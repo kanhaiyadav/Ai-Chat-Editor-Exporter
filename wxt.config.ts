@@ -1,0 +1,20 @@
+import { defineConfig } from 'wxt';
+
+// See https://wxt.dev/api/config.html
+export default defineConfig({
+    modules: ["@wxt-dev/module-react"],
+    manifest: {
+        name: "Chat2Pdf",
+        description: "A Chrome extension for converting AI chats to PDF",
+        version: "13.0.0",
+        permissions: ["activeTab", "downloads", "storage"],
+        host_permissions: [
+            "https://chatgpt.com/*",
+            "https://chat.openai.com/*",
+        ],
+        options_ui: {
+            page: "options.html",
+            open_in_tab: true,
+        }
+    },
+});
