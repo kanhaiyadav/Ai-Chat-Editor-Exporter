@@ -4,6 +4,7 @@ import { SiBuymeacoffee } from "react-icons/si";
 import { FaGithub } from "react-icons/fa6";
 import { TbMessageReport } from "react-icons/tb";
 import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
+import { HiOutlineUserCircle } from "react-icons/hi2";
 
 interface Message {
     role: string;
@@ -59,10 +60,10 @@ interface PDFSettings {
 const defaultSettings: PDFSettings = {
     layout: 'chat',
     chat: {
-        userBubbleColor: '#3b82f6',
-        userTextColor: '#ffffff',
-        aiBubbleColor: '#22c55e',
-        aiTextColor: '#ffffff',
+        userBubbleColor: '#ffcc41',
+        userTextColor: '#000000',
+        aiBubbleColor: '#efefef',
+        aiTextColor: '#3c3c3c',
         fontSize: 14,
         fontFamily: 'Inter, system-ui, sans-serif',
         bubbleRadius: 16,
@@ -104,6 +105,7 @@ const defaultSettings: PDFSettings = {
 
 function App() {
     const [chatData, setChatData] = useState<Message[] | null>(null);
+    const [chatProps, setChatProps] = useState<{ title?: string }>({});
     const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
     const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
         layout: true,
@@ -117,6 +119,12 @@ function App() {
         // Load chat data
         chrome.storage.local.get(["chatData"], (result) => {
             setChatData(result.chatData);
+        });
+        
+        chrome.storage.local.get(["chatProps"], (result) => {
+            if (result.chatProps) {
+                setChatProps(result.chatProps);
+            }
         });
 
         // Load settings
@@ -139,6 +147,9 @@ function App() {
                 if (changes.chatData) {
                     setChatData(changes.chatData.newValue);
                 }
+                if (changes.chatProps) {
+                    setChatProps(changes.chatProps.newValue);
+                }
                 if (changes.pdfSettings) {
                     setSettings(changes.pdfSettings.newValue);
                 }
@@ -150,6 +161,22 @@ function App() {
         return () => {
             chrome.storage.onChanged.removeListener(listener);
         };
+    }, []);
+
+    useEffect(() => { 
+        setSettings(prev => ({ ...prev, general: { ...prev.general, headerText: chatProps?.title || prev.general.headerText } }));
+    }, [chatProps]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            const chatContainer = document.getElementById('chat-container');
+            if (chatContainer) {
+                const copyButtons = chatContainer.querySelectorAll('[aria-label="Copy"]');
+                copyButtons.forEach(button => button.remove());
+            }
+        }, 1000); // wait 1 second
+
+        return () => clearTimeout(timeout);
     }, []);
 
     const updateSettings = (updates: Partial<PDFSettings>) => {
@@ -206,6 +233,7 @@ function App() {
                     <div style={{
                         textAlign: 'center',
                         padding: '20px',
+                        paddingTop: '0',
                         borderBottom: '2px solid #e5e7eb',
                         marginBottom: '20px',
                         fontFamily: settings.chat.fontFamily,
@@ -230,7 +258,11 @@ function App() {
                     };
 
                     if (settings.chat.bubbleStyle === 'filled') {
-                        bubbleStyle = { ...bubbleStyle, backgroundColor: bubbleColor, color: textColor };
+                        if (bubbleColor === 'transparent' && !isUser) {
+                            bubbleStyle = { ...bubbleStyle, backgroundColor: '#f3f4f6', color: textColor };
+                        } else {
+                            bubbleStyle = { ...bubbleStyle, backgroundColor: bubbleColor, color: textColor };
+                        }
                     } else if (settings.chat.bubbleStyle === 'outlined') {
                         bubbleStyle = {
                             ...bubbleStyle,
@@ -259,15 +291,16 @@ function App() {
                         >
                             {settings.chat.showAvatars && !isUser && (
                                 <div style={{
-                                    width: '32px',
-                                    height: '32px',
+                                    width: '30px',
+                                    height: '30px',
                                     borderRadius: '50%',
-                                    backgroundColor: settings.chat.aiBubbleColor,
                                     marginRight: '8px',
                                     flexShrink: 0,
-                                }}></div>
+                                }}>
+                                    <img src="/chat/chatgpt.png" alt="" className='w-[50px]'/>
+                                </div>
                             )}
-                            <div style={bubbleStyle}>
+                            <div style={bubbleStyle} className={`${isUser? "!rounded-tr-none" : "!rounded-tl-none"}`}>
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
                                 {settings.chat.showTimestamps && (
                                     <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '4px' }}>
@@ -280,10 +313,12 @@ function App() {
                                     width: '32px',
                                     height: '32px',
                                     borderRadius: '50%',
-                                    backgroundColor: settings.chat.userBubbleColor,
                                     marginLeft: '8px',
+                                    marginTop: "-5px",
                                     flexShrink: 0,
-                                }}></div>
+                                }}>
+                                    <HiOutlineUserCircle className='w-[32px] h-[32px]' />
+                                </div>
                             )}
                         </div>
                     );
@@ -464,7 +499,7 @@ function App() {
                 {/* Settings Panel */}
                 <div className='w-[420px] h-full bg-gradient-to-b from-amber-50 to-amber-100 overflow-y-auto border-l border-amber-200 mt-1' style={{
                     scrollbarWidth: 'thin',
-                    scrollbarColor: '#fbbf24 #fef3c7'
+                    scrollbarColor: '#fbb400 #fef3c7'
                 }}>
                     <div className='p-6 space-y-4'>
                         {/* Export Button */}
@@ -492,8 +527,8 @@ function App() {
                                         key={layout}
                                         onClick={() => updateSettings({ layout })}
                                         className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${settings.layout === layout
-                                                ? 'bg-amber-500 text-white'
-                                                : 'bg-white text-gray-700 hover:bg-gray-50'
+                                            ? 'bg-amber-500 text-white'
+                                            : 'bg-white text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
                                         {layout === 'chat' ? 'Chat Bubbles' : layout === 'qa' ? 'Q&A Format' : 'Document Style'}

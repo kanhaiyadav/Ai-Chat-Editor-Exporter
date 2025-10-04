@@ -6,6 +6,14 @@ export default defineContentScript({
             console.log("Extracting chat data...");
 
             try {
+                let title = "";
+                const activeLink = document.querySelector(
+                    "#history a[data-active]"
+                );
+                if (activeLink) {
+                    title = activeLink.textContent.trim();
+                }
+
                 // Find all conversation turns based on the structure you provided
                 const turns = document.querySelectorAll(
                     '[data-testid^="conversation-turn"]'
@@ -44,7 +52,7 @@ export default defineContentScript({
                     }
                 });
 
-                chrome.storage.local.set({ chatData: messages }, () => {
+                chrome.storage.local.set({ chatData: messages, chatProps: { title } }, () => {
                     chrome.runtime.sendMessage({ action: "openOptions" });
                     console.log("Chat data saved:", messages);
                 });
