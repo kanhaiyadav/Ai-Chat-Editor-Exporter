@@ -5,6 +5,16 @@ import { FaGithub } from "react-icons/fa6";
 import { TbMessageReport } from "react-icons/tb";
 import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import { HiOutlineUserCircle } from "react-icons/hi2";
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/lib/useTheme';
+import { Button } from '@/components/ui/button';
+import { Input as ShadcnInput } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider as ShadcnSlider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Message {
     role: string;
@@ -114,13 +124,14 @@ function App() {
         documentStyle: false,
         general: true,
     });
+    const { effectiveTheme, loading } = useTheme(); // Add this
 
     useEffect(() => {
         // Load chat data
         chrome.storage.local.get(["chatData"], (result) => {
             setChatData(result.chatData);
         });
-        
+
         chrome.storage.local.get(["chatProps"], (result) => {
             if (result.chatProps) {
                 setChatProps(result.chatProps);
@@ -163,21 +174,9 @@ function App() {
         };
     }, []);
 
-    useEffect(() => { 
+    useEffect(() => {
         setSettings(prev => ({ ...prev, general: { ...prev.general, headerText: chatProps?.title || prev.general.headerText } }));
     }, [chatProps]);
-
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            const chatContainer = document.getElementById('chat-container');
-            if (chatContainer) {
-                const copyButtons = chatContainer.querySelectorAll('[aria-label="Copy"]');
-                copyButtons.forEach(button => button.remove());
-            }
-        }, 1000); // wait 1 second
-
-        return () => clearTimeout(timeout);
-    }, []);
 
     const updateSettings = (updates: Partial<PDFSettings>) => {
         const newSettings = { ...settings, ...updates };
@@ -196,6 +195,7 @@ function App() {
 
     const generatePDF = () => {
         const container = document.getElementById('chat-container');
+        console.log("gerating pdf...");
         if (container) {
             const options = {
                 margin: settings.general.margins,
@@ -253,7 +253,7 @@ function App() {
                         fontSize: `${settings.chat.fontSize}px`,
                         fontFamily: settings.chat.fontFamily,
                         marginBottom: `${settings.chat.spacing}px`,
-                        maxWidth: '70%',
+                        maxWidth: '80%',
                         wordWrap: 'break-word',
                     };
 
@@ -297,10 +297,10 @@ function App() {
                                     marginRight: '8px',
                                     flexShrink: 0,
                                 }}>
-                                    <img src="/chat/chatgpt.png" alt="" className='w-[50px]'/>
+                                    <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
                                 </div>
                             )}
-                            <div style={bubbleStyle} className={`${isUser? "!rounded-tr-none" : "!rounded-tl-none"}`}>
+                            <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
                                 {settings.chat.showTimestamps && (
                                     <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '4px' }}>
@@ -317,7 +317,7 @@ function App() {
                                     marginTop: "-5px",
                                     flexShrink: 0,
                                 }}>
-                                    <HiOutlineUserCircle className='w-[32px] h-[32px]' />
+                                    <HiOutlineUserCircle className='text-foreground w-[32px] h-[32px]' />
                                 </div>
                             )}
                         </div>
@@ -436,9 +436,10 @@ function App() {
     const themeStyles = getThemeStyles();
 
     return (
-        <div className='flex flex-col items-center h-dvh w-screen overflow-hidden'>
+        <div className='flex flex-col items-center h-dvh w-full !overflow-hidden'
+        >
             {/* Header */}
-            <div className='w-full flex items-center justify-between px-[50px] h-[65px] bg-amber-400'>
+            <div className='w-full flex items-center justify-between px-[50px] h-[65px] bg-primary'>
                 <div className='flex items-center gap-4'>
                     <div className='w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center text-white font-bold text-xl'>
                         PDF
@@ -449,6 +450,7 @@ function App() {
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>
+                    <ThemeToggle />
                     <TbMessageReport className='text-black/80 cursor-pointer hover:text-black' size={26} />
                     <FaGithub className='text-black/80 cursor-pointer hover:text-black' size={24} />
                     <SiBuymeacoffee className='text-black/80 cursor-pointer hover:text-black' size={24} />
@@ -497,266 +499,333 @@ function App() {
                 </div>
 
                 {/* Settings Panel */}
-                <div className='w-[420px] h-full bg-gradient-to-b from-amber-50 to-amber-100 overflow-y-auto border-l border-amber-200 mt-1' style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#fbb400 #fef3c7'
-                }}>
-                    <div className='p-6 space-y-4'>
-                        {/* Export Button */}
-                        <button
-                            onClick={generatePDF}
-                            className='w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md'
-                        >
-                            Export as PDF
-                        </button>
-
-                        {/* Reset Button */}
-                        <button
-                            onClick={resetSettings}
-                            className='w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 border border-gray-300'
-                        >
-                            <RotateCcw size={16} />
-                            Reset to Default
-                        </button>
+                <div className='w-[420px] h-full bg-gradient-to-b relative from-amber-50/70 to-amber-100/70 border-l border-amber-200 mt-1 flex flex-col'>
+                    <div className='flex-1 overflow-y-auto p-6 py-4 space-y-4 pb-24' style={{
+                        scrollbarWidth: 'thin',
+                        scrollbarColor: '#fbb400 #fef3c7'
+                    }}>
 
                         {/* Layout Selection */}
-                        <Section title="Layout" expanded={expandedSections.layout} onToggle={() => toggleSection('layout')}>
-                            <div className='space-y-2'>
-                                {(['chat', 'qa', 'document'] as const).map(layout => (
-                                    <button
-                                        key={layout}
-                                        onClick={() => updateSettings({ layout })}
-                                        className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${settings.layout === layout
-                                            ? 'bg-amber-500 text-white'
-                                            : 'bg-white text-gray-700 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {layout === 'chat' ? 'Chat Bubbles' : layout === 'qa' ? 'Q&A Format' : 'Document Style'}
-                                    </button>
-                                ))}
-                            </div>
-                        </Section>
+                        <h2 className='!text-base !my-0 !mb-1'>Select Layout</h2>
+                        <div className='flex items-center gap-2'>
+                            {(['chat', 'qa', 'document'] as const).map(layout => (
+                                <div
+                                    key={layout}
+                                    onClick={() => updateSettings({ layout })}
+                                    className={`w-full rounded-lg ${settings.layout === layout ? 'bg-primary/20 border-2 border-primary' : ' bg-white shadow-md'} hover:bg-primary/15`}
+                                >
+                                    {
+                                        layout === 'chat' ? (
+                                            <img src="/side/chat2.png" className={`flex-1 rounded-lg`} alt="Chat Layout" />
+                                        ) : layout === 'qa' ? (
+                                            <img src="/side/qna2.png" className={`flex-1 rounded-lg`} alt="Q&A Layout" />
+                                        ) : (
+                                            <img src="/side/doc2.png" className={`flex-1 rounded-lg`} alt="Document Layout" />
+                                        )
+                                    }
+                                </div>
+                            ))}
+                        </div>
+
 
                         {/* Chat Style Settings */}
                         {settings.layout === 'chat' && (
-                            <Section title="Chat Style" expanded={expandedSections.chatStyle} onToggle={() => toggleSection('chatStyle')}>
-                                <div className='space-y-4'>
-                                    <ColorPicker
-                                        label="User Bubble"
-                                        value={settings.chat.userBubbleColor}
-                                        onChange={(color) => updateSettings({ chat: { ...settings.chat, userBubbleColor: color } })}
-                                    />
-                                    <ColorPicker
-                                        label="User Text"
-                                        value={settings.chat.userTextColor}
-                                        onChange={(color) => updateSettings({ chat: { ...settings.chat, userTextColor: color } })}
-                                    />
-                                    <ColorPicker
-                                        label="AI Bubble"
-                                        value={settings.chat.aiBubbleColor}
-                                        onChange={(color) => updateSettings({ chat: { ...settings.chat, aiBubbleColor: color } })}
-                                    />
-                                    <ColorPicker
-                                        label="AI Text"
-                                        value={settings.chat.aiTextColor}
-                                        onChange={(color) => updateSettings({ chat: { ...settings.chat, aiTextColor: color } })}
-                                    />
-                                    <Slider
-                                        label="Font Size"
-                                        value={settings.chat.fontSize}
-                                        min={10}
-                                        max={24}
-                                        onChange={(value) => updateSettings({ chat: { ...settings.chat, fontSize: value } })}
-                                    />
-                                    <Slider
-                                        label="Border Radius"
-                                        value={settings.chat.bubbleRadius}
-                                        min={0}
-                                        max={30}
-                                        onChange={(value) => updateSettings({ chat: { ...settings.chat, bubbleRadius: value } })}
-                                    />
-                                    <Slider
-                                        label="Message Spacing"
-                                        value={settings.chat.spacing}
-                                        min={4}
-                                        max={32}
-                                        onChange={(value) => updateSettings({ chat: { ...settings.chat, spacing: value } })}
-                                    />
-                                    <Select
-                                        label="Bubble Style"
-                                        value={settings.chat.bubbleStyle}
-                                        options={[
-                                            { value: 'filled', label: 'Filled' },
-                                            { value: 'outlined', label: 'Outlined' },
-                                            { value: 'minimal', label: 'Minimal' },
-                                        ]}
-                                        onChange={(value) => updateSettings({ chat: { ...settings.chat, bubbleStyle: value as any } })}
-                                    />
-                                    <Toggle
-                                        label="Show Avatars"
-                                        checked={settings.chat.showAvatars}
-                                        onChange={(checked) => updateSettings({ chat: { ...settings.chat, showAvatars: checked } })}
-                                    />
-                                    <Toggle
-                                        label="Show Timestamps"
-                                        checked={settings.chat.showTimestamps}
-                                        onChange={(checked) => updateSettings({ chat: { ...settings.chat, showTimestamps: checked } })}
-                                    />
-                                </div>
-                            </Section>
+                            <Card className="shadow-sm border border-gray-200">
+                                <Collapsible open={expandedSections.chatStyle} onOpenChange={() => toggleSection('chatStyle')}>
+                                    <CollapsibleTrigger asChild>
+                                        <CardHeader className="px-4 py-3 bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-150 hover:to-amber-100 transition-colors cursor-pointer">
+                                            <CardTitle className="flex items-center justify-between font-semibold text-gray-800">
+                                                Chat Style
+                                                {expandedSections.chatStyle ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                            </CardTitle>
+                                        </CardHeader>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <CardContent className="p-4">
+                                            <div className='space-y-4'>
+                                                <ColorPicker
+                                                    label="User Bubble"
+                                                    value={settings.chat.userBubbleColor}
+                                                    onChange={(color) => updateSettings({ chat: { ...settings.chat, userBubbleColor: color } })}
+                                                />
+                                                <ColorPicker
+                                                    label="User Text"
+                                                    value={settings.chat.userTextColor}
+                                                    onChange={(color) => updateSettings({ chat: { ...settings.chat, userTextColor: color } })}
+                                                />
+                                                <ColorPicker
+                                                    label="AI Bubble"
+                                                    value={settings.chat.aiBubbleColor}
+                                                    onChange={(color) => updateSettings({ chat: { ...settings.chat, aiBubbleColor: color } })}
+                                                />
+                                                <ColorPicker
+                                                    label="AI Text"
+                                                    value={settings.chat.aiTextColor}
+                                                    onChange={(color) => updateSettings({ chat: { ...settings.chat, aiTextColor: color } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Font Size"
+                                                    value={settings.chat.fontSize}
+                                                    min={10}
+                                                    max={24}
+                                                    onChange={(value) => updateSettings({ chat: { ...settings.chat, fontSize: value } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Border Radius"
+                                                    value={settings.chat.bubbleRadius}
+                                                    min={0}
+                                                    max={30}
+                                                    onChange={(value) => updateSettings({ chat: { ...settings.chat, bubbleRadius: value } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Message Spacing"
+                                                    value={settings.chat.spacing}
+                                                    min={4}
+                                                    max={32}
+                                                    onChange={(value) => updateSettings({ chat: { ...settings.chat, spacing: value } })}
+                                                />
+                                                <SelectComponent
+                                                    label="Bubble Style"
+                                                    value={settings.chat.bubbleStyle}
+                                                    options={[
+                                                        { value: 'filled', label: 'Filled' },
+                                                        { value: 'outlined', label: 'Outlined' },
+                                                        { value: 'minimal', label: 'Minimal' },
+                                                    ]}
+                                                    onChange={(value) => updateSettings({ chat: { ...settings.chat, bubbleStyle: value as any } })}
+                                                />
+                                                <ToggleComponent
+                                                    label="Show Avatars"
+                                                    checked={settings.chat.showAvatars}
+                                                    onChange={(checked) => updateSettings({ chat: { ...settings.chat, showAvatars: checked } })}
+                                                />
+                                                <ToggleComponent
+                                                    label="Show Timestamps"
+                                                    checked={settings.chat.showTimestamps}
+                                                    onChange={(checked) => updateSettings({ chat: { ...settings.chat, showTimestamps: checked } })}
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            </Card>
                         )}
 
                         {/* Q&A Style Settings */}
                         {settings.layout === 'qa' && (
-                            <Section title="Q&A Style" expanded={expandedSections.qaStyle} onToggle={() => toggleSection('qaStyle')}>
-                                <div className='space-y-4'>
-                                    <ColorPicker
-                                        label="Question Color"
-                                        value={settings.qa.questionColor}
-                                        onChange={(color) => updateSettings({ qa: { ...settings.qa, questionColor: color } })}
-                                    />
-                                    <ColorPicker
-                                        label="Answer Color"
-                                        value={settings.qa.answerColor}
-                                        onChange={(color) => updateSettings({ qa: { ...settings.qa, answerColor: color } })}
-                                    />
-                                    <Slider
-                                        label="Font Size"
-                                        value={settings.qa.fontSize}
-                                        min={10}
-                                        max={24}
-                                        onChange={(value) => updateSettings({ qa: { ...settings.qa, fontSize: value } })}
-                                    />
-                                    <Input
-                                        label="Question Prefix"
-                                        value={settings.qa.questionPrefix}
-                                        onChange={(value) => updateSettings({ qa: { ...settings.qa, questionPrefix: value } })}
-                                    />
-                                    <Input
-                                        label="Answer Prefix"
-                                        value={settings.qa.answerPrefix}
-                                        onChange={(value) => updateSettings({ qa: { ...settings.qa, answerPrefix: value } })}
-                                    />
-                                    <Select
-                                        label="Separator Style"
-                                        value={settings.qa.separatorStyle}
-                                        options={[
-                                            { value: 'line', label: 'Line' },
-                                            { value: 'dots', label: 'Dots' },
-                                            { value: 'none', label: 'None' },
-                                        ]}
-                                        onChange={(value) => updateSettings({ qa: { ...settings.qa, separatorStyle: value as any } })}
-                                    />
-                                    <Toggle
-                                        label="Number Questions"
-                                        checked={settings.qa.numbering}
-                                        onChange={(checked) => updateSettings({ qa: { ...settings.qa, numbering: checked } })}
-                                    />
-                                    <Toggle
-                                        label="Indent Answers"
-                                        checked={settings.qa.indentAnswer}
-                                        onChange={(checked) => updateSettings({ qa: { ...settings.qa, indentAnswer: checked } })}
-                                    />
-                                </div>
-                            </Section>
+                            <Card className="shadow-sm border border-gray-200">
+                                <Collapsible open={expandedSections.qaStyle} onOpenChange={() => toggleSection('qaStyle')}>
+                                    <CollapsibleTrigger asChild>
+                                        <CardHeader className="px-4 py-3 bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-150 hover:to-amber-100 transition-colors cursor-pointer">
+                                            <CardTitle className="flex items-center justify-between font-semibold text-gray-800">
+                                                Q&A Style
+                                                {expandedSections.qaStyle ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                            </CardTitle>
+                                        </CardHeader>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <CardContent className="p-4">
+                                            <div className='space-y-4'>
+                                                <ColorPicker
+                                                    label="Question Color"
+                                                    value={settings.qa.questionColor}
+                                                    onChange={(color) => updateSettings({ qa: { ...settings.qa, questionColor: color } })}
+                                                />
+                                                <ColorPicker
+                                                    label="Answer Color"
+                                                    value={settings.qa.answerColor}
+                                                    onChange={(color) => updateSettings({ qa: { ...settings.qa, answerColor: color } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Font Size"
+                                                    value={settings.qa.fontSize}
+                                                    min={10}
+                                                    max={24}
+                                                    onChange={(value) => updateSettings({ qa: { ...settings.qa, fontSize: value } })}
+                                                />
+                                                <InputComponent
+                                                    label="Question Prefix"
+                                                    value={settings.qa.questionPrefix}
+                                                    onChange={(value) => updateSettings({ qa: { ...settings.qa, questionPrefix: value } })}
+                                                />
+                                                <InputComponent
+                                                    label="Answer Prefix"
+                                                    value={settings.qa.answerPrefix}
+                                                    onChange={(value) => updateSettings({ qa: { ...settings.qa, answerPrefix: value } })}
+                                                />
+                                                <SelectComponent
+                                                    label="Separator Style"
+                                                    value={settings.qa.separatorStyle}
+                                                    options={[
+                                                        { value: 'line', label: 'Line' },
+                                                        { value: 'dots', label: 'Dots' },
+                                                        { value: 'none', label: 'None' },
+                                                    ]}
+                                                    onChange={(value) => updateSettings({ qa: { ...settings.qa, separatorStyle: value as any } })}
+                                                />
+                                                <ToggleComponent
+                                                    label="Number Questions"
+                                                    checked={settings.qa.numbering}
+                                                    onChange={(checked) => updateSettings({ qa: { ...settings.qa, numbering: checked } })}
+                                                />
+                                                <ToggleComponent
+                                                    label="Indent Answers"
+                                                    checked={settings.qa.indentAnswer}
+                                                    onChange={(checked) => updateSettings({ qa: { ...settings.qa, indentAnswer: checked } })}
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            </Card>
                         )}
 
                         {/* Document Style Settings */}
                         {settings.layout === 'document' && (
-                            <Section title="Document Style" expanded={expandedSections.documentStyle} onToggle={() => toggleSection('documentStyle')}>
-                                <div className='space-y-4'>
-                                    <ColorPicker
-                                        label="Title Color"
-                                        value={settings.document.titleColor}
-                                        onChange={(color) => updateSettings({ document: { ...settings.document, titleColor: color } })}
-                                    />
-                                    <ColorPicker
-                                        label="Body Color"
-                                        value={settings.document.bodyColor}
-                                        onChange={(color) => updateSettings({ document: { ...settings.document, bodyColor: color } })}
-                                    />
-                                    <Slider
-                                        label="Font Size"
-                                        value={settings.document.fontSize}
-                                        min={10}
-                                        max={20}
-                                        onChange={(value) => updateSettings({ document: { ...settings.document, fontSize: value } })}
-                                    />
-                                    <Slider
-                                        label="Line Height"
-                                        value={settings.document.lineHeight}
-                                        min={1.2}
-                                        max={2.5}
-                                        step={0.1}
-                                        onChange={(value) => updateSettings({ document: { ...settings.document, lineHeight: value } })}
-                                    />
-                                    <Slider
-                                        label="Paragraph Spacing"
-                                        value={settings.document.paragraphSpacing}
-                                        min={8}
-                                        max={40}
-                                        onChange={(value) => updateSettings({ document: { ...settings.document, paragraphSpacing: value } })}
-                                    />
-                                </div>
-                            </Section>
+                            <Card className="shadow-sm border border-gray-200">
+                                <Collapsible open={expandedSections.documentStyle} onOpenChange={() => toggleSection('documentStyle')}>
+                                    <CollapsibleTrigger asChild>
+                                        <CardHeader className="px-4 py-3 bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-150 hover:to-amber-100 transition-colors cursor-pointer">
+                                            <CardTitle className="flex items-center justify-between font-semibold text-gray-800">
+                                                Document Style
+                                                {expandedSections.documentStyle ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                            </CardTitle>
+                                        </CardHeader>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <CardContent className="p-4">
+                                            <div className='space-y-4'>
+                                                <ColorPicker
+                                                    label="Title Color"
+                                                    value={settings.document.titleColor}
+                                                    onChange={(color) => updateSettings({ document: { ...settings.document, titleColor: color } })}
+                                                />
+                                                <ColorPicker
+                                                    label="Body Color"
+                                                    value={settings.document.bodyColor}
+                                                    onChange={(color) => updateSettings({ document: { ...settings.document, bodyColor: color } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Font Size"
+                                                    value={settings.document.fontSize}
+                                                    min={10}
+                                                    max={20}
+                                                    onChange={(value) => updateSettings({ document: { ...settings.document, fontSize: value } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Line Height"
+                                                    value={settings.document.lineHeight}
+                                                    min={1.2}
+                                                    max={2.5}
+                                                    step={0.1}
+                                                    onChange={(value) => updateSettings({ document: { ...settings.document, lineHeight: value } })}
+                                                />
+                                                <SliderComponent
+                                                    label="Paragraph Spacing"
+                                                    value={settings.document.paragraphSpacing}
+                                                    min={8}
+                                                    max={40}
+                                                    onChange={(value) => updateSettings({ document: { ...settings.document, paragraphSpacing: value } })}
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </CollapsibleContent>
+                                </Collapsible>
+                            </Card>
                         )}
 
                         {/* General Settings */}
-                        <Section title="General Settings" expanded={expandedSections.general} onToggle={() => toggleSection('general')}>
-                            <div className='space-y-4'>
-                                <Select
-                                    label="Page Size"
-                                    value={settings.general.pageSize}
-                                    options={[
-                                        { value: 'a4', label: 'A4' },
-                                        { value: 'letter', label: 'Letter' },
-                                        { value: 'legal', label: 'Legal' },
-                                    ]}
-                                    onChange={(value) => updateSettings({ general: { ...settings.general, pageSize: value as any } })}
-                                />
-                                <Slider
-                                    label="Margins"
-                                    value={settings.general.margins}
-                                    min={5}
-                                    max={50}
-                                    onChange={(value) => updateSettings({ general: { ...settings.general, margins: value } })}
-                                />
-                                <Select
-                                    label="Theme"
-                                    value={settings.general.theme}
-                                    options={[
-                                        { value: 'light', label: 'Light' },
-                                        { value: 'dark', label: 'Dark' },
-                                        { value: 'sepia', label: 'Sepia' },
-                                    ]}
-                                    onChange={(value) => updateSettings({ general: { ...settings.general, theme: value as any } })}
-                                />
-                                <Toggle
-                                    label="Include Header"
-                                    checked={settings.general.includeHeader}
-                                    onChange={(checked) => updateSettings({ general: { ...settings.general, includeHeader: checked } })}
-                                />
-                                {settings.general.includeHeader && (
-                                    <Input
-                                        label="Header Text"
-                                        value={settings.general.headerText}
-                                        onChange={(value) => updateSettings({ general: { ...settings.general, headerText: value } })}
-                                    />
-                                )}
-                                <Toggle
-                                    label="Include Footer"
-                                    checked={settings.general.includeFooter}
-                                    onChange={(checked) => updateSettings({ general: { ...settings.general, includeFooter: checked } })}
-                                />
-                                {settings.general.includeFooter && (
-                                    <Toggle
-                                        label="Show Page Numbers"
-                                        checked={settings.general.pageNumbers}
-                                        onChange={(checked) => updateSettings({ general: { ...settings.general, pageNumbers: checked } })}
-                                    />
-                                )}
-                            </div>
-                        </Section>
+                        <Card className="shadow-sm border border-gray-200">
+                            <Collapsible open={expandedSections.general} onOpenChange={() => toggleSection('general')}>
+                                <CollapsibleTrigger asChild>
+                                    <CardHeader className="px-4 py-3 bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-150 hover:to-amber-100 transition-colors cursor-pointer">
+                                        <CardTitle className="flex items-center justify-between font-semibold text-gray-800">
+                                            General Settings
+                                            {expandedSections.general ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                                        </CardTitle>
+                                    </CardHeader>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <CardContent className="p-4">
+                                        <div className='space-y-4'>
+                                            <SelectComponent
+                                                label="Page Size"
+                                                value={settings.general.pageSize}
+                                                options={[
+                                                    { value: 'a4', label: 'A4' },
+                                                    { value: 'letter', label: 'Letter' },
+                                                    { value: 'legal', label: 'Legal' },
+                                                ]}
+                                                onChange={(value) => updateSettings({ general: { ...settings.general, pageSize: value as any } })}
+                                            />
+                                            <SliderComponent
+                                                label="Margins"
+                                                value={settings.general.margins}
+                                                min={5}
+                                                max={50}
+                                                onChange={(value) => updateSettings({ general: { ...settings.general, margins: value } })}
+                                            />
+                                            <SelectComponent
+                                                label="Theme"
+                                                value={settings.general.theme}
+                                                options={[
+                                                    { value: 'light', label: 'Light' },
+                                                    { value: 'dark', label: 'Dark' },
+                                                    { value: 'sepia', label: 'Sepia' },
+                                                ]}
+                                                onChange={(value) => updateSettings({ general: { ...settings.general, theme: value as any } })}
+                                            />
+                                            <ToggleComponent
+                                                label="Include Header"
+                                                checked={settings.general.includeHeader}
+                                                onChange={(checked) => updateSettings({ general: { ...settings.general, includeHeader: checked } })}
+                                            />
+                                            {settings.general.includeHeader && (
+                                                <InputComponent
+                                                    label="Header Text"
+                                                    value={settings.general.headerText}
+                                                    onChange={(value) => updateSettings({ general: { ...settings.general, headerText: value } })}
+                                                />
+                                            )}
+                                            <ToggleComponent
+                                                label="Include Footer"
+                                                checked={settings.general.includeFooter}
+                                                onChange={(checked) => updateSettings({ general: { ...settings.general, includeFooter: checked } })}
+                                            />
+                                            {settings.general.includeFooter && (
+                                                <ToggleComponent
+                                                    label="Show Page Numbers"
+                                                    checked={settings.general.pageNumbers}
+                                                    onChange={(checked) => updateSettings({ general: { ...settings.general, pageNumbers: checked } })}
+                                                />
+                                            )}
+                                        </div>
+                                    </CardContent>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        </Card>
+                    </div>
+
+                    {/* Fixed Button Bar */}
+                    <div className='flex items-center gap-4 w-full bg-amber-50/90 backdrop-blur-md py-4 px-6 border-t-[1px] border-amber-300 mt-auto'>
+                        <Button
+                            onClick={generatePDF}
+                            className="flex-1 bg-primary hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md"
+                            size="lg"
+                        >
+                            Export as PDF
+                        </Button>
+
+                        {/* Reset Button */}
+                        <Button
+                            onClick={resetSettings}
+                            variant="outline"
+                            className="flex-1"
+                            size="default"
+                        >
+                            <RotateCcw size={16} />
+                            Reset to Default
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -764,30 +833,11 @@ function App() {
     );
 }
 
-// UI Components
-function Section({ title, expanded, onToggle, children }: { title: string; expanded: boolean; onToggle: () => void; children: React.ReactNode }) {
-    return (
-        <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
-            <button
-                onClick={onToggle}
-                className='w-full px-4 py-3 flex items-center justify-between bg-gradient-to-r from-amber-100 to-amber-50 hover:from-amber-150 hover:to-amber-100 transition-colors'
-            >
-                <span className='font-semibold text-gray-800'>{title}</span>
-                {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
-            {expanded && (
-                <div className='p-4'>
-                    {children}
-                </div>
-            )}
-        </div>
-    );
-}
-
+// UI Components using shadcn/ui
 function ColorPicker({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
     return (
         <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>{label}</label>
+            <Label className='block text-sm font-medium text-gray-700 mb-2'>{label}</Label>
             <div className='flex items-center gap-3'>
                 <input
                     type="color"
@@ -795,11 +845,11 @@ function ColorPicker({ label, value, onChange }: { label: string; value: string;
                     onChange={(e) => onChange(e.target.value)}
                     className='h-10 w-16 rounded cursor-pointer border-2 border-gray-300'
                 />
-                <input
+                <ShadcnInput
                     type="text"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
-                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm'
+                    className='flex-1'
                     placeholder="#000000"
                 />
             </div>
@@ -807,73 +857,66 @@ function ColorPicker({ label, value, onChange }: { label: string; value: string;
     );
 }
 
-function Slider({ label, value, min, max, step = 1, onChange }: { label: string; value: number; min: number; max: number; step?: number; onChange: (value: number) => void }) {
+function SliderComponent({ label, value, min, max, step = 1, onChange }: { label: string; value: number; min: number; max: number; step?: number; onChange: (value: number) => void }) {
     return (
         <div>
             <div className='flex items-center justify-between mb-2'>
-                <label className='text-sm font-medium text-gray-700'>{label}</label>
+                <Label className='text-sm font-medium text-gray-700'>{label}</Label>
                 <span className='text-sm font-semibold text-amber-600'>{value}</span>
             </div>
-            <input
-                type="range"
+            <ShadcnSlider
+                value={[value]}
+                onValueChange={(values) => onChange(values[0])}
                 min={min}
                 max={max}
                 step={step}
-                value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
-                className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-amber-500'
+                className="w-full"
             />
         </div>
     );
 }
 
-function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
+function ToggleComponent({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
     return (
         <div className='flex items-center justify-between'>
-            <label className='text-sm font-medium text-gray-700'>{label}</label>
-            <button
-                onClick={() => onChange(!checked)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? 'bg-amber-500' : 'bg-gray-300'
-                    }`}
-            >
-                <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                />
-            </button>
+            <Label className='text-sm font-medium text-gray-700'>{label}</Label>
+            <Switch
+                checked={checked}
+                onCheckedChange={onChange}
+            />
         </div>
     );
 }
 
-function Input({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function InputComponent({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
     return (
         <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>{label}</label>
-            <input
+            <Label className='block text-sm font-medium text-gray-700 mb-2'>{label}</Label>
+            <ShadcnInput
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500'
             />
         </div>
     );
 }
 
-function Select({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
+function SelectComponent({ label, value, options, onChange }: { label: string; value: string; options: Array<{ value: string; label: string }>; onChange: (value: string) => void }) {
     return (
         <div>
-            <label className='block text-sm font-medium text-gray-700 mb-2'>{label}</label>
-            <select
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white'
-            >
-                {options.map(option => (
-                    <option key={option.value} value={option.value}>
-                        {option.label}
-                    </option>
-                ))}
-            </select>
+            <Label className='block text-sm font-medium text-gray-700 mb-2'>{label}</Label>
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select an option" />
+                </SelectTrigger>
+                <SelectContent>
+                    {options.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
     );
 }
