@@ -2,65 +2,108 @@ export default defineContentScript({
     matches: ["https://chatgpt.com/*", "https://chat.openai.com/*"],
     main() {
         console.log("Content script loaded");
-        document.addEventListener("click", () => {
-            console.log("Extracting chat data...");
 
-            try {
-                let title = "";
-                const activeLink = document.querySelector(
-                    "#history a[data-active]"
-                );
-                if (activeLink) {
-                    title = activeLink.textContent.trim();
-                }
+        // Wait for the header actions div (ChatGPT loads dynamically)
+        const interval = setInterval(() => {
+            const headerDiv = document.querySelector(
+                "#conversation-header-actions"
+            );
+            if (headerDiv && !document.querySelector("#export-chat-button")) {
+                clearInterval(interval);
 
-                // Find all conversation turns based on the structure you provided
-                const turns = document.querySelectorAll(
-                    '[data-testid^="conversation-turn"]'
-                );
-                const messages: { role: string; content: string }[] = [];
+                // Create the Export Chat button
+                const exportButton = document.createElement("button");
+                exportButton.id = "export-chat-button";
+                exportButton.className =
+                    "btn relative btn-ghost text-token-text-primary mx-2";
+                exportButton.setAttribute("aria-label", "Export Chat");
 
-                turns.forEach((turn) => {
-                    const isUser = turn.querySelector(
-                        '[data-message-author-role="user"]'
-                    );
-                    const isAssistant = turn.querySelector(
-                        '[data-message-author-role="assistant"]'
-                    );
+                // Add icon + text
+                exportButton.innerHTML = `
+                    <div class="flex w-full items-center justify-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     class="w-4 h-4">
+  <path d="M13 11L21.2 2.8" />
+  <path d="M22 6.8V2H17.2" />
+  <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13" />
+</svg>
 
-                    let role = "unknown";
-                    let content = "";
+                        <span>Export Chat</span>
+                    </div>
+                `;
 
-                    if (isUser) {
-                        role = "user";
-                        // Extract user message content
-                        const userBubble = turn.querySelector(
-                            ".user-message-bubble-color, [data-multiline]"
+                // Insert it into the header
+                headerDiv.prepend(exportButton);
+
+                // Add the click event listener to the new button
+                exportButton.addEventListener("click", () => {
+                    console.log("Extracting chat data...");
+
+                    try {
+                        let title = "";
+                        const activeLink = document.querySelector(
+                            "#history a[data-active]"
                         );
-                        content = userBubble?.textContent?.trim() || "";
-                    } else if (isAssistant) {
-                        role = "assistant";
-                        // Extract assistant message content
-                        const assistantContent = turn.querySelector(
-                            '[data-message-author-role="assistant"]'
-                        );
-                        content = assistantContent?.innerHTML?.trim() || "";
-                    }
+                        if (activeLink) {
+                            title = activeLink.textContent?.trim() || "";
+                        }
 
-                    if (content) {
-                        messages.push({ role, content });
+                        // Find all conversation turns
+                        const turns = document.querySelectorAll(
+                            '[data-testid^="conversation-turn"]'
+                        );
+                        const messages: { role: string; content: string }[] =
+                            [];
+
+                        turns.forEach((turn) => {
+                            const isUser = turn.querySelector(
+                                '[data-message-author-role="user"]'
+                            );
+                            const isAssistant = turn.querySelector(
+                                '[data-message-author-role="assistant"]'
+                            );
+
+                            let role = "unknown";
+                            let content = "";
+
+                            if (isUser) {
+                                role = "user";
+                                const userBubble = turn.querySelector(
+                                    ".user-message-bubble-color, [data-multiline]"
+                                );
+                                content = userBubble?.textContent?.trim() || "";
+                            } else if (isAssistant) {
+                                role = "assistant";
+                                const assistantContent = turn.querySelector(
+                                    '[data-message-author-role="assistant"]'
+                                );
+                                content =
+                                    assistantContent?.innerHTML?.trim() || "";
+                            }
+
+                            if (content) messages.push({ role, content });
+                        });
+
+                        // Save to Chrome storage and open options page
+                        chrome.storage.local.set(
+                            { chatData: messages, chatProps: { title } },
+                            () => {
+                                chrome.runtime.sendMessage({
+                                    action: "openOptions",
+                                });
+                                console.log("Chat data saved:", messages);
+                            }
+                        );
+                    } catch (error) {
+                        console.error("Error extracting chat data:", error);
+                        alert("Error extracting chat data. Please try again.");
                     }
                 });
 
-                chrome.storage.local.set({ chatData: messages, chatProps: { title } }, () => {
-                    chrome.runtime.sendMessage({ action: "openOptions" });
-                    console.log("Chat data saved:", messages);
-                });
-
-            } catch (error) {
-                console.error("Error extracting chat data:", error);
-                alert("Error extracting chat data. Please try again.");
+                console.log("✅ Export Chat button inserted successfully");
             }
-        });
+        }, 1000);
     },
 });
