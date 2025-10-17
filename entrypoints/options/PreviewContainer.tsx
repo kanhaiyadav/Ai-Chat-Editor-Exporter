@@ -14,7 +14,7 @@ export const PreviewContainer = ({ messages, settings }: PreviewContainerProps) 
         <div className='flex-1 h-full overflow-y-auto bg-background mt-1'>
             <div
                 id='chat-container'
-                className='mx-auto my-8 p-8 bg-accent shadow-lg'
+                className='mx-auto my-8 p-8 bg-accent shadow-lg relative'
                 style={{
                     maxWidth: '800px',
                     minHeight: '1000px',
@@ -22,6 +22,10 @@ export const PreviewContainer = ({ messages, settings }: PreviewContainerProps) 
                     color: settings.general.textColor,
                 }}
             >
+                <div className='absolute top-1 left-0 px-4 text-black/50 w-full flex justify-between'>
+                    <span>Chat2Pdf</span>
+                    <span>{ new Date().toLocaleDateString() }</span>
+                </div>
                 {messages && messages.length > 0 ? (
                     settings.layout === 'chat' ? (
                         <ChatLayout messages={messages} settings={settings} />

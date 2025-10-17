@@ -8,8 +8,6 @@ import { DocumentSettings } from './DocumentSettings';
 import { GeneralSettings } from './GeneralSettings';
 
 interface SettingsPanelProps {
-    ChatTheme: 'light' | 'dark';
-    setChatTheme: (theme: 'light' | 'dark') => void;
     settings: PDFSettings;
     expandedSections: { [key: string]: boolean };
     onUpdateSettings: (updates: Partial<PDFSettings>) => void;
@@ -19,8 +17,6 @@ interface SettingsPanelProps {
 }
 
 export const SettingsPanel = ({
-    ChatTheme,
-    setChatTheme,
     settings,
     expandedSections,
     onUpdateSettings,
@@ -69,8 +65,6 @@ export const SettingsPanel = ({
                 )}
 
                 <GeneralSettings
-                    ChatTheme={ChatTheme}
-                    setChatTheme={setChatTheme}
                     settings={settings.general}
                     isExpanded={expandedSections.general}
                     onToggle={() => onToggleSection('general')}

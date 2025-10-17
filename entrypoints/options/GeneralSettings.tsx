@@ -9,15 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { PDFSettings } from './types';
 
 interface GeneralSettingsProps {
-    ChatTheme: 'light' | 'dark';
-    setChatTheme: (theme: 'light' | 'dark') => void;
     settings: PDFSettings['general'];
     isExpanded: boolean;
     onToggle: () => void;
     onUpdate: (updates: Partial<PDFSettings['general']>) => void;
 }
 
-export const GeneralSettings = ({ ChatTheme, setChatTheme, settings, isExpanded, onToggle, onUpdate }: GeneralSettingsProps) => {
+export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: GeneralSettingsProps) => {
     return (
         <Card className="shadow-sm border border-gray-200">
             <Collapsible open={isExpanded} onOpenChange={onToggle}>

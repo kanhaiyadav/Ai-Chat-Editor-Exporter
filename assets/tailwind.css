@@ -188,6 +188,7 @@ pre > div.contain-inline-size {
     font-size: 14px;
     line-height: 1.5;
     margin: 1rem 0;
+    border: 1px solid #e0e0e0;
 }
 
 /* Language header (top bar) - NOW USES CHAT-SPECIFIC VARIABLES */
@@ -287,6 +288,8 @@ div[class*="_tableWrapper"] {
     scrollbar-width: thin;
     scrollbar-color: var(--chat-table-scrollbar-thumb)
         var(--chat-table-scrollbar-track);
+    border: 1px solid #e0e0e0;
+    margin-top: 10px
 }
 
 /* Scrollbar (for WebKit browsers) */
@@ -383,7 +386,7 @@ button[aria-label="Copy table"] {
     :root {
         --background: #ffffff !important;
     }
-    
+
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;

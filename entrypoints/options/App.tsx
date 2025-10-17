@@ -26,7 +26,6 @@ function App() {
     });
     const { effectiveTheme, loading } = useTheme();
     const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
-    const [chatTheme, setChatTheme] = useState<'light' | 'dark'>(settings.theme);
 
 
 
@@ -79,7 +78,7 @@ function App() {
                 headerText: chatProps?.title || ''
             }
         }));
-    }, [chatProps, chatTheme]);
+    }, [chatProps]);
 
     const updateSettings = (updates: Partial<PDFSettings>) => {
         const newSettings = { ...settings, ...updates };
@@ -112,8 +111,6 @@ function App() {
                 />
 
                 <SettingsPanel
-                    ChatTheme={chatTheme}
-                    setChatTheme={setChatTheme}
                     settings={settings}
                     expandedSections={expandedSections}
                     onUpdateSettings={updateSettings}

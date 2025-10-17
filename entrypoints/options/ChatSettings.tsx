@@ -138,14 +138,6 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                                     onCheckedChange={(checked) => onUpdate({ showAvatars: checked })}
                                 />
                             </div>
-
-                            <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Show Timestamps</Label>
-                                <Switch
-                                    checked={settings.showTimestamps}
-                                    onCheckedChange={(checked) => onUpdate({ showTimestamps: checked })}
-                                />
-                            </div>
                         </div>
                     </CardContent>
                 </CollapsibleContent>

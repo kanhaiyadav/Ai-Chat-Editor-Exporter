@@ -7,6 +7,7 @@ interface ChatLayoutProps {
 }
 
 export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
+    
     return (
         <>
             {settings.general.includeHeader && (
@@ -23,7 +24,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
             )}
             {messages.map((message, index) => {
                 const isUser = message.role === 'user';
-                const bubbleColor = isUser ? settings.chat.userBubbleColor : settings.chat.aiBubbleColor;
+                const bubbleColor = isUser ? settings.chat.userBubbleColor :  settings.chat.aiBubbleColor;
                 const textColor = isUser ? settings.chat.userTextColor : settings.chat.aiTextColor;
 
                 let bubbleStyle: React.CSSProperties = {
@@ -38,7 +39,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
 
                 if (settings.chat.bubbleStyle === 'filled') {
                     if (bubbleColor === 'transparent' && !isUser) {
-                        bubbleStyle = { ...bubbleStyle, backgroundColor: '#f3f4f6', color: textColor };
+                        bubbleStyle = { ...bubbleStyle, backgroundColor: '#f3f4f6', color: textColor};
                     } else {
                         bubbleStyle = { ...bubbleStyle, backgroundColor: bubbleColor, color: textColor };
                     }
@@ -46,13 +47,14 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                     bubbleStyle = {
                         ...bubbleStyle,
                         border: `2px solid ${bubbleColor}`,
-                        color: bubbleColor,
+                        color: textColor,
                         backgroundColor: 'transparent',
+                        fontWeight: '500', 
                     };
                 } else {
                     bubbleStyle = {
                         ...bubbleStyle,
-                        color: bubbleColor,
+                        color: textColor,
                         backgroundColor: 'transparent',
                         borderRadius: '0',
                         padding: '8px 0',
@@ -76,22 +78,12 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 marginRight: '8px',
                                 flexShrink: 0,
                             }}>
-                                {
-                                    settings.theme === 'dark' ? (
-                                        <img src="/chat/chatgpt-light.png" alt="" className='w-[50px]' />
-                                    ) : (
-                                        <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
-                                    )
-                                }
+
+                                <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
                             </div>
                         )}
                         <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
                             <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                            {settings.chat.showTimestamps && (
-                                <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '4px' }}>
-                                    {new Date().toLocaleTimeString()}
-                                </div>
-                            )}
                         </div>
                         {settings.chat.showAvatars && isUser && (
                             <div style={{
@@ -102,7 +94,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 marginTop: "-5px",
                                 flexShrink: 0,
                             }}>
-                                <HiOutlineUserCircle className={`${settings.theme === 'dark' ? 'text-white' : 'text-black'} w-[32px] h-[32px]`} />
+                                <HiOutlineUserCircle className={`text-black w-[32px] h-[32px]`} />
                             </div>
                         )}
                     </div>

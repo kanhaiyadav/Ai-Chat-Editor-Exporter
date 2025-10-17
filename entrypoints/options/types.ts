@@ -4,7 +4,6 @@ export interface Message {
 }
 
 export interface PDFSettings {
-    theme: "light" | "dark";
     layout: "chat" | "qa" | "document";
     chat: {
         userBubbleColor: string;
@@ -16,7 +15,6 @@ export interface PDFSettings {
         bubbleRadius: number;
         spacing: number;
         showAvatars: boolean;
-        showTimestamps: boolean;
         bubbleStyle: "filled" | "outlined" | "minimal";
     };
     qa: {
@@ -51,7 +49,6 @@ export interface PDFSettings {
 }
 
 export const defaultSettings: PDFSettings = {
-    theme: "light",
     layout: "chat",
     chat: {
         userBubbleColor: "#ffcc41",
@@ -63,7 +60,6 @@ export const defaultSettings: PDFSettings = {
         bubbleRadius: 16,
         spacing: 12,
         showAvatars: true,
-        showTimestamps: false,
         bubbleStyle: "filled",
     },
     qa: {
