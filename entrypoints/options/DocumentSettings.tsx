@@ -38,7 +38,7 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
     return (
         <Card className="shadow-sm border border-gray-200">
             <Collapsible open={isExpanded} onOpenChange={onToggle}>
-                <CollapsibleTrigger asChild>
+                <CollapsibleTrigger asChild className='mb-[-3px]'>
                     <CardHeader className="px-4 cursor-pointer">
                         <CardTitle className="flex items-center justify-between font-semibold">
                             Document Style

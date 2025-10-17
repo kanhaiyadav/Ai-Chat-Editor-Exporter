@@ -7,9 +7,7 @@ export const Header = () => {
     return (
         <div className='w-full flex items-center justify-between px-[50px] h-[65px] bg-primary'>
             <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center text-white font-bold text-xl'>
-                    PDF
-                </div>
+                <img src="/chat2pdf2.png" alt="" className="h-[50px]" />
                 <div className='mt-[-5px]'>
                     <h1 className='text-2xl text-black/75 font-bold'>AI Chat Editor & Exporter</h1>
                     <p className='text-sm font-medium text-black/60 mt-[-3px]'>Convert AI chats to PDF</p>

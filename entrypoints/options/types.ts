@@ -45,6 +45,10 @@ export interface PDFSettings {
         includeHeader: boolean;
         headerText: string;
         includeFooter: boolean;
+        fontFamily: {
+            type: string;
+            value: string;
+        } | null;
     };
 }
 
@@ -56,7 +60,7 @@ export const defaultSettings: PDFSettings = {
         aiBubbleColor: "#efefef",
         aiTextColor: "#3c3c3c",
         fontSize: 14,
-        fontFamily: "Inter, system-ui, sans-serif",
+        fontFamily: "Commissioner, sans-serif",
         bubbleRadius: 16,
         spacing: 12,
         showAvatars: true,
@@ -66,7 +70,7 @@ export const defaultSettings: PDFSettings = {
         questionColor: "#1e293b",
         answerColor: "#475569",
         fontSize: 14,
-        fontFamily: "Georgia, serif",
+        fontFamily: "Tinos, serif",
         showSeparator: true,
         separatorStyle: "line",
         numbering: true,
@@ -78,7 +82,7 @@ export const defaultSettings: PDFSettings = {
         titleColor: "#1e293b",
         bodyColor: "#334155",
         fontSize: 12,
-        fontFamily: "Georgia, serif",
+        fontFamily: "Bitter, serif",
         lineHeight: 1.6,
         paragraphSpacing: 16,
     },
@@ -90,5 +94,43 @@ export const defaultSettings: PDFSettings = {
         includeHeader: true,
         headerText: "AI Conversation Export",
         includeFooter: true,
+        fontFamily: null,
     },
 };
+
+export type fontFamilies = Array<{
+    type: string;
+    values: Array<string>;
+}>
+
+export const fontFamilies: fontFamilies = [
+    {
+        type: "Formal",
+        values: [
+            "Tinos, serif",
+            "Commissioner, sans-serif",
+            "Unna, serif",
+            "Montserrat, sans-serif",
+            "Bitter, serif",
+        ],
+    },
+    {
+        type: "Handwriting",
+        values: [
+            "Handlee, cursive",
+            "Patrick Hand, cursive",
+            "Merienda, cursive",
+            "Caveat, cursive",
+        ],
+    },
+    {
+        type: "Stylistic",
+        values: [
+            "Sofia, cursive",
+            "Grand Hotel, cursive",
+            "Montez, cursive",
+            "Redressed, cursive",
+        ],
+    },
+];
+

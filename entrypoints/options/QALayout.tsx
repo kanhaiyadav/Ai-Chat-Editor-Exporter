@@ -16,7 +16,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                     padding: '20px',
                     borderBottom: '2px solid #e5e7eb',
                     marginBottom: '30px',
-                    fontFamily: settings.qa.fontFamily,
+                    fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                     color: settings.qa.questionColor,
                 }}>
                     <h1 style={{ margin: 0, fontSize: '24px' }}>{settings.general.headerText}</h1>
@@ -40,22 +40,25 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                         <div style={{
                             marginBottom: '16px',
                             paddingLeft: !isQuestion && settings.qa.indentAnswer ? '24px' : '0',
-                        }}>
+                        }}
+                        className='flex gap-2'
+                        >
                             <div style={{
                                 fontWeight: 'bold',
                                 color: isQuestion ? settings.qa.questionColor : settings.qa.answerColor,
                                 fontSize: `${settings.qa.fontSize + 2}px`,
-                                fontFamily: settings.qa.fontFamily,
+                                fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 marginBottom: '8px',
                             }}>
                                 {settings.qa.numbering && isQuestion ? `${questionNumber}. ` : ''}
                                 {isQuestion ? settings.qa.questionPrefix : settings.qa.answerPrefix}
                             </div>
                             <div style={{
-                                color: settings.qa.answerColor,
+                                color: isQuestion ? settings.qa.questionColor : settings.qa.answerColor,
                                 fontSize: `${settings.qa.fontSize}px`,
-                                fontFamily: settings.qa.fontFamily,
+                                fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 lineHeight: '1.6',
+                                fontWeight: isQuestion? "600" : "400",
                             }}>
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
                             </div>

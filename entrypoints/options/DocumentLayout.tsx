@@ -11,8 +11,8 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
             <div style={{
                 textAlign: 'center',
                 padding: '40px 0',
-                marginBottom: '40px',
-                fontFamily: settings.document.fontFamily,
+                marginBottom: '10px',
+                fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
             }}>
                 <h1 style={{
                     margin: 0,
@@ -25,22 +25,29 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                     opacity: 0.7,
                 }}>{new Date().toLocaleDateString()}</p>
             </div>
-            {messages.map((message, index) => (
-                <div key={index} style={{
-                    marginBottom: `${settings.document.paragraphSpacing}px`,
-                }}>
-                    <p style={{
-                        color: settings.document.bodyColor,
-                        fontSize: `${settings.document.fontSize}px`,
-                        fontFamily: settings.document.fontFamily,
-                        lineHeight: settings.document.lineHeight,
-                        margin: 0,
-                        textAlign: 'justify',
+            {messages.map((message, index) => {
+                const isTopic = message.role === 'user';
+                return (
+                    <div key={index} style={{
+                        marginBottom: `${settings.document.paragraphSpacing}px`,
                     }}>
-                        <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                    </p>
-                </div>
-            ))}
+                        <p style={{
+                            color: settings.document.bodyColor,
+                            fontSize: isTopic ? `${settings.document.fontSize + 3}px` : `${settings.document.fontSize}px`,
+                            fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
+                            lineHeight: settings.document.lineHeight,
+                            margin: 0,
+                            textAlign: 'justify',
+                            fontWeight: isTopic ? '600' : '400',
+                            textDecoration: isTopic ? 'underline' : 'none',
+                            marginTop: isTopic ? '10px' : '',
+                            marginBottom: isTopic ? '-5px' : '',
+                        }}>
+                            <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                        </p>
+                    </div>
+                )
+            })}
         </>
     );
 };

@@ -40,7 +40,7 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
     return (
         <Card className="shadow-sm border border-gray-200">
             <Collapsible open={isExpanded} onOpenChange={onToggle}>
-                <CollapsibleTrigger asChild>
+                <CollapsibleTrigger asChild className='mb-[-3px]'>
                     <CardHeader className="px-4 transition-colors cursor-pointer">
                         <CardTitle className="flex items-center justify-between font-semibold">
                             Q&A Style

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PDFSettings } from './types';
+import { fontFamilies, PDFSettings } from './types';
 
 interface GeneralSettingsProps {
     settings: PDFSettings['general'];
@@ -49,6 +49,37 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     />
                                 </div>
                             )}
+
+                            <div>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Font Family</Label>
+                                <div className='flex'>
+                                    <Select value={settings.fontFamily?.type} onValueChange={(value) => onUpdate({ fontFamily: { type: value, value: settings.fontFamily?.value || '' } })}>
+                                        <SelectTrigger className="w-[130px]">
+                                            <SelectValue placeholder="Select a font family" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {fontFamilies.map((group) => (
+                                                <SelectItem key={group.type} value={group.type}>
+                                                    {group.type}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+
+                                    <Select value={settings.fontFamily?.value} onValueChange={(value) => onUpdate({ fontFamily: { type: settings.fontFamily?.type || '', value } })}>
+                                        <SelectTrigger className="flex-1 ml-2">
+                                            <SelectValue placeholder="Variant" />   
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {fontFamilies.find(group => group.type === settings.fontFamily?.type)?.values.map((variant) => (
+                                                <SelectItem key={variant} value={variant}>
+                                                    {variant}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </CollapsibleContent>

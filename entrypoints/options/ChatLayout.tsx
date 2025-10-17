@@ -17,7 +17,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                     paddingTop: '0',
                     borderBottom: '2px solid #e5e7eb',
                     marginBottom: '20px',
-                    fontFamily: settings.chat.fontFamily,
+                    fontFamily: settings.general.fontFamily?.value || settings.chat.fontFamily,
                 }}>
                     <h1 style={{ margin: 0, fontSize: '24px' }}>{settings.general.headerText}</h1>
                 </div>
@@ -31,7 +31,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                     padding: '12px 16px',
                     borderRadius: `${settings.chat.bubbleRadius}px`,
                     fontSize: `${settings.chat.fontSize}px`,
-                    fontFamily: settings.chat.fontFamily,
+                    fontFamily: settings.general.fontFamily?.value || settings.chat.fontFamily,
                     marginBottom: `${settings.chat.spacing}px`,
                     maxWidth: '80%',
                     wordWrap: 'break-word',
