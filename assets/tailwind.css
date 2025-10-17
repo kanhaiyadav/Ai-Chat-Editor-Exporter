@@ -75,43 +75,62 @@
     --sidebar-accent-foreground: #2d2d2d;
     --sidebar-border: #e5e5e5;
     --sidebar-ring: #a3a3a3;
+
+    /* Default chat theme variables (light) */
+    --chat-code-area: #fafafa;
+    --chat-code-text: #333333;
+    --chat-code-header: #f5f5f5;
+    --chat-code-header-text: #555555;
+
+    /* Table variables */
+    --chat-table-bg: #ffffff;
+    --chat-table-header-bg: #f5f5f5;
+    --chat-table-header-text: #333333;
+    --chat-table-border: #dddddd;
+    --chat-table-cell-border: #e5e5e5;
+    --chat-table-text: #444444;
+    --chat-table-even-row: #fafafa;
+    --chat-table-hover: #f0f0f0;
+    --chat-table-code-bg: #f2f2f2;
+    --chat-table-code-text: #555555;
+    --chat-table-scrollbar-track: #f2f2f2;
+    --chat-table-scrollbar-thumb: #bfbfbf;
 }
 
 .dark {
-  --background: #171717;
-  --foreground: #f3f3f3;
-  --card: #303030;
-  --card-foreground: #f3f3f3;
-  --popover: #020202;
-  --popover-foreground: #f3f3f3;
-  --primary: #ffcc42;
-  --primary-foreground: #020202;
-  --secondary: #050505;
-  --secondary-foreground: #f3f3f3;
-  --muted: #050505;
-  --badge: #00000024;
-  --muted-foreground: #585865;
-  --accent: #212121;
-  --accent-foreground: #f3f3f3;
-  --destructive: #ff2022;
-  --border: #ffffff19;
-  --input: #ffffff26;
-  --ring: #2a2a32;
-  --chart-1: #0110c9;
-  --chart-2: #008034;
-  --chart-3: #fb5100;
-  --chart-4: #6a0fff;
-  --chart-5: #ff0317;
-  --sidebar: #020202;
-  --sidebar-foreground: #f3f3f3;
-  --sidebar-primary: #0110c9;
-  --sidebar-primary-foreground: #f3f3f3;
-  --sidebar-accent: #050505;
-  --sidebar-accent-foreground: #f3f3f3;
-  --sidebar-border: #ffffff19;
-  --sidebar-ring: #2a2a32;
+    --background: #171717;
+    --foreground: #f3f3f3;
+    --card: #303030;
+    --card-foreground: #f3f3f3;
+    --popover: #020202;
+    --popover-foreground: #f3f3f3;
+    --primary: #ffcc42;
+    --primary-foreground: #020202;
+    --secondary: #050505;
+    --secondary-foreground: #f3f3f3;
+    --muted: #050505;
+    --badge: #00000024;
+    --muted-foreground: #585865;
+    --accent: #212121;
+    --accent-foreground: #f3f3f3;
+    --destructive: #ff2022;
+    --border: #ffffff19;
+    --input: #ffffff26;
+    --ring: #2a2a32;
+    --chart-1: #0110c9;
+    --chart-2: #008034;
+    --chart-3: #fb5100;
+    --chart-4: #6a0fff;
+    --chart-5: #ff0317;
+    --sidebar: #020202;
+    --sidebar-foreground: #f3f3f3;
+    --sidebar-primary: #0110c9;
+    --sidebar-primary-foreground: #f3f3f3;
+    --sidebar-accent: #050505;
+    --sidebar-accent-foreground: #f3f3f3;
+    --sidebar-border: #ffffff19;
+    --sidebar-ring: #2a2a32;
 }
-
 
 @layer base {
     img {
@@ -171,10 +190,10 @@ pre > div.contain-inline-size {
     margin: 1rem 0;
 }
 
-/* Language header (top bar) */
+/* Language header (top bar) - NOW USES CHAT-SPECIFIC VARIABLES */
 pre > div.contain-inline-size > div:first-child {
-    background: #f5f5f5;
-    color: #555555;
+    background: var(--chat-code-header);
+    color: var(--chat-code-header-text);
     font-weight: 600;
     font-size: 12px;
     padding: 0.5rem 1rem;
@@ -193,7 +212,7 @@ pre > div.contain-inline-size > div:first-child + div.sticky {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #f5f5f5;
+    background: var(--chat-code-header);
 }
 
 /* Copy button container */
@@ -205,22 +224,24 @@ pre > div.contain-inline-size .bg-token-bg-elevated-secondary:hover {
     background: #d0d0d0;
 }
 
-/* Code area */
+/* Code area - NOW USES CHAT-SPECIFIC VARIABLES */
 pre > div.contain-inline-size > .overflow-y-auto {
-    max-height: 500px; /* optional vertical limit */
+    /* Allow full vertical growth for long code blocks */
+    max-height: none;
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: visible;
     padding: 1rem;
-    background: #fafafa;
+    background: var(--chat-code-area);
 }
 
-/* Code text */
+/* Code text - NOW USES CHAT-SPECIFIC VARIABLES */
 pre > div.contain-inline-size code {
     background: transparent;
-    color: #333333;
-    white-space: pre; /* preserves formatting */
+    color: var(--chat-code-text);
+    white-space: pre-wrap; /* allow long lines to wrap */
+    word-break: break-word;
     display: block;
-    overflow-wrap: normal;
+    overflow-wrap: anywhere;
 }
 
 /* Optional: subtle line highlight */
@@ -252,20 +273,20 @@ pre > div.contain-inline-size .overflow-y-auto::-webkit-scrollbar-thumb {
 
 /* Rounded corners for code scroll area */
 pre > div.contain-inline-size > .overflow-y-auto {
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 /* Match any parent div whose class name contains '_tableWrapper' */
 div[class*="_tableWrapper"] {
-    overflow-x: auto !important;
-    overflow-y: hidden;
+    overflow: hidden !important; /* prevent horizontal scroll */
     max-width: 100%;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    background: #ffffff;
+    background: var(--chat-table-bg);
     scrollbar-width: thin;
-    scrollbar-color: #c7c7c7 #f2f2f2;
+    scrollbar-color: var(--chat-table-scrollbar-thumb)
+        var(--chat-table-scrollbar-track);
 }
 
 /* Scrollbar (for WebKit browsers) */
@@ -273,65 +294,72 @@ div[class*="_tableWrapper"]::-webkit-scrollbar {
     height: 8px;
 }
 div[class*="_tableWrapper"]::-webkit-scrollbar-track {
-    background: #f2f2f2;
+    background: var(--chat-table-scrollbar-track);
     border-radius: 4px;
 }
 div[class*="_tableWrapper"]::-webkit-scrollbar-thumb {
-    background-color: #bfbfbf;
+    background-color: var(--chat-table-scrollbar-thumb);
     border-radius: 4px;
 }
 
 /* Target tables inside these wrappers */
 div[class*="_tableWrapper"] table {
-    width: 100%;
+    width: 100%; /* always fit parent width */
+    table-layout: auto; /* allow cells to wrap naturally */
     border-collapse: collapse;
     font-family: "Inter", "Segoe UI", Roboto, sans-serif;
     font-size: 14px;
-    background: #ffffff;
+    background: var(--chat-table-bg);
     border-radius: 8px;
     overflow: hidden;
-    min-width: 600px; /* Keeps layout consistent when columns are many */
+    /* remove min-width restriction so table fits container */
+    min-width: 0;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 /* Table header */
 div[class*="_tableWrapper"] thead {
-    background: #f5f5f5;
-    color: #333333;
+    background: var(--chat-table-header-bg);
+    color: var(--chat-table-header-text);
     text-align: left;
 }
 
 div[class*="_tableWrapper"] th {
     padding: 12px 16px;
     font-weight: 600;
-    border-bottom: 1px solid #dddddd;
-    white-space: nowrap;
+    border-bottom: 1px solid var(--chat-table-border);
+    white-space: normal; /* allow header text to wrap */
+    word-break: break-word;
 }
 
 /* Table body cells */
 div[class*="_tableWrapper"] td {
     padding: 12px 16px;
-    border-bottom: 1px solid #e5e5e5;
-    color: #444444;
+    border-bottom: 1px solid var(--chat-table-cell-border);
+    color: var(--chat-table-text);
     vertical-align: top;
-    white-space: nowrap;
+    white-space: normal; /* wrap cell text */
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 /* Alternate row background */
 div[class*="_tableWrapper"] tbody tr:nth-child(even) {
-    background-color: #fafafa;
+    background-color: var(--chat-table-even-row);
 }
 
 /* Hover effect */
 div[class*="_tableWrapper"] tbody tr:hover {
-    background-color: #f0f0f0;
+    background-color: var(--chat-table-hover);
     transform: scale(1.002);
     transition: background 0.2s ease, transform 0.1s ease;
 }
 
 /* Inline code styling */
 div[class*="_tableWrapper"] code {
-    background: #f2f2f2;
-    color: #555555;
+    background: var(--chat-table-code-bg);
+    color: var(--chat-table-code-text);
     padding: 3px 6px;
     border-radius: 4px;
     font-family: "Fira Code", monospace;
@@ -348,4 +376,47 @@ div[class*="_tableWrapper"] table::before {
 
 button[aria-label="Copy table"] {
     display: none;
+}
+
+
+@media print {
+    :root {
+        --background: #ffffff !important;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+
+    body * {
+        visibility: hidden; /* Hide everything */
+    }
+
+    #chat-container,
+    #chat-container * {
+        visibility: visible; /* Show only the chat container */
+    }
+
+    #chat-container {
+        position: absolute;
+        left: 0;
+        top: -30px;
+        width: 100%;
+        box-shadow: none !important; /* Remove shadows for printing */
+
+    }
+
+    .no-print {
+        display: none !important; /* Hide export buttons etc. */
+    }
+}
+
+@page {
+    size: A4 portrait;
+    margin: 0px !important;
+    margin-top: 3mm !important;
+    margin-bottom: 3mm;
 }

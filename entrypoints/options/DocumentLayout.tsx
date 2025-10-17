@@ -3,10 +3,9 @@ import { Message, PDFSettings } from './types';
 interface DocumentLayoutProps {
     messages: Message[];
     settings: PDFSettings;
-    themeStyles: { bg: string; text: string };
 }
 
-export const DocumentLayout = ({ messages, settings, themeStyles }: DocumentLayoutProps) => {
+export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
     return (
         <>
             <div style={{
@@ -23,7 +22,6 @@ export const DocumentLayout = ({ messages, settings, themeStyles }: DocumentLayo
                 <p style={{
                     margin: '8px 0 0 0',
                     fontSize: '14px',
-                    color: themeStyles.text,
                     opacity: 0.7,
                 }}>{new Date().toLocaleDateString()}</p>
             </div>

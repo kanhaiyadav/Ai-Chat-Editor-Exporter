@@ -4,6 +4,7 @@ export interface Message {
 }
 
 export interface PDFSettings {
+    theme: "light" | "dark";
     layout: "chat" | "qa" | "document";
     chat: {
         userBubbleColor: string;
@@ -39,17 +40,18 @@ export interface PDFSettings {
         paragraphSpacing: number;
     };
     general: {
+        backgroundColor: string;
+        textColor: string;
         pageSize: "a4" | "letter" | "legal";
         margins: number;
         includeHeader: boolean;
         headerText: string;
         includeFooter: boolean;
-        pageNumbers: boolean;
-        theme: "light" | "dark" | "sepia";
     };
 }
 
 export const defaultSettings: PDFSettings = {
+    theme: "light",
     layout: "chat",
     chat: {
         userBubbleColor: "#ffcc41",
@@ -85,12 +87,12 @@ export const defaultSettings: PDFSettings = {
         paragraphSpacing: 16,
     },
     general: {
+        backgroundColor: "#ffffff",
+        textColor: "#000000",
         pageSize: "a4",
         margins: 20,
         includeHeader: true,
         headerText: "AI Conversation Export",
         includeFooter: true,
-        pageNumbers: true,
-        theme: "light",
     },
 };

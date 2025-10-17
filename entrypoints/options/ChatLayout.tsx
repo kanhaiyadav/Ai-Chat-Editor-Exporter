@@ -4,10 +4,9 @@ import { Message, PDFSettings } from './types';
 interface ChatLayoutProps {
     messages: Message[];
     settings: PDFSettings;
-    themeStyles: { bg: string; text: string };
 }
 
-export const ChatLayout = ({ messages, settings, themeStyles }: ChatLayoutProps) => {
+export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
     return (
         <>
             {settings.general.includeHeader && (
@@ -18,7 +17,6 @@ export const ChatLayout = ({ messages, settings, themeStyles }: ChatLayoutProps)
                     borderBottom: '2px solid #e5e7eb',
                     marginBottom: '20px',
                     fontFamily: settings.chat.fontFamily,
-                    color: themeStyles.text,
                 }}>
                     <h1 style={{ margin: 0, fontSize: '24px' }}>{settings.general.headerText}</h1>
                 </div>
@@ -78,7 +76,13 @@ export const ChatLayout = ({ messages, settings, themeStyles }: ChatLayoutProps)
                                 marginRight: '8px',
                                 flexShrink: 0,
                             }}>
-                                <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
+                                {
+                                    settings.theme === 'dark' ? (
+                                        <img src="/chat/chatgpt-light.png" alt="" className='w-[50px]' />
+                                    ) : (
+                                        <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
+                                    )
+                                }
                             </div>
                         )}
                         <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
@@ -98,7 +102,7 @@ export const ChatLayout = ({ messages, settings, themeStyles }: ChatLayoutProps)
                                 marginTop: "-5px",
                                 flexShrink: 0,
                             }}>
-                                <HiOutlineUserCircle className='text-foreground w-[32px] h-[32px]' />
+                                <HiOutlineUserCircle className={`${settings.theme === 'dark' ? 'text-white' : 'text-black'} w-[32px] h-[32px]`} />
                             </div>
                         )}
                     </div>

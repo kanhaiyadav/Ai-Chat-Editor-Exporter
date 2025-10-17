@@ -1,16 +1,14 @@
 export default defineContentScript({
-    matches: ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+    matches: ["https://chatgpt.com/c/*", "https://chat.openai.com/c/*"],
     main() {
-        console.log("Content script loaded");
-
-        // Wait for the header actions div (ChatGPT loads dynamically)
-        const interval = setInterval(() => {
+        // Function to insert the button
+        function insertExportButton() {
             const headerDiv = document.querySelector(
                 "#conversation-header-actions"
             );
-            if (headerDiv && !document.querySelector("#export-chat-button")) {
-                clearInterval(interval);
 
+            // Check if header exists and button doesn't already exist
+            if (headerDiv && !document.querySelector("#export-chat-button")) {
                 // Create the Export Chat button
                 const exportButton = document.createElement("button");
                 exportButton.id = "export-chat-button";
@@ -22,14 +20,13 @@ export default defineContentScript({
                 exportButton.innerHTML = `
                     <div class="flex w-full items-center justify-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-     fill="none" stroke="currentColor" stroke-width="2"
-     stroke-linecap="round" stroke-linejoin="round"
-     class="w-4 h-4">
-  <path d="M13 11L21.2 2.8" />
-  <path d="M22 6.8V2H17.2" />
-  <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13" />
-</svg>
-
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round"
+                             class="w-4 h-4">
+                            <path d="M13 11L21.2 2.8" />
+                            <path d="M22 6.8V2H17.2" />
+                            <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13" />
+                        </svg>
                         <span>Export Chat</span>
                     </div>
                 `;
@@ -37,7 +34,7 @@ export default defineContentScript({
                 // Insert it into the header
                 headerDiv.prepend(exportButton);
 
-                // Add the click event listener to the new button
+                // Add the click event listener
                 exportButton.addEventListener("click", () => {
                     console.log("Extracting chat data...");
 
@@ -104,6 +101,31 @@ export default defineContentScript({
 
                 console.log("✅ Export Chat button inserted successfully");
             }
-        }, 1000);
+        }
+
+        // Initial insertion attempt
+        const initialInterval = setInterval(() => {
+            const headerDiv = document.querySelector(
+                "#conversation-header-actions"
+            );
+            if (headerDiv) {
+                clearInterval(initialInterval);
+                insertExportButton();
+            }
+        }, 500);
+
+        // Set up MutationObserver to watch for DOM changes
+        const observer = new MutationObserver((mutations) => {
+            // Check if button needs to be re-inserted
+            insertExportButton();
+        });
+
+        // Start observing the document body for changes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+        });
+
+        console.log("MutationObserver set up to watch for navigation changes");
     },
 });

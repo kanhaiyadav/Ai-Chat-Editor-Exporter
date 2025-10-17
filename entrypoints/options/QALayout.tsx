@@ -3,10 +3,9 @@ import { Message, PDFSettings } from './types';
 interface QALayoutProps {
     messages: Message[];
     settings: PDFSettings;
-    themeStyles: { bg: string; text: string };
 }
 
-export const QALayout = ({ messages, settings, themeStyles }: QALayoutProps) => {
+export const QALayout = ({ messages, settings }: QALayoutProps) => {
     let questionNumber = 0;
 
     return (
@@ -18,7 +17,7 @@ export const QALayout = ({ messages, settings, themeStyles }: QALayoutProps) => 
                     borderBottom: '2px solid #e5e7eb',
                     marginBottom: '30px',
                     fontFamily: settings.qa.fontFamily,
-                    color: themeStyles.text,
+                    color: settings.qa.questionColor,
                 }}>
                     <h1 style={{ margin: 0, fontSize: '24px' }}>{settings.general.headerText}</h1>
                 </div>
@@ -53,7 +52,7 @@ export const QALayout = ({ messages, settings, themeStyles }: QALayoutProps) => 
                                 {isQuestion ? settings.qa.questionPrefix : settings.qa.answerPrefix}
                             </div>
                             <div style={{
-                                color: themeStyles.text,
+                                color: settings.qa.answerColor,
                                 fontSize: `${settings.qa.fontSize}px`,
                                 fontFamily: settings.qa.fontFamily,
                                 lineHeight: '1.6',

@@ -17,7 +17,6 @@ interface StorageChanges {
 function App() {
     const [chatData, setChatData] = useState<Message[] | null>(null);
     const [chatProps, setChatProps] = useState<{ title?: string }>({});
-    const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
     const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
         layout: true,
         chatStyle: true,
@@ -26,6 +25,10 @@ function App() {
         general: true,
     });
     const { effectiveTheme, loading } = useTheme();
+    const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
+    const [chatTheme, setChatTheme] = useState<'light' | 'dark'>(settings.theme);
+
+
 
     useEffect(() => {
         // Load chat data
@@ -68,14 +71,15 @@ function App() {
     }, []);
 
     useEffect(() => {
+        console.log('chatProps changed:', chatProps);
         setSettings(prev => ({
             ...prev,
             general: {
                 ...prev.general,
-                headerText: chatProps?.title || prev.general.headerText
+                headerText: chatProps?.title || ''
             }
         }));
-    }, [chatProps]);
+    }, [chatProps, chatTheme]);
 
     const updateSettings = (updates: Partial<PDFSettings>) => {
         const newSettings = { ...settings, ...updates };
@@ -93,10 +97,9 @@ function App() {
     };
 
     const handleGeneratePDF = () => {
-        generatePDF(settings);
+        // generatePDF(settings);
+        window.print();
     };
-
-    const themeStyles = getThemeStyles(settings.general.theme);
 
     return (
         <div className='flex flex-col items-center h-dvh w-full !overflow-hidden'>
@@ -106,10 +109,11 @@ function App() {
                 <PreviewContainer
                     messages={chatData}
                     settings={settings}
-                    themeStyles={themeStyles}
                 />
 
                 <SettingsPanel
+                    ChatTheme={chatTheme}
+                    setChatTheme={setChatTheme}
                     settings={settings}
                     expandedSections={expandedSections}
                     onUpdateSettings={updateSettings}

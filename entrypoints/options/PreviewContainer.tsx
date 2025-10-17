@@ -6,10 +6,10 @@ import { DocumentLayout } from './DocumentLayout';
 interface PreviewContainerProps {
     messages: Message[] | null;
     settings: PDFSettings;
-    themeStyles: { bg: string; text: string };
 }
 
-export const PreviewContainer = ({ messages, settings, themeStyles }: PreviewContainerProps) => {
+export const PreviewContainer = ({ messages, settings }: PreviewContainerProps) => {
+    console.log("Rendering PreviewContainer with settings:", settings);
     return (
         <div className='flex-1 h-full overflow-y-auto bg-background mt-1'>
             <div
@@ -18,33 +18,21 @@ export const PreviewContainer = ({ messages, settings, themeStyles }: PreviewCon
                 style={{
                     maxWidth: '800px',
                     minHeight: '1000px',
-                    backgroundColor: themeStyles.bg,
+                    backgroundColor: settings.general.backgroundColor,
+                    color: settings.general.textColor,
                 }}
             >
                 {messages && messages.length > 0 ? (
                     settings.layout === 'chat' ? (
-                        <ChatLayout messages={messages} settings={settings} themeStyles={themeStyles} />
+                        <ChatLayout messages={messages} settings={settings} />
                     ) : settings.layout === 'qa' ? (
-                        <QALayout messages={messages} settings={settings} themeStyles={themeStyles} />
+                        <QALayout messages={messages} settings={settings} />
                     ) : (
-                        <DocumentLayout messages={messages} settings={settings} themeStyles={themeStyles} />
+                        <DocumentLayout messages={messages} settings={settings} />
                     )
                 ) : (
                     <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
                         No chat data found. Start a conversation to see the preview.
-                    </div>
-                )}
-                {settings.general.includeFooter && settings.general.pageNumbers && (
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '20px',
-                        marginTop: '40px',
-                        borderTop: '1px solid #e5e7eb',
-                        fontSize: '12px',
-                        color: themeStyles.text,
-                        opacity: 0.6,
-                    }}>
-                        Page 1
                     </div>
                 )}
             </div>
