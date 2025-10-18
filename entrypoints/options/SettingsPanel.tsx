@@ -19,6 +19,7 @@ interface SettingsPanelProps {
     onGeneratePDF: () => void;
     onUpdateMessage: (index: number, content: string) => void;
     onToggleMessage: (index: number) => void;
+    onReorderMessages: (newOrder: Message[]) => void;
 }
 
 export const SettingsPanel = ({
@@ -32,6 +33,7 @@ export const SettingsPanel = ({
     onGeneratePDF,
     onUpdateMessage,
     onToggleMessage,
+    onReorderMessages,
 }: SettingsPanelProps) => {
     return (
         <div className='w-[420px] h-full bg-gradient-to-b relative bg-accent dark:bg-accent border-l border-amber-200 mt-1 flex flex-col'>
@@ -86,6 +88,7 @@ export const SettingsPanel = ({
                     onToggle={() => onToggleSection('messages')}
                     onUpdateMessage={onUpdateMessage}
                     onToggleMessage={onToggleMessage}
+                    onReorderMessages={onReorderMessages}
                     selectedMessages={selectedMessages}
                 />
             </div>

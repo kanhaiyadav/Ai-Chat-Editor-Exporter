@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Edit, MessageSquare } from 'lucide-react';
+import { ChevronDown, ChevronUp, Edit, MessageSquare, GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -10,6 +10,23 @@ import { Message } from './types';
 import { ChatEditor } from './Editor';
 import { RiChatSettingsLine } from "react-icons/ri";
 import { LuSettings } from "react-icons/lu";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface MessageManagementProps {
     messages: Message[] | null;
@@ -17,8 +34,92 @@ interface MessageManagementProps {
     onToggle: () => void;
     onUpdateMessage: (index: number, content: string) => void;
     onToggleMessage: (index: number) => void;
+    onReorderMessages: (newOrder: Message[]) => void;
     selectedMessages: Set<number>;
 }
+
+interface SortableMessageItemProps {
+    message: Message;
+    index: number;
+    isSelected: boolean;
+    onToggle: (index: number) => void;
+    onEdit: (index: number, content: string) => void;
+    getRoleBadgeColor: (role: string) => string;
+    truncateText: (text: string, maxLength?: number) => string;
+}
+
+const SortableMessageItem = ({
+    message,
+    index,
+    isSelected,
+    onToggle,
+    onEdit,
+    getRoleBadgeColor,
+    truncateText,
+}: SortableMessageItemProps) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: `message-${index}` });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className="border rounded-lg p-3 bg-card hover:bg-accent/50 transition-colors"
+        >
+            <div className="flex items-start gap-3">
+                <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => onToggle(index)}
+                    className="mt-1"
+                />
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getRoleBadgeColor(message.role)}`}>
+                            {message.role === 'user' ? 'User' : 'AI'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                            #{index + 1}
+                        </span>
+                    </div>
+
+                    <p className="text-sm text-foreground/80 leading-relaxed">
+                        {truncateText(message.content)}
+                    </p>
+                </div>
+                <div className='flex flex-col justify-between items-center'>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 shrink-0"
+                        onClick={() => onEdit(index, message.content)}
+                    >
+                        <Edit size={14} />
+                    </Button>
+                    <div
+                        {...attributes}
+                        {...listeners}
+                        className="cursor-grab active:cursor-grabbing mt-1 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                        <GripVertical size={18} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export const MessageManagement = ({
     messages,
@@ -26,11 +127,35 @@ export const MessageManagement = ({
     onToggle,
     onUpdateMessage,
     onToggleMessage,
+    onReorderMessages,
     selectedMessages
 }: MessageManagementProps) => {
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editedContent, setEditedContent] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id && messages) {
+            const oldIndex = parseInt(active.id.toString().replace('message-', ''));
+            const newIndex = parseInt(over.id.toString().replace('message-', ''));
+
+            const newMessages = arrayMove(messages, oldIndex, newIndex);
+            onReorderMessages(newMessages);
+        }
+    };
 
     const handleEditClick = (index: number, content: string) => {
         setEditingIndex(index);
@@ -91,46 +216,31 @@ export const MessageManagement = ({
                                     <p className="text-sm">No messages available</p>
                                 </div>
                             ) : (
-                                <div className="space-y-2 mt-2">
-                                    {messages.map((message, index) => (
-                                        <div
-                                            key={index}
-                                            className="border rounded-lg p-3 bg-card hover:bg-accent/50 transition-colors"
-                                        >
-                                            <div className="flex items-start gap-3">
-                                                <Checkbox
-                                                    checked={selectedMessages.has(index)}
-                                                    onCheckedChange={() => onToggleMessage(index)}
-                                                    className="mt-1"
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <SortableContext
+                                        items={messages.map((_, index) => `message-${index}`)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        <div className="space-y-2 mt-2">
+                                            {messages.map((message, index) => (
+                                                <SortableMessageItem
+                                                    key={`message-${index}`}
+                                                    message={message}
+                                                    index={index}
+                                                    isSelected={selectedMessages.has(index)}
+                                                    onToggle={onToggleMessage}
+                                                    onEdit={handleEditClick}
+                                                    getRoleBadgeColor={getRoleBadgeColor}
+                                                    truncateText={truncateText}
                                                 />
-
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getRoleBadgeColor(message.role)}`}>
-                                                            {message.role === 'user' ? 'User' : 'AI'}
-                                                        </span>
-                                                        <span className="text-xs text-muted-foreground">
-                                                            #{index + 1}
-                                                        </span>
-                                                    </div>
-
-                                                    <p className="text-sm text-foreground/80 leading-relaxed">
-                                                        {truncateText(message.content)}
-                                                    </p>
-                                                </div>
-
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0 shrink-0"
-                                                    onClick={() => handleEditClick(index, message.content)}
-                                                >
-                                                    <Edit size={14} />
-                                                </Button>
-                                            </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
+                                    </SortableContext>
+                                </DndContext>
                             )}
 
                             {messages && messages.length > 0 && (

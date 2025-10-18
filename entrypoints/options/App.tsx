@@ -135,6 +135,25 @@ function App() {
         });
     };
 
+    const handleReorderMessages = (newOrder: Message[]) => {
+        setChatData(newOrder);
+        chrome.storage.local.set({ chatData: newOrder });
+
+        // Update selected messages indices based on new order
+        // We need to maintain the selection based on message identity, not index
+        // For simplicity, we'll rebuild the selected set with updated indices
+        const newSelectedMessages = new Set<number>();
+        newOrder.forEach((message, newIndex) => {
+            const oldIndex = chatData?.findIndex(
+                (msg) => msg.role === message.role && msg.content === message.content
+            );
+            if (oldIndex !== undefined && oldIndex !== -1 && selectedMessages.has(oldIndex)) {
+                newSelectedMessages.add(newIndex);
+            }
+        });
+        setSelectedMessages(newSelectedMessages);
+    };
+
     // Filter messages based on selection
     const filteredMessages = chatData?.filter((_, index) => selectedMessages.has(index)) || null;
 
@@ -159,6 +178,7 @@ function App() {
                     onGeneratePDF={handleGeneratePDF}
                     onUpdateMessage={handleUpdateMessage}
                     onToggleMessage={handleToggleMessage}
+                    onReorderMessages={handleReorderMessages}
                 />
             </div>
         </div>
