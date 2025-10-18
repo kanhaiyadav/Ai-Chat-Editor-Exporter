@@ -17,7 +17,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                     borderBottom: '2px solid #e5e7eb',
                     marginBottom: '30px',
                     fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
-                    color: settings.qa.questionColor,
+                    color: "#000000",
                 }}>
                     <h1 style={{ margin: 0, fontSize: '24px' }}>{settings.general.headerText}</h1>
                 </div>
@@ -41,7 +41,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                             marginBottom: '16px',
                             paddingLeft: !isQuestion && settings.qa.indentAnswer ? '24px' : '0',
                         }}
-                        className='flex gap-2'
+                            className='flex gap-2'
                         >
                             <div style={{
                                 fontWeight: 'bold',
@@ -59,9 +59,19 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 fontSize: `${settings.qa.fontSize}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 lineHeight: '1.6',
-                                fontWeight: isQuestion? "600" : "400",
+                                fontWeight: isQuestion ? "600" : "400",
                             }}>
-                                <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                                {
+                                    message.content !== '' &&
+                                    <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                                }
+                                {
+                                    message.images && message.images.map((imgSrc, imgIndex) => (
+                                        <div key={imgIndex} style={{ marginTop: '12px' }}>
+                                            <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%' }} />
+                                        </div>
+                                    ))
+                                }
                             </div>
                         </div>
                     </div>

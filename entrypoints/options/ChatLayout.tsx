@@ -83,7 +83,17 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                             </div>
                         )}
                         <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
-                            <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                            {
+                                message.content !== "" &&
+                                <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                            }
+                            {
+                                message.images && message.images.length > 0 && message.images.map((src, imgIndex) => (
+                                    <div key={imgIndex} style={{ marginTop: '10px' }}>
+                                        <img src={src} alt={`Generated image ${imgIndex + 1}`} style={{ maxWidth: '100%', borderRadius: '8px' }} />
+                                    </div>
+                                ))
+                            }
                         </div>
                         {settings.chat.showAvatars && isUser && (
                             <div style={{
@@ -97,7 +107,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 <HiOutlineUserCircle className={`text-black w-[32px] h-[32px]`} />
                             </div>
                         )}
-                        
+
                     </div>
                 );
             })}

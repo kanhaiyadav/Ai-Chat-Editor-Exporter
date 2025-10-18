@@ -11,7 +11,7 @@ interface PreviewContainerProps {
 export const PreviewContainer = ({ messages, settings }: PreviewContainerProps) => {
     console.log("Rendering PreviewContainer with settings:", settings);
     return (
-        <div className='flex-1 h-full overflow-y-auto bg-background mt-1'>
+        <div className='flex-1 h-full overflow-y-auto bg-background mt-1 px-5'>
             <div
                 id='chat-container'
                 className='mx-auto my-8 p-8 bg-accent shadow-lg relative'

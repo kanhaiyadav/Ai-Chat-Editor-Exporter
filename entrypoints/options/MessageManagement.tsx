@@ -27,6 +27,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Image } from 'lucide-react';
 
 interface MessageManagementProps {
     messages: Message[] | null;
@@ -94,10 +95,22 @@ const SortableMessageItem = ({
                             #{index + 1}
                         </span>
                     </div>
-
-                    <p className="text-sm text-foreground/80 leading-relaxed">
-                        {truncateText(message.content)}
-                    </p>
+                    {
+                        message.content !== "" &&
+                        <p className="text-sm text-foreground/80 leading-relaxed">
+                            {truncateText(message.content)}
+                        </p>
+                    }
+                    {
+                        message.images && message.images.length > 0 && (
+                            <div className='flex items-center'>
+                                <Image size={16} className="inline-block mr-1" />
+                                <span className="text-sm text-foreground/80">
+                                    {message.images.length} image{message.images.length > 1 ? 's' : ''}
+                                </span>
+                            </div>
+                        )
+                    }
                 </div>
                 <div className='flex flex-col justify-between items-center'>
                     <Button
@@ -105,6 +118,7 @@ const SortableMessageItem = ({
                         size="sm"
                         className="h-8 w-8 p-0 shrink-0"
                         onClick={() => onEdit(index, message.content)}
+                        disabled={message.content === "" || isDragging}
                     >
                         <Edit size={14} />
                     </Button>

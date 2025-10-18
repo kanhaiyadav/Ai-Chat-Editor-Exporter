@@ -36,7 +36,7 @@ export const SettingsPanel = ({
     onReorderMessages,
 }: SettingsPanelProps) => {
     return (
-        <div className='w-[420px] h-full bg-gradient-to-b relative bg-accent dark:bg-accent border-l border-amber-200 mt-1 flex flex-col'>
+        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent dark:bg-accent mt-1 flex flex-col'>
             <div
                 className='flex-1 overflow-y-auto p-6 py-4 space-y-3 pb-24'
                 style={{
@@ -94,7 +94,7 @@ export const SettingsPanel = ({
             </div>
 
             {/* Fixed Button Bar */}
-            <div className='flex items-center gap-4 w-full bg-accent backdrop-blur-md py-4 px-6 border-t-[1px] border-amber-300 mt-auto'>
+            <div className='flex items-center gap-4 w-full bg-accent py-4 px-6 mt-auto shadow-lg border-t'>
                 <Button
                     onClick={onGeneratePDF}
                     size="lg"

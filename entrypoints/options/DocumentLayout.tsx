@@ -31,20 +31,30 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                     <div key={index} style={{
                         marginBottom: `${settings.document.paragraphSpacing}px`,
                     }}>
-                        <p style={{
-                            color: settings.document.bodyColor,
-                            fontSize: isTopic ? `${settings.document.fontSize + 3}px` : `${settings.document.fontSize}px`,
-                            fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
-                            lineHeight: settings.document.lineHeight,
-                            margin: 0,
-                            textAlign: 'justify',
-                            fontWeight: isTopic ? '600' : '400',
-                            textDecoration: isTopic ? 'underline' : 'none',
-                            marginTop: isTopic ? '10px' : '',
-                            marginBottom: isTopic ? '-5px' : '',
-                        }}>
-                            <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                        </p>
+                        {
+                            message.content !== '' &&
+                            <p style={{
+                                color: settings.document.bodyColor,
+                                fontSize: isTopic ? `${settings.document.fontSize + 3}px` : `${settings.document.fontSize}px`,
+                                fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
+                                lineHeight: settings.document.lineHeight,
+                                margin: 0,
+                                textAlign: 'justify',
+                                fontWeight: isTopic ? '600' : '400',
+                                textDecoration: isTopic ? 'underline' : 'none',
+                                marginTop: isTopic ? '10px' : '',
+                                marginBottom: isTopic ? '-5px' : '',
+                            }}>
+                                <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                            </p>
+                        }
+                        {
+                            message.images && message.images.map((imgSrc, imgIndex) => (
+                                <div key={imgIndex} style={{ marginTop: '12px' }}>
+                                    <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%' }} />
+                                </div>
+                            ))  
+                        }
                     </div>
                 )
             })}

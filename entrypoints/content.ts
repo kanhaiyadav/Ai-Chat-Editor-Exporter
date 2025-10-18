@@ -1,5 +1,10 @@
 export default defineContentScript({
-    matches: ["https://chatgpt.com/c/*", "https://chat.openai.com/c/*"],
+    matches: [
+        "https://chatgpt.com/c/*",
+        "https://chat.openai.com/c/*",
+        "https://chatgpt.com/g/*",
+        "https://chat.openai.com/g/*",
+    ],
     main() {
         // Function to insert the button
         function insertExportButton() {
@@ -41,18 +46,20 @@ export default defineContentScript({
                     try {
                         let title = "";
                         const activeLink = document.querySelector(
-                            "#history a[data-active]"
+                            'nav[aria-label="Chat history"] a[data-active]'
                         );
                         if (activeLink) {
                             title = activeLink.textContent?.trim() || "";
                         }
-
                         // Find all conversation turns
                         const turns = document.querySelectorAll(
                             '[data-testid^="conversation-turn"]'
                         );
-                        const messages: { role: string; content: string }[] =
-                            [];
+                        const messages: {
+                            role: string;
+                            content: string;
+                            images?: string[];
+                        }[] = [];
 
                         turns.forEach((turn) => {
                             const isUser = turn.querySelector(
@@ -64,6 +71,7 @@ export default defineContentScript({
 
                             let role = "unknown";
                             let content = "";
+                            let images: string[] = [];
 
                             if (isUser) {
                                 role = "user";
@@ -71,19 +79,46 @@ export default defineContentScript({
                                     ".user-message-bubble-color, [data-multiline]"
                                 );
                                 content = userBubble?.textContent?.trim() || "";
-                            } else if (isAssistant) {
+                            } else {
                                 role = "assistant";
                                 const assistantContent = turn.querySelector(
                                     '[data-message-author-role="assistant"]'
                                 );
+
+                                // Extract text content
                                 content =
                                     assistantContent?.innerHTML?.trim() || "";
+
+                                // Extract images from assistant messages
+                                const imageElements = turn.querySelectorAll(
+                                    'img[alt="Generated image"]'
+                                );
+                                imageElements.forEach((img) => {
+                                    const src = (img as HTMLImageElement).src;
+                                    if (src && !images.includes(src)) {
+                                        images.push(src);
+                                    }
+                                });
                             }
 
-                            if (content) messages.push({ role, content });
+                            if (content || images.length > 0) {
+                                const message: {
+                                    role: string;
+                                    content: string;
+                                    images?: string[];
+                                } = {
+                                    role,
+                                    content,
+                                };
+
+                                if (images.length > 0) {
+                                    message.images = images;
+                                }
+
+                                messages.push(message);
+                            }
                         });
 
-                        console.log("😂😂😂", title);
                         // Save to Chrome storage and open options page
                         chrome.storage.local.set(
                             { chatData: messages, chatProps: { title } },

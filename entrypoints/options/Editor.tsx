@@ -36,7 +36,8 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                     className="prose prose-sm dark:prose-invert max-w-none focus:outline-none min-h-[300px] px-4 py-3"
                     style={{
                         wordWrap: 'break-word',
-                        overflowWrap: 'break-word'
+                        overflowWrap: 'break-word',
+                        color: "#252525"
                     }}
                     suppressContentEditableWarning
                 />

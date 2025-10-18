@@ -109,9 +109,9 @@
     --primary-foreground: #020202;
     --secondary: #050505;
     --secondary-foreground: #f3f3f3;
-    --muted: #050505;
+    --muted: #393939;
     --badge: #00000024;
-    --muted-foreground: #585865;
+    --muted-foreground: #9e9eb4;
     --accent: #212121;
     --accent-foreground: #f3f3f3;
     --destructive: #ff2022;
@@ -185,7 +185,6 @@ pre > div.contain-inline-size {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     position: relative;
-    font-family: "Fira Code", "JetBrains Mono", monospace;
     font-size: 14px;
     line-height: 1.5;
     margin: 1rem 0;
@@ -311,7 +310,6 @@ div[class*="_tableWrapper"] table {
     width: 100%; /* always fit parent width */
     table-layout: auto; /* allow cells to wrap naturally */
     border-collapse: collapse;
-    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
     font-size: 14px;
     background: var(--chat-table-bg);
     border-radius: 8px;
@@ -367,7 +365,6 @@ div[class*="_tableWrapper"] code {
     color: var(--chat-table-code-text);
     padding: 3px 6px;
     border-radius: 4px;
-    font-family: "Fira Code", monospace;
     font-size: 13px;
 }
 

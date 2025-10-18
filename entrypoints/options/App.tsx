@@ -18,12 +18,12 @@ function App() {
     const [chatData, setChatData] = useState<Message[] | null>(null);
     const [chatProps, setChatProps] = useState<{ title?: string }>({});
     const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
-        layout: true,
-        chatStyle: true,
+        layout: false,
+        chatStyle: false,
         qaStyle: false,
         documentStyle: false,
-        general: true,
-        messages: true,
+        general: false,
+        messages: false,
     });
     const { effectiveTheme, loading } = useTheme();
     const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
