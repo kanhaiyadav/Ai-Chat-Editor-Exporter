@@ -56,6 +56,7 @@
     --secondary-foreground: #2d2d2d;
     --muted-foreground: #737373;
     --badge: rgba(0, 0, 0, 0.145);
+    --border: #cacaca;
     --accent: #f4f4f5;
     --accent-foreground: #2d2d2d;
     --destructive: #dc2626;

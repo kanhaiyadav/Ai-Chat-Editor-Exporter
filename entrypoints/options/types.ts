@@ -57,7 +57,7 @@ export const defaultSettings: PDFSettings = {
     chat: {
         userBubbleColor: "#ffcc41",
         userTextColor: "#000000",
-        aiBubbleColor: "#efefef",
+        aiBubbleColor: "#f3f2f2",
         aiTextColor: "#3c3c3c",
         fontSize: 14,
         fontFamily: "Commissioner, sans-serif",

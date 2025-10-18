@@ -49,6 +49,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 fontSize: `${settings.qa.fontSize + 2}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 marginBottom: '8px',
+                                whiteSpace: 'nowrap',
                             }}>
                                 {settings.qa.numbering && isQuestion ? `${questionNumber}. ` : ''}
                                 {isQuestion ? settings.qa.questionPrefix : settings.qa.answerPrefix}

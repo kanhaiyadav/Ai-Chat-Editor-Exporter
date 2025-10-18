@@ -45,8 +45,8 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                     <CardHeader className="px-4 transition-colors cursor-pointer">
                         <CardTitle className="flex items-center justify-between font-semibold">
                             <span className="flex items-center gap-2">
-                                Q&A Style
                                 <RiBrushAiLine size={20} />
+                                Q&A Style
                             </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
