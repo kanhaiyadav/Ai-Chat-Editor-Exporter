@@ -84,6 +84,31 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     </Select>
                                 </div>
                             </div>
+
+                            <div className='flex items-center justify-between'>
+                                <Label className='text-sm font-medium text-foreground/70'>Include AI Generated Images</Label>
+                                <Switch
+                                    checked={settings.includeAIImages}
+                                    onCheckedChange={(checked) => onUpdate({ includeAIImages: checked })}
+                                />
+                            </div>
+
+                            <div className='flex items-center justify-between'>
+                                <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Images</Label>
+                                <Switch
+                                    checked={settings.includeUserImages}
+                                    onCheckedChange={(checked) => onUpdate({ includeUserImages: checked })}
+                                />
+                            </div>
+
+                            <div className='flex items-center justify-between'>
+                                <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Docs</Label>
+                                <Switch
+                                    checked={settings.includeUserAttachments}
+                                    onCheckedChange={(checked) => onUpdate({ includeUserAttachments: checked })}
+                                />
+                            </div>
+
                         </div>
                     </CardContent>
                 </CollapsibleContent>

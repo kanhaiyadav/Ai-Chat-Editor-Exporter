@@ -28,6 +28,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Image } from 'lucide-react';
+import { HiOutlineDocumentText } from "react-icons/hi2";
 
 interface MessageManagementProps {
     messages: Message[] | null;
@@ -101,16 +102,28 @@ const SortableMessageItem = ({
                             {truncateText(message.content)}
                         </p>
                     }
-                    {
-                        message.images && message.images.length > 0 && (
-                            <div className='flex items-center'>
-                                <Image size={16} className="inline-block mr-1" />
-                                <span className="text-sm text-foreground/80">
-                                    {message.images.length} image{message.images.length > 1 ? 's' : ''}
-                                </span>
-                            </div>
-                        )
-                    }
+                    <div className='flex items-center gap-3'>
+                        {
+                            message.images && message.images.length > 0 && (
+                                <div className='flex items-center'>
+                                    <Image size={16} className="inline-block mr-1" />
+                                    <span className="text-sm text-foreground/80">
+                                        {message.images.length} image{message.images.length > 1 ? 's' : ''}
+                                    </span>
+                                </div>
+                            )
+                        }
+                        {
+                            message.attachments && message.attachments.length > 0 && (
+                                <div className='flex items-center'>
+                                    <HiOutlineDocumentText size={16} className="inline-block mr-1" />
+                                    <span className="text-sm text-foreground/80">
+                                        {message.attachments.length} attachment{message.attachments.length > 1 ? 's' : ''}
+                                    </span>
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
                 <div className='flex flex-col justify-between items-center'>
                     <Button

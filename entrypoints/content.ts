@@ -51,6 +51,7 @@ export default defineContentScript({
                         if (activeLink) {
                             title = activeLink.textContent?.trim() || "";
                         }
+
                         // Find all conversation turns
                         const turns = document.querySelectorAll(
                             '[data-testid^="conversation-turn"]'
@@ -59,6 +60,11 @@ export default defineContentScript({
                             role: string;
                             content: string;
                             images?: string[];
+                            attachments?: {
+                                name: string;
+                                url: string;
+                                type: string;
+                            }[];
                         }[] = [];
 
                         turns.forEach((turn) => {
@@ -72,6 +78,11 @@ export default defineContentScript({
                             let role = "unknown";
                             let content = "";
                             let images: string[] = [];
+                            let attachments: {
+                                name: string;
+                                url: string;
+                                type: string;
+                            }[] = [];
 
                             if (isUser) {
                                 role = "user";
@@ -79,7 +90,100 @@ export default defineContentScript({
                                     ".user-message-bubble-color, [data-multiline]"
                                 );
                                 content = userBubble?.textContent?.trim() || "";
-                            } else {
+
+                                // Extract user-uploaded images
+                                const uploadedImages = turn.querySelectorAll(
+                                    'img[alt="Uploaded image"]'
+                                );
+                                uploadedImages.forEach((img) => {
+                                    const src = (img as HTMLImageElement).src;
+                                    if (src && !images.includes(src)) {
+                                        images.push(src);
+                                    }
+                                });
+
+                                // Extract PDF and other document attachments
+                                const attachmentLinks = turn.querySelectorAll(
+                                    'a[target="_blank"][rel="noreferrer"]'
+                                );
+                                attachmentLinks.forEach((link) => {
+                                    const nameEl = link.querySelector(
+                                        ".truncate.font-semibold"
+                                    );
+                                    const typeEl = link.querySelector(
+                                        ".text-token-text-secondary.truncate"
+                                    );
+
+                                    if (nameEl) {
+                                        const fileName =
+                                            nameEl.textContent?.trim() ||
+                                            "Unknown";
+                                        const fileType =
+                                            typeEl?.textContent?.trim() ||
+                                            "File";
+
+                                        // Try to find iframe with document URL when clicking the attachment
+                                        // Since we can't simulate clicks, we'll look for any iframe in the document
+                                        // that might have been opened, or extract from data attributes if available
+
+                                        // For now, we'll store the attachment info without direct URL
+                                        // since the URL is only revealed in the iframe when clicked
+                                        attachments.push({
+                                            name: fileName,
+                                            url: "", // URL not directly accessible without click
+                                            type: fileType,
+                                        });
+                                    }
+                                });
+
+                                // Alternative: Try to extract file info from nearby elements
+                                const fileContainers = turn.querySelectorAll(
+                                    '[class*="file"], [class*="document"]'
+                                );
+                                fileContainers.forEach((container) => {
+                                    const svgParent =
+                                        container.querySelector("svg");
+                                    if (svgParent) {
+                                        const parent = container.closest("a");
+                                        if (
+                                            parent &&
+                                            parent.hasAttribute("href")
+                                        ) {
+                                            const href =
+                                                parent.getAttribute("href");
+                                            if (href) {
+                                                const nameEl =
+                                                    container.querySelector(
+                                                        ".truncate.font-semibold"
+                                                    );
+                                                const typeEl =
+                                                    container.querySelector(
+                                                        ".text-token-text-secondary.truncate"
+                                                    );
+
+                                                if (
+                                                    nameEl &&
+                                                    !attachments.some(
+                                                        (a) =>
+                                                            a.name ===
+                                                            nameEl.textContent?.trim()
+                                                    )
+                                                ) {
+                                                    attachments.push({
+                                                        name:
+                                                            nameEl.textContent?.trim() ||
+                                                            "Unknown",
+                                                        url: href,
+                                                        type:
+                                                            typeEl?.textContent?.trim() ||
+                                                            "File",
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            } else if (isAssistant) {
                                 role = "assistant";
                                 const assistantContent = turn.querySelector(
                                     '[data-message-author-role="assistant"]'
@@ -89,7 +193,7 @@ export default defineContentScript({
                                 content =
                                     assistantContent?.innerHTML?.trim() || "";
 
-                                // Extract images from assistant messages
+                                // Extract images from assistant messages (generated images)
                                 const imageElements = turn.querySelectorAll(
                                     'img[alt="Generated image"]'
                                 );
@@ -101,11 +205,20 @@ export default defineContentScript({
                                 });
                             }
 
-                            if (content || images.length > 0) {
+                            if (
+                                content ||
+                                images.length > 0 ||
+                                attachments.length > 0
+                            ) {
                                 const message: {
                                     role: string;
                                     content: string;
                                     images?: string[];
+                                    attachments?: {
+                                        name: string;
+                                        url: string;
+                                        type: string;
+                                    }[];
                                 } = {
                                     role,
                                     content,
@@ -115,7 +228,39 @@ export default defineContentScript({
                                     message.images = images;
                                 }
 
+                                if (attachments.length > 0) {
+                                    message.attachments = attachments;
+                                }
+
                                 messages.push(message);
+                            }
+                        });
+
+                        // Also check for any open iframes with PDF/document content
+                        const iframes = document.querySelectorAll(
+                            'iframe[src*="backend-api/estuary/content"]'
+                        );
+                        iframes.forEach((iframe) => {
+                            const src = (iframe as HTMLIFrameElement).src;
+                            const title = (iframe as HTMLIFrameElement).title;
+
+                            // Try to find corresponding message and add URL
+                            if (title && src) {
+                                const lastUserMessage = messages
+                                    .filter((m) => m.role === "user")
+                                    .pop();
+                                if (
+                                    lastUserMessage &&
+                                    lastUserMessage.attachments
+                                ) {
+                                    const attachment =
+                                        lastUserMessage.attachments.find(
+                                            (a) => a.name === title
+                                        );
+                                    if (attachment && !attachment.url) {
+                                        attachment.url = src;
+                                    }
+                                }
                             }
                         });
 

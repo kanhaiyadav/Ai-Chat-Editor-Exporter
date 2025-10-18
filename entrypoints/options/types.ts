@@ -2,6 +2,11 @@ export interface Message {
     role: string;
     content: string;
     images?: string[];
+    attachments?: Array<{
+        name: string;
+        type: string;
+        url: string;
+    }>
 }
 
 export interface PDFSettings {
@@ -46,6 +51,9 @@ export interface PDFSettings {
         includeHeader: boolean;
         headerText: string;
         includeFooter: boolean;
+        includeUserAttachments: boolean;
+        includeUserImages: boolean;
+        includeAIImages: boolean;
         fontFamily: {
             type: string;
             value: string;
@@ -93,6 +101,9 @@ export const defaultSettings: PDFSettings = {
         pageSize: "a4",
         margins: 20,
         includeHeader: true,
+        includeAIImages: true,
+        includeUserImages: true,
+        includeUserAttachments: true,
         headerText: "AI Conversation Export",
         includeFooter: true,
         fontFamily: null,
