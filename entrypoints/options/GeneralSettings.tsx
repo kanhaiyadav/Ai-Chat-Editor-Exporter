@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { fontFamilies, PDFSettings } from './types';
+import { LuSettings } from "react-icons/lu";
 
 interface GeneralSettingsProps {
     settings: PDFSettings['general'];
@@ -22,7 +23,10 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                 <CollapsibleTrigger asChild>
                     <CardHeader className="px-4 cursor-pointer mb-[-3px]">
                         <CardTitle className="flex items-center justify-between font-semibold">
-                            General Settings
+                            <span className="flex items-center gap-2">
+                                <LuSettings size={20} />
+                                General Settings
+                            </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
                     </CardHeader>

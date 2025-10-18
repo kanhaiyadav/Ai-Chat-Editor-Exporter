@@ -7,7 +7,7 @@ interface ChatLayoutProps {
 }
 
 export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
-    
+
     return (
         <>
             {settings.general.includeHeader && (
@@ -24,7 +24,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
             )}
             {messages.map((message, index) => {
                 const isUser = message.role === 'user';
-                const bubbleColor = isUser ? settings.chat.userBubbleColor :  settings.chat.aiBubbleColor;
+                const bubbleColor = isUser ? settings.chat.userBubbleColor : settings.chat.aiBubbleColor;
                 const textColor = isUser ? settings.chat.userTextColor : settings.chat.aiTextColor;
 
                 let bubbleStyle: React.CSSProperties = {
@@ -39,7 +39,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
 
                 if (settings.chat.bubbleStyle === 'filled') {
                     if (bubbleColor === 'transparent' && !isUser) {
-                        bubbleStyle = { ...bubbleStyle, backgroundColor: '#f3f4f6', color: textColor};
+                        bubbleStyle = { ...bubbleStyle, backgroundColor: '#f3f4f6', color: textColor };
                     } else {
                         bubbleStyle = { ...bubbleStyle, backgroundColor: bubbleColor, color: textColor };
                     }
@@ -49,7 +49,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                         border: `2px solid ${bubbleColor}`,
                         color: textColor,
                         backgroundColor: 'transparent',
-                        fontWeight: '500', 
+                        fontWeight: '500',
                     };
                 } else {
                     bubbleStyle = {
@@ -97,6 +97,7 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 <HiOutlineUserCircle className={`text-black w-[32px] h-[32px]`} />
                             </div>
                         )}
+                        
                     </div>
                 );
             })}

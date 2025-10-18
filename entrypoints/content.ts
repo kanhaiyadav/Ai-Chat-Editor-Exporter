@@ -83,6 +83,7 @@ export default defineContentScript({
                             if (content) messages.push({ role, content });
                         });
 
+                        console.log("😂😂😂", title);
                         // Save to Chrome storage and open options page
                         chrome.storage.local.set(
                             { chatData: messages, chatProps: { title } },

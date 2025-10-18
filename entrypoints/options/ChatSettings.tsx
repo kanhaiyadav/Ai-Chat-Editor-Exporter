@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PDFSettings } from './types';
+import { RiBrushAiLine } from "react-icons/ri";
 
 interface ChatSettingsProps {
     settings: PDFSettings['chat'];
@@ -43,7 +44,10 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                 <CollapsibleTrigger asChild>
                     <CardHeader className="px-4 cursor-pointer mb-[-3px]">
                         <CardTitle className="flex items-center justify-between font-semibold">
-                            Chat Style
+                            <span className="flex items-center gap-2">
+                                <RiBrushAiLine size={20} />
+                                Chat Style
+                            </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
                     </CardHeader>

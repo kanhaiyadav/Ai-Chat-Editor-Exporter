@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PDFSettings } from './types';
+import { RiBrushAiLine } from "react-icons/ri";
 
 interface QASettingsProps {
     settings: PDFSettings['qa'];
@@ -43,7 +44,10 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                 <CollapsibleTrigger asChild className='mb-[-3px]'>
                     <CardHeader className="px-4 transition-colors cursor-pointer">
                         <CardTitle className="flex items-center justify-between font-semibold">
-                            Q&A Style
+                            <span className="flex items-center gap-2">
+                                Q&A Style
+                                <RiBrushAiLine size={20} />
+                            </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
                     </CardHeader>

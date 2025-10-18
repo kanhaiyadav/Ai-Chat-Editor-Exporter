@@ -319,6 +319,7 @@ div[class*="_tableWrapper"] table {
     min-width: 0;
     max-width: 100%;
     word-break: break-word;
+    margin-top: 0 !important;
 }
 
 /* Table header */

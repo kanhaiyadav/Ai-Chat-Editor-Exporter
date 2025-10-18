@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { PDFSettings } from './types';
+import { RiBrushAiLine } from "react-icons/ri";
 
 interface DocumentSettingsProps {
     settings: PDFSettings['document'];
@@ -41,7 +42,10 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
                 <CollapsibleTrigger asChild className='mb-[-3px]'>
                     <CardHeader className="px-4 cursor-pointer">
                         <CardTitle className="flex items-center justify-between font-semibold">
-                            Document Style
+                            <span className="flex items-center gap-2">
+                                <RiBrushAiLine size={20} />
+                                Document Style
+                            </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
                     </CardHeader>

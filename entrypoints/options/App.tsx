@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/lib/useTheme';
 import { Message, PDFSettings, defaultSettings } from './types';
-import { getThemeStyles, generatePDF } from './utils';
+import { cleanHTML } from './utils';
 import { Header } from './Header';
 import { PreviewContainer } from './PreviewContainer';
 import { SettingsPanel } from './SettingsPanel';
@@ -23,16 +23,26 @@ function App() {
         qaStyle: false,
         documentStyle: false,
         general: true,
+        messages: true,
     });
     const { effectiveTheme, loading } = useTheme();
     const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
-
+    const [selectedMessages, setSelectedMessages] = useState<Set<number>>(new Set());
 
 
     useEffect(() => {
         // Load chat data
         chrome.storage.local.get(["chatData"], (result) => {
-            setChatData(result.chatData);
+            const cleanedChatData = result.chatData?.map((msg: Message) => ({
+                ...msg,
+                content: cleanHTML(msg.content)
+            }));
+            result.chatData = cleanedChatData;
+            setChatData(cleanedChatData);
+            // Initialize all messages as selected
+            if (cleanedChatData) {
+                setSelectedMessages(new Set(cleanedChatData.map((_: Message, index: number) => index)));
+            }
         });
 
         chrome.storage.local.get(["chatProps"], (result) => {
@@ -51,7 +61,11 @@ function App() {
         const listener = (changes: StorageChanges, areaName: string) => {
             if (areaName === 'local') {
                 if (changes.chatData) {
-                    setChatData(changes.chatData.newValue);
+                    const cleanedData = changes.chatData.newValue?.map((msg: Message) => ({
+                        ...msg,
+                        content: cleanHTML(msg.content)
+                    }));
+                    setChatData(cleanedData);
                 }
                 if (changes.chatProps) {
                     setChatProps(changes.chatProps.newValue);
@@ -100,23 +114,51 @@ function App() {
         window.print();
     };
 
+    const handleUpdateMessage = (index: number, content: string) => {
+        if (!chatData) return;
+
+        const updatedMessages = [...chatData];
+        updatedMessages[index] = { ...updatedMessages[index], content };
+        setChatData(updatedMessages);
+        chrome.storage.local.set({ chatData: updatedMessages });
+    };
+
+    const handleToggleMessage = (index: number) => {
+        setSelectedMessages(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(index)) {
+                newSet.delete(index);
+            } else {
+                newSet.add(index);
+            }
+            return newSet;
+        });
+    };
+
+    // Filter messages based on selection
+    const filteredMessages = chatData?.filter((_, index) => selectedMessages.has(index)) || null;
+
     return (
         <div className='flex flex-col items-center h-dvh w-full !overflow-hidden'>
             <Header />
 
             <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
                 <PreviewContainer
-                    messages={chatData}
+                    messages={filteredMessages}
                     settings={settings}
                 />
 
                 <SettingsPanel
                     settings={settings}
                     expandedSections={expandedSections}
+                    messages={chatData}
+                    selectedMessages={selectedMessages}
                     onUpdateSettings={updateSettings}
                     onToggleSection={toggleSection}
                     onResetSettings={resetSettings}
                     onGeneratePDF={handleGeneratePDF}
+                    onUpdateMessage={handleUpdateMessage}
+                    onToggleMessage={handleToggleMessage}
                 />
             </div>
         </div>
