@@ -266,7 +266,7 @@ export default defineContentScript({
 
                         // Save to Chrome storage and open options page
                         chrome.storage.local.set(
-                            { chatData: messages, chatProps: { title } },
+                            { chatData: { title, messages } },
                             () => {
                                 chrome.runtime.sendMessage({
                                     action: "openOptions",
