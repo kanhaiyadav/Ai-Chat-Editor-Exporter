@@ -17,7 +17,7 @@ interface PresetManagementProps {
     currentSettings: PDFSettings;
     isExpanded: boolean;
     onToggle: () => void;
-    onLoadPreset: (settings: PDFSettings) => void;
+    onLoadPreset: (settings: PDFSettings, presetId: number) => void;
 }
 
 export const PresetManagement = ({
@@ -67,7 +67,7 @@ export const PresetManagement = ({
     };
 
     const handleLoadPreset = (preset: SavedPreset) => {
-        onLoadPreset(preset.settings);
+        onLoadPreset(preset.settings, preset.id!);
     };
 
     const handleDeletePreset = async (id: number) => {

@@ -1,5 +1,5 @@
 import Dexie, { Table } from "dexie";
-import { PDFSettings, Message } from "@/entrypoints/options/types";
+import { PDFSettings, Message, ChatSource } from "@/entrypoints/options/types";
 
 export interface SavedPreset {
     id?: number;
@@ -14,6 +14,7 @@ export interface SavedChat {
     name: string;
     title: string;
     messages: Message[];
+    source: ChatSource; // Source of the chat (chatgpt, claude, gemini, deepseek)
     presetId: number | null; // null means "Current Settings"
     presetName: string; // For display purposes
     createdAt: Date;
@@ -33,6 +34,11 @@ export class SettingsDatabase extends Dexie {
         this.version(2).stores({
             presets: "++id, name, createdAt, updatedAt",
             chats: "++id, name, createdAt, updatedAt",
+        });
+        // Add version 3 to include source field in chats
+        this.version(3).stores({
+            presets: "++id, name, createdAt, updatedAt",
+            chats: "++id, name, source, createdAt, updatedAt",
         });
     }
 }
@@ -106,6 +112,7 @@ export const chatOperations = {
         name: string,
         title: string,
         messages: Message[],
+        source: ChatSource,
         presetId: number | null,
         presetName: string
     ): Promise<number> {
@@ -114,6 +121,7 @@ export const chatOperations = {
             name,
             title,
             messages,
+            source,
             presetId,
             presetName,
             createdAt: now,
@@ -137,6 +145,7 @@ export const chatOperations = {
         name: string,
         title: string,
         messages: Message[],
+        source: ChatSource,
         presetId: number | null,
         presetName: string
     ): Promise<void> {
@@ -144,6 +153,7 @@ export const chatOperations = {
             name,
             title,
             messages,
+            source,
             presetId,
             presetName,
             updatedAt: new Date(),
@@ -174,8 +184,18 @@ export const chatOperations = {
             newName,
             chat.title,
             chat.messages,
+            chat.source,
             chat.presetId,
             chat.presetName
         );
+    },
+
+    // Get chats by source
+    async getChatsBySource(source: ChatSource): Promise<SavedChat[]> {
+        return await db.chats
+            .where("source")
+            .equals(source)
+            .reverse()
+            .sortBy("updatedAt");
     },
 };

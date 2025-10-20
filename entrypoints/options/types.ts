@@ -6,8 +6,10 @@ export interface Message {
         name: string;
         type: string;
         url: string;
-    }>
+    }>;
 }
+
+export type ChatSource = "chatgpt" | "claude" | "gemini" | "deepseek";
 
 export interface PDFSettings {
     layout: "chat" | "qa" | "document";
@@ -113,7 +115,7 @@ export const defaultSettings: PDFSettings = {
 export type fontFamilies = Array<{
     type: string;
     values: Array<string>;
-}>
+}>;
 
 export const fontFamilies: fontFamilies = [
     {
@@ -145,4 +147,3 @@ export const fontFamilies: fontFamilies = [
         ],
     },
 ];
-

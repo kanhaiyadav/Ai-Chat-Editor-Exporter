@@ -8,27 +8,22 @@ import { DocumentSettings } from './DocumentSettings';
 import { GeneralSettings } from './GeneralSettings';
 import { MessageManagement } from './MessageManagement';
 import { PresetManagement } from './PresetManagement';
-import { SavedChatsManagement } from './SavedChatsManagement';
-import { SavedChat } from '@/lib/settingsDB';
 
 interface SettingsPanelProps {
     settings: PDFSettings;
     expandedSections: { [key: string]: boolean };
     messages: Message[] | null;
     selectedMessages: Set<number>;
-    chatTitle: string;
-    currentChatId: number | null;
+    currentPresetId: number | null;
     onUpdateSettings: (updates: Partial<PDFSettings>) => void;
     onToggleSection: (section: string) => void;
     onResetSettings: () => void;
-    onGeneratePDF: () => void;
     onUpdateMessage: (index: number, content: string) => void;
     onToggleMessage: (index: number) => void;
     onReorderMessages: (newOrder: Message[]) => void;
-    onLoadPreset: (settings: PDFSettings) => void;
-    onSaveChat: () => void;
-    onSaveAsChat: () => void;
-    onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;
+    onLoadPreset: (settings: PDFSettings, presetId: number) => void;
+    onSavePreset: () => void;
+    onSaveAsPreset: () => void;
 }
 
 export const SettingsPanel = ({
@@ -36,34 +31,25 @@ export const SettingsPanel = ({
     expandedSections,
     messages,
     selectedMessages,
-    chatTitle,
-    currentChatId,
+    currentPresetId,
     onUpdateSettings,
     onToggleSection,
     onResetSettings,
-    onGeneratePDF,
     onUpdateMessage,
     onToggleMessage,
     onReorderMessages,
     onLoadPreset,
-    onSaveChat,
-    onSaveAsChat,
-    onLoadChat,
+    onSavePreset,
+    onSaveAsPreset,
 }: SettingsPanelProps) => {
     return (
-        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent dark:bg-accent mt-1 flex flex-col'>
+        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border'>
             <div
                 className='flex-1 overflow-y-scroll p-6 py-4 space-y-3 pb-24'
                 style={{
                     scrollbarColor: '#bebebe var(--color-accent)',
                 }}
             >
-                <SavedChatsManagement
-                    isExpanded={expandedSections.savedChats}
-                    onToggle={() => onToggleSection('savedChats')}
-                    onLoadChat={onLoadChat}
-                />
-
                 <PresetManagement
                     currentSettings={settings}
                     isExpanded={expandedSections.presets}
@@ -123,48 +109,38 @@ export const SettingsPanel = ({
 
             {/* Fixed Button Bar */}
             <div className='flex flex-col gap-2 w-full bg-accent py-4 px-6 mt-auto shadow-lg border-t'>
-                <div className='flex items-center gap-2 w-full'>
-                    <Button
-                        onClick={onGeneratePDF}
-                        size="lg"
-                        className='flex-1'
-                    >
-                        Export as PDF
-                    </Button>
-
-                    {currentChatId !== null ? (
-                        <>
-                            <Button
-                                onClick={onSaveChat}
-                                variant="secondary"
-                                className="flex-1"
-                                size="lg"
-                            >
-                                <Save size={16} className='mr-1' />
-                                Save
-                            </Button>
-                            <Button
-                                onClick={onSaveAsChat}
-                                variant="outline"
-                                className="flex-1"
-                                size="lg"
-                            >
-                                <SaveAll size={16} className='mr-1' />
-                                Save As
-                            </Button>
-                        </>
-                    ) : (
+                {currentPresetId !== null ? (
+                    <div className='flex items-center gap-2 w-full'>
                         <Button
-                            onClick={onSaveChat}
-                            variant="secondary"
+                            onClick={onSavePreset}
+                            variant="default"
                             className="flex-1"
                             size="lg"
                         >
                             <Save size={16} className='mr-1' />
-                            Save Chat
+                            Save Preset
                         </Button>
-                    )}
-                </div>
+                        <Button
+                            onClick={onSaveAsPreset}
+                            variant="secondary"
+                            className="flex-1"
+                            size="lg"
+                        >
+                            <SaveAll size={16} className='mr-1' />
+                            Save As
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        onClick={onSavePreset}
+                        variant="default"
+                        className="w-full"
+                        size="lg"
+                    >
+                        <Save size={16} className='mr-1' />
+                        Save as Preset
+                    </Button>
+                )}
 
                 <Button
                     onClick={onResetSettings}

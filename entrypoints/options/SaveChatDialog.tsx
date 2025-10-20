@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Message, PDFSettings } from './types';
+import { Message, PDFSettings, ChatSource } from './types';
 import { SavedPreset, chatOperations, presetOperations, db } from '@/lib/settingsDB';
 
 interface SaveChatDialogProps {
@@ -27,6 +27,7 @@ interface SaveChatDialogProps {
     onOpenChange: (open: boolean) => void;
     chatTitle: string;
     messages: Message[];
+    chatSource: ChatSource;
     currentSettings: PDFSettings;
     currentChatId: number | null;
     mode: 'save' | 'saveAs';
@@ -37,6 +38,7 @@ export const SaveChatDialog = ({
     onOpenChange,
     chatTitle,
     messages,
+    chatSource,
     currentSettings,
     currentChatId,
     mode,
@@ -129,6 +131,7 @@ export const SaveChatDialog = ({
                     chatName.trim(),
                     chatTitle,
                     messages,
+                    chatSource,
                     presetId,
                     presetName
                 );
@@ -146,6 +149,7 @@ export const SaveChatDialog = ({
                     chatName.trim(),
                     chatTitle,
                     messages,
+                    chatSource,
                     presetId,
                     presetName
                 );
