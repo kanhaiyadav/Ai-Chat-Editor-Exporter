@@ -148,10 +148,10 @@ function App() {
         }
     }, [chatData, selectedMessages, settings, originalChatData]);
 
-    // Warn before closing tab with unsaved changes
+    // Warn before closing tab with unsaved chat changes only (not preset changes)
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            if (settingsChanged || chatChanged) {
+            if (chatChanged) {
                 e.preventDefault();
                 // Modern browsers require returnValue to be set
                 e.returnValue = '';
@@ -161,7 +161,7 @@ function App() {
 
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, [settingsChanged, chatChanged]);
+    }, [chatChanged]);
 
     const updateSettings = (updates: Partial<PDFSettings>) => {
         const newSettings = { ...settings, ...updates };

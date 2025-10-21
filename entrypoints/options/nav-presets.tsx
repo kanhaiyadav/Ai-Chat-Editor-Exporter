@@ -81,43 +81,30 @@ export function NavPresets({
                                 className="hover:bg-card hover:shadow-sm rounded-sm py-1 flex items-center"
                             >
                                 {editingPresetId === preset.id ? (
-                                    <div className='space-y-2' onClick={(e) => e.stopPropagation()}>
-                                        <Input
-                                            value={editingPresetName}
-                                            onChange={(e) => {
-                                                setEditingPresetName(e.target.value);
-                                                setError('');
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    handleSaveEditPreset(preset.id!, e as any);
-                                                } else if (e.key === 'Escape') {
-                                                    handleCancelEditPreset(e as any);
-                                                }
-                                            }}
-                                            className='h-8'
-                                            autoFocus
-                                        />
-                                        {error && (
-                                            <p className='text-xs text-destructive'>{error}</p>
-                                        )}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <SidebarMenuAction showOnHover>
-                                                    <MoreHorizontal />
-                                                    <span className="sr-only">More</span>
-                                                </SidebarMenuAction>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent
-                                                className="w-48 rounded-lg"
-                                                side={isMobile ? "bottom" : "right"}
-                                                align={isMobile ? "end" : "start"}
-                                            >
+                                    <div className='space-y-1 p-1' onClick={(e) => e.stopPropagation()}>
+                                        <div className="flex gap-1 items-center">
+                                            <Input
+                                                value={editingPresetName}
+                                                onChange={(e) => {
+                                                    setEditingPresetName(e.target.value);
+                                                    setError('');
+                                                }}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        handleSaveEditPreset(preset.id!, e as any);
+                                                    } else if (e.key === 'Escape') {
+                                                        handleCancelEditPreset(e as any);
+                                                    }
+                                                }}
+                                                className='h-8'
+                                                autoFocus
+                                            />
+                                            <div className='flex gap-2'>
                                                 <Button
                                                     onClick={(e) => handleSaveEditPreset(preset.id!, e)}
-                                                    variant='secondary'
+                                                    variant='outline'
                                                     size='sm'
-                                                    className='flex-1 h-7'
+                                                    className='flex-1 p-0 !px-1 h-9'
                                                 >
                                                     <Check className='h-3 w-3' />
                                                 </Button>
@@ -125,12 +112,15 @@ export function NavPresets({
                                                     onClick={handleCancelEditPreset}
                                                     variant='outline'
                                                     size='sm'
-                                                    className='flex-1 h-7'
+                                                    className='flex-1 h-9 !px-1'
                                                 >
                                                     <X className='h-3 w-3' />
                                                 </Button>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                            </div>
+                                        </div>
+                                        {error && (
+                                            <p className='text-xs text-destructive'>{error}</p>
+                                        )}
                                     </div>
                                 ) : (
                                     <>

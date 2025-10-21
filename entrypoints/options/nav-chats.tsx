@@ -99,41 +99,43 @@ export function NavChats({
                                             <SidebarMenuSubItem key={chat.id}>
                                                 {editingChatId === chat.id ? (
                                                     <div className="flex flex-col gap-2 p-2">
-                                                        <Input
-                                                            value={editingChatName}
-                                                            onChange={(e) =>
-                                                                setEditingChatName(e.target.value)
-                                                            }
-                                                            placeholder="Chat name"
-                                                            className="h-8"
-                                                            autoFocus
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        />
+                                                        <div className="flex items-center gap-1">
+                                                            <Input
+                                                                value={editingChatName}
+                                                                onChange={(e) =>
+                                                                    setEditingChatName(e.target.value)
+                                                                }
+                                                                placeholder="Chat name"
+                                                                className="h-8"
+                                                                autoFocus
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            />
+                                                            <div className="flex gap-1">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    className="h-9 !px-1"
+                                                                    onClick={(e) =>
+                                                                        handleSaveEditChat(chat.id!, e)
+                                                                    }
+                                                                >
+                                                                    <Check className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    className="h-9 !px-1"
+                                                                    onClick={handleCancelEditChat}
+                                                                >
+                                                                    <X className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
                                                         {error && (
                                                             <p className="text-xs text-destructive">
                                                                 {error}
                                                             </p>
                                                         )}
-                                                        <div className="flex gap-1">
-                                                            <Button
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                className="h-7 w-7 p-0"
-                                                                onClick={(e) =>
-                                                                    handleSaveEditChat(chat.id!, e)
-                                                                }
-                                                            >
-                                                                <Check className="h-4 w-4" />
-                                                            </Button>
-                                                            <Button
-                                                                size="sm"
-                                                                variant="ghost"
-                                                                className="h-7 w-7 p-0"
-                                                                onClick={handleCancelEditChat}
-                                                            >
-                                                                <X className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
                                                     </div>
                                                 ) : (
                                                     <>
@@ -152,38 +154,6 @@ export function NavChats({
                                                                 <p className='text-[10px] mt-[-2px] text-muted-foreground'>
                                                                     {formatDate(chat.updatedAt)}
                                                                 </p>
-                                                                {/* <div className="flex gap-1 opacity-0 group-hover/chat:opacity-100 transition-opacity">
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="ghost"
-                                                                        className="h-6 w-6 p-0"
-                                                                        onClick={(e) =>
-                                                                            handleStartEditChat(chat, e)
-                                                                        }
-                                                                    >
-                                                                        <Pencil className="h-3 w-3" />
-                                                                    </Button>
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="ghost"
-                                                                        className="h-6 w-6 p-0"
-                                                                        onClick={(e) =>
-                                                                            handleDuplicateChat(chat, e)
-                                                                        }
-                                                                    >
-                                                                        <Copy className="h-3 w-3" />
-                                                                    </Button>
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="ghost"
-                                                                        className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
-                                                                        onClick={(e) =>
-                                                                            handleDeleteChat(chat.id!, e)
-                                                                        }
-                                                                    >
-                                                                        <Trash2 className="h-3 w-3" />
-                                                                    </Button>
-                                                                </div> */}
                                                             </div>
                                                         </SidebarMenuSubButton>
                                                         <DropdownMenu>
