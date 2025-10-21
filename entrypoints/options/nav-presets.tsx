@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
     Check,
     Copy,
@@ -33,6 +34,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SavedPreset } from "@/lib/settingsDB"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export function NavPresets({
     presets,
@@ -64,52 +66,15 @@ export function NavPresets({
     handleDuplicatePreset: (preset: SavedPreset, e: React.MouseEvent) => void,
 }) {
     const { isMobile } = useSidebar()
-    const [moreToggled, setMoreToggled] = useState(false);
+    const [more, setMore] = useState(5);
 
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Setting presets</SidebarGroupLabel>
             <SidebarMenu>
-                {/* {projects.map((item) => (
-                    <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild>
-                            <a href={item.url}>
-                                <item.icon />
-                                <span>{item.name}</span>
-                            </a>
-                        </SidebarMenuButton>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction showOnHover>
-                                    <MoreHorizontal />
-                                    <span className="sr-only">More</span>
-                                </SidebarMenuAction>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                className="w-48 rounded-lg"
-                                side={isMobile ? "bottom" : "right"}
-                                align={isMobile ? "end" : "start"}
-                            >
-                                <DropdownMenuItem>
-                                    <Folder className="text-muted-foreground" />
-                                    <span>View Project</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Forward className="text-muted-foreground" />
-                                    <span>Share Project</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Trash2 className="text-muted-foreground" />
-                                    <span>Delete Project</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </SidebarMenuItem>
-                ))} */}
                 {presets && presets.length > 0 ? (
                     <>
-                        {presets.map((preset) => (
+                        {presets.slice(0, more).map((preset) => (
                             <SidebarMenuItem
                                 key={preset.id}
                                 onClick={(e) => handleLoadPreset(preset, e)}
@@ -237,11 +202,11 @@ export function NavPresets({
                 {
                     presets.length > 5 &&
                     <SidebarMenuItem>
-                            <SidebarMenuButton className="text-sidebar-foreground/70"
-                                onClick={() => setMoreToggled(!moreToggled)}
-                            >
+                        <SidebarMenuButton className="text-sidebar-foreground/70"
+                            onClick={() => setMore(more === 5 ? presets.length : 5)}
+                        >
                             <MoreHorizontal className="text-sidebar-foreground/70" />
-                            <span>{moreToggled ? "Less" : "More"}</span>
+                            <span>{more !== presets.length ? "More" : "Less"}</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 }

@@ -20,7 +20,7 @@ interface SavePresetDialogProps {
     onOpenChange: (open: boolean) => void;
     currentSettings: PDFSettings;
     currentPresetId: number | null;
-    mode: 'save' | 'saveAs';
+    onPresetCreated?: (presetId: number) => void;
 }
 
 export const SavePresetDialog = ({
@@ -28,7 +28,7 @@ export const SavePresetDialog = ({
     onOpenChange,
     currentSettings,
     currentPresetId,
-    mode,
+    onPresetCreated,
 }: SavePresetDialogProps) => {
     const presets = useLiveQuery(
         () => db.presets.orderBy('updatedAt').reverse().toArray(),
@@ -41,12 +41,8 @@ export const SavePresetDialog = ({
 
     useEffect(() => {
         if (open) {
-            if (mode === 'save' && currentPresetId !== null) {
-                // For Save, use current preset name
-                const preset = presets?.find(p => p.id === currentPresetId);
-                setPresetName(preset?.name || '');
-            } else if (mode === 'saveAs' && currentPresetId !== null) {
-                // For Save As, suggest a new name
+            if (currentPresetId !== null) {
+                // For Save As from existing preset, suggest a new name
                 const preset = presets?.find(p => p.id === currentPresetId);
                 setPresetName(preset ? `${preset.name} (Copy)` : '');
             } else {
@@ -55,7 +51,7 @@ export const SavePresetDialog = ({
             }
             setError('');
         }
-    }, [open, mode, currentPresetId, presets]);
+    }, [open, currentPresetId, presets]);
 
     const handleSavePreset = async () => {
         if (!presetName.trim()) {
@@ -67,26 +63,22 @@ export const SavePresetDialog = ({
         setError('');
 
         try {
-            if (mode === 'save' && currentPresetId !== null) {
-                // Update existing preset
-                await presetOperations.updatePreset(
-                    currentPresetId,
-                    presetName.trim(),
-                    currentSettings
-                );
-            } else {
-                // Create new preset (Save As or new save)
-                const exists = await presetOperations.presetNameExists(
-                    presetName.trim(),
-                    currentPresetId || undefined
-                );
-                if (exists) {
-                    setError('A preset with this name already exists');
-                    setSaving(false);
-                    return;
-                }
+            // Always create new preset (Save As)
+            const exists = await presetOperations.presetNameExists(
+                presetName.trim(),
+                currentPresetId || undefined
+            );
+            if (exists) {
+                setError('A preset with this name already exists');
+                setSaving(false);
+                return;
+            }
 
-                await presetOperations.savePreset(presetName.trim(), currentSettings);
+            const newPresetId = await presetOperations.savePreset(presetName.trim(), currentSettings);
+
+            // Notify parent component of the new preset ID
+            if (onPresetCreated && newPresetId) {
+                onPresetCreated(newPresetId);
             }
 
             // Reset and close
@@ -105,13 +97,9 @@ export const SavePresetDialog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='sm:max-w-[450px]'>
                 <DialogHeader>
-                    <DialogTitle>
-                        {mode === 'save' ? 'Update Preset' : 'Save Preset As'}
-                    </DialogTitle>
+                    <DialogTitle>Save Preset As</DialogTitle>
                     <DialogDescription>
-                        {mode === 'save'
-                            ? 'Update the saved preset with current settings.'
-                            : 'Save current PDF settings as a new preset.'}
+                        Save current PDF settings as a new preset.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -155,7 +143,7 @@ export const SavePresetDialog = ({
                         ) : (
                             <>
                                 <Save className='mr-2 h-4 w-4' />
-                                {mode === 'save' ? 'Update' : 'Save'} Preset
+                                Save Preset
                             </>
                         )}
                     </Button>

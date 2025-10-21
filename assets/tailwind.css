@@ -162,7 +162,7 @@ h2 {
     @apply text-xl font-bold mt-6 mb-2;
 }
 
-h3 {
+#chat-container h3 {
     @apply text-lg font-bold mt-6 mb-2;
 }
 

@@ -1,10 +1,12 @@
-import { Save, SaveAll, FileDown, ZoomIn, ZoomOut, RotateCcw, Menu } from 'lucide-react';
+import { Save, SaveAll, FileDown, ZoomIn, ZoomOut, RotateCcw, Menu, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
     zoom: number;
+    chatSaved: boolean;
+    chatChanged: boolean;
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
@@ -16,6 +18,8 @@ interface PreviewToolbarProps {
 export const PreviewToolbar = ({
     currentChatId,
     zoom,
+    chatSaved,
+    chatChanged,
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
@@ -25,7 +29,7 @@ export const PreviewToolbar = ({
 }: PreviewToolbarProps) => {
 
     const { open, setOpen } = useSidebar();
-    
+
     return (
         <div className='sticky top-0 z-10 bg-accent border-b border-border/40 px-4 py-2 flex items-center justify-between gap-2 !rounded-none'>
             {/* Left side - Chat actions */}
@@ -53,9 +57,19 @@ export const PreviewToolbar = ({
                             variant="secondary"
                             size="sm"
                             className='gap-2'
+                            disabled={!chatChanged}
                         >
-                            <Save size={16} />
-                            Save
+                            {chatSaved ? (
+                                <>
+                                    <Check size={16} className='text-green-500' />
+                                    Saved
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={16} />
+                                    Save
+                                </>
+                            )}
                         </Button>
                         <Button
                             onClick={onSaveAsChat}
@@ -69,13 +83,13 @@ export const PreviewToolbar = ({
                     </>
                 ) : (
                     <Button
-                        onClick={onSaveChat}
+                        onClick={onSaveAsChat}
                         variant="secondary"
                         size="sm"
                         className='gap-2'
                     >
-                        <Save size={16} />
-                        Save Chat
+                        <SaveAll size={16} />
+                        Save As
                     </Button>
                 )}
             </div>

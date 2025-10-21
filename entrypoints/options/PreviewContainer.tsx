@@ -9,6 +9,8 @@ interface PreviewContainerProps {
     settings: PDFSettings;
     currentChatId: number | null;
     zoom: number;
+    chatSaved: boolean;
+    chatChanged: boolean;
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
@@ -22,6 +24,8 @@ export const PreviewContainer = ({
     settings,
     currentChatId,
     zoom,
+    chatSaved,
+    chatChanged,
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
@@ -35,6 +39,8 @@ export const PreviewContainer = ({
             <PreviewToolbar
                 currentChatId={currentChatId}
                 zoom={zoom}
+                chatSaved={chatSaved}
+                chatChanged={chatChanged}
                 onSaveChat={onSaveChat}
                 onSaveAsChat={onSaveAsChat}
                 onExportPDF={onExportPDF}

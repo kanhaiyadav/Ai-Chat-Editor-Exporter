@@ -30,9 +30,14 @@ import chatgpt from "@/assets/openai.svg";
 import claude from "@/assets/claude.svg";
 import gemini from "@/assets/gemini-fill.svg";
 import deepseek from "@/assets/deepseek-fill.svg";
+import chatgptLight from "@/assets/openai-light.svg";
+import claudeLight from "@/assets/claude-light.svg";
+import geminiLight from "@/assets/gemini-fill-light.svg";
+import deepseekLight from "@/assets/deepseek-fill-light.svg";
 import { useLiveQuery } from "dexie-react-hooks"
 import { chatOperations, db, presetOperations, SavedChat, SavedPreset } from "@/lib/settingsDB"
 import { PDFSettings, ChatSource } from "./types"
+import { useTheme } from "@/lib/useTheme"
 
 // This is sample data.
 const data = {
@@ -181,6 +186,75 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
         []
     );
 
+    const { theme } = useTheme();
+    console.log("😂😂😂", theme);
+
+    const data = {
+        user: {
+            name: "shadcn",
+            email: "m@example.com",
+            avatar: "/avatars/shadcn.jpg",
+        },
+        teams: [
+            {
+                name: "Acme Inc",
+                logo: GalleryVerticalEnd,
+                plan: "Enterprise",
+            },
+            {
+                name: "Acme Corp.",
+                logo: AudioWaveform,
+                plan: "Startup",
+            },
+            {
+                name: "Evil Corp.",
+                logo: Command,
+                plan: "Free",
+            },
+        ],
+        navMain: [
+            {
+                title: "Chatgpt",
+                url: "#",
+                icon: theme === 'light' ? chatgptLight : chatgpt,
+                isActive: true,
+            },
+            {
+                title: "Claude",
+                url: "#",
+                icon: theme === 'light' ? claudeLight : claude,
+            },
+            {
+                title: "Gemini",
+                url: "#",
+                icon: theme === 'light' ? geminiLight : gemini,
+            },
+            {
+                title: "Deepseek",
+                url: "#",
+                icon: theme === 'light' ? deepseekLight : deepseek,
+            },
+        ],
+        settingPresets: [
+            {
+                name: "Design Engineering",
+                url: "#",
+                icon: Frame,
+            },
+            {
+                name: "Sales & Marketing",
+                url: "#",
+                icon: PieChart,
+            },
+            {
+                name: "Travel",
+                url: "#",
+                icon: Map,
+            },
+        ],
+    }
+
+
     const [editingChatId, setEditingChatId] = useState<number | null>(null);
     const [editingChatName, setEditingChatName] = useState('');
     const [editingPresetId, setEditingPresetId] = useState<number | null>(null);
@@ -190,12 +264,13 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
     const [showFeedback, setShowFeedback] = useState(false);
 
     // Source icons mapping
-    const sourceIcons: Record<string, string> = {
-        chatgpt: chatgpt,
-        claude: claude,
-        gemini: gemini,
-        deepseek: deepseek,
-    };
+    const sourceIcons: Record<string, string> = React.useMemo(() => ({
+        chatgpt: theme === 'dark' ? chatgptLight : chatgpt,
+        claude: theme === 'dark' ? claudeLight : claude,
+        gemini: theme === 'dark' ? geminiLight : gemini,
+        deepseek: theme === 'dark' ? deepseekLight : deepseek,
+    }), [theme]);
+
 
     // Group chats by source
     const chatsBySource = React.useMemo(() => {
@@ -217,16 +292,8 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
 
     // Chat handlers
     const handleLoadChat = async (chat: SavedChat) => {
-        let preset: PDFSettings | null = null;
-
-        if (chat.presetId !== null) {
-            const savedPreset = await presetOperations.getPreset(chat.presetId);
-            if (savedPreset) {
-                preset = savedPreset.settings;
-            }
-        }
-
-        onLoadChat(chat, preset);
+        // Use the stored settings from the chat
+        onLoadChat(chat, chat.settings);
     };
 
     const handleDeleteChat = async (id: number, e: React.MouseEvent) => {
@@ -264,8 +331,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                 chat.title,
                 chat.messages,
                 chat.source,
-                chat.presetId,
-                chat.presetName
+                chat.settings
             );
             setEditingChatId(null);
             setEditingChatName('');

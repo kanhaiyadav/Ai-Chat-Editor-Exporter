@@ -15,8 +15,7 @@ export interface SavedChat {
     title: string;
     messages: Message[];
     source: ChatSource; // Source of the chat (chatgpt, claude, gemini, deepseek)
-    presetId: number | null; // null means "Current Settings"
-    presetName: string; // For display purposes
+    settings: PDFSettings; // Store the full settings preset
     createdAt: Date;
     updatedAt: Date;
 }
@@ -37,6 +36,11 @@ export class SettingsDatabase extends Dexie {
         });
         // Add version 3 to include source field in chats
         this.version(3).stores({
+            presets: "++id, name, createdAt, updatedAt",
+            chats: "++id, name, source, createdAt, updatedAt",
+        });
+        // Add version 4 to store full settings in chats instead of presetId
+        this.version(4).stores({
             presets: "++id, name, createdAt, updatedAt",
             chats: "++id, name, source, createdAt, updatedAt",
         });
@@ -113,8 +117,7 @@ export const chatOperations = {
         title: string,
         messages: Message[],
         source: ChatSource,
-        presetId: number | null,
-        presetName: string
+        settings: PDFSettings
     ): Promise<number> {
         const now = new Date();
         return await db.chats.add({
@@ -122,8 +125,7 @@ export const chatOperations = {
             title,
             messages,
             source,
-            presetId,
-            presetName,
+            settings,
             createdAt: now,
             updatedAt: now,
         });
@@ -146,16 +148,14 @@ export const chatOperations = {
         title: string,
         messages: Message[],
         source: ChatSource,
-        presetId: number | null,
-        presetName: string
+        settings: PDFSettings
     ): Promise<void> {
         await db.chats.update(id, {
             name,
             title,
             messages,
             source,
-            presetId,
-            presetName,
+            settings,
             updatedAt: new Date(),
         });
     },
@@ -185,8 +185,7 @@ export const chatOperations = {
             chat.title,
             chat.messages,
             chat.source,
-            chat.presetId,
-            chat.presetName
+            chat.settings
         );
     },
 
