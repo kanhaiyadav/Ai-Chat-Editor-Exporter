@@ -17,13 +17,18 @@ import {
 import { NavMain } from "./nav-main"
 import { NavChats } from "./nav-chats"
 import { NavPresets } from "./nav-presets"
-import { NavUser } from "./nav-user"
-import { TeamSwitcher } from "./team-switcher"
+import { ToggleSidebar } from "./team-switcher"
+import { BuyMeCoffeeModal } from "@/components/BuyMeCoffeeModal"
+import { FeedbackModal } from "@/components/FeedbackModal"
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
+    SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
     SidebarRail,
 } from "@/components/ui/sidebar"
 import chatgpt from "@/assets/openai.svg";
@@ -38,6 +43,9 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { chatOperations, db, presetOperations, SavedChat, SavedPreset } from "@/lib/settingsDB"
 import { PDFSettings, ChatSource } from "./types"
 import { useTheme } from "@/lib/useTheme"
+import { TbMessageReport } from "react-icons/tb"
+import { SiBuymeacoffee } from "react-icons/si"
+import { FaGithub } from "react-icons/fa6"
 
 // This is sample data.
 const data = {
@@ -175,6 +183,8 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarProps) {
+    const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
+    const [feedbackOpen, setFeedbackOpen] = React.useState(false)
 
     const chats = useLiveQuery(
         () => db.chats.orderBy('updatedAt').reverse().toArray(),
@@ -264,10 +274,10 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
 
     // Source icons mapping
     const sourceIcons: Record<string, string> = React.useMemo(() => ({
-        chatgpt: theme === 'dark' ? chatgptLight : chatgpt,
-        claude: theme === 'dark' ? claudeLight : claude,
-        gemini: theme === 'dark' ? geminiLight : gemini,
-        deepseek: theme === 'dark' ? deepseekLight : deepseek,
+        chatgpt: theme !== 'light' ? chatgptLight : chatgpt,
+        claude: theme !== 'light' ? claudeLight : claude,
+        gemini: theme !== 'light' ? geminiLight : gemini,
+        deepseek: theme !== 'light' ? deepseekLight : deepseek,
     }), [theme]);
 
 
@@ -438,47 +448,79 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
 
 
     return (
-        <Sidebar collapsible="icon" {...props} className="h-full">
-            <SidebarHeader className="border-t-[3px] border-[#bbbbbb] dark:border-0">
-                <TeamSwitcher teams={data.teams} />
-            </SidebarHeader>
-            <SidebarContent>
-                <NavChats
-                    chats={chats || []}
-                    chatsBySource={chatsBySource}
-                    sourceIcons={sourceIcons}
-                    handleLoadChat={handleLoadChat}
-                    editingChatId={editingChatId}
-                    editingChatName={editingChatName}
-                    setEditingChatName={setEditingChatName}
-                    handleStartEditChat={handleStartEditChat}
-                    handleSaveEditChat={handleSaveEditChat}
-                    handleCancelEditChat={handleCancelEditChat}
-                    handleDeleteChat={handleDeleteChat}
-                    handleDuplicateChat={handleDuplicateChat}
-                    formatDate={formatDate}
-                    error={error}
-                />
-                <NavPresets
-                    presets={presets || []}
-                    handleLoadPreset={handleLoadPreset}
-                    editingPresetId={editingPresetId}
-                    editingPresetName={editingPresetName}
-                    setEditingPresetName={setEditingPresetName}
-                    handleStartEditPreset={handleStartEditPreset}
-                    handleSaveEditPreset={handleSaveEditPreset}
-                    handleCancelEditPreset={handleCancelEditPreset}
-                    setError={setError}
-                    error={error}
-                    formatDate={formatDate}
-                    handleDeletePreset={handleDeletePreset}
-                    handleDuplicatePreset={handleDuplicatePreset}
-                />
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser user={data.user} />
-            </SidebarFooter>
-            <SidebarRail />
-        </Sidebar>
+        <>
+            <Sidebar collapsible="icon" {...props} className="h-full">
+                <SidebarHeader className="border-t-[3px] border-[#bbbbbb] dark:border-0">
+                    <ToggleSidebar teams={data.teams} />
+                </SidebarHeader>
+                <SidebarContent>
+                    <NavChats
+                        chats={chats || []}
+                        chatsBySource={chatsBySource}
+                        sourceIcons={sourceIcons}
+                        handleLoadChat={handleLoadChat}
+                        editingChatId={editingChatId}
+                        editingChatName={editingChatName}
+                        setEditingChatName={setEditingChatName}
+                        handleStartEditChat={handleStartEditChat}
+                        handleSaveEditChat={handleSaveEditChat}
+                        handleCancelEditChat={handleCancelEditChat}
+                        handleDeleteChat={handleDeleteChat}
+                        handleDuplicateChat={handleDuplicateChat}
+                        formatDate={formatDate}
+                        error={error}
+                    />
+                    <NavPresets
+                        presets={presets || []}
+                        handleLoadPreset={handleLoadPreset}
+                        editingPresetId={editingPresetId}
+                        editingPresetName={editingPresetName}
+                        setEditingPresetName={setEditingPresetName}
+                        handleStartEditPreset={handleStartEditPreset}
+                        handleSaveEditPreset={handleSaveEditPreset}
+                        handleCancelEditPreset={handleCancelEditPreset}
+                        setError={setError}
+                        error={error}
+                        formatDate={formatDate}
+                        handleDeletePreset={handleDeletePreset}
+                        handleDuplicatePreset={handleDuplicatePreset}
+                    />
+                </SidebarContent>
+                <SidebarFooter>
+                    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+                        <SidebarGroupLabel>Contribute</SidebarGroupLabel>
+                        <SidebarMenu>
+                            <SidebarMenuButton
+                                onClick={() => setBuyMeCoffeeOpen(true)}
+                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
+                            >
+                                <SiBuymeacoffee className='text-black/80' />
+                                <span className="font-semibold">Buy Me a Coffee</span>
+                            </SidebarMenuButton>
+                            <SidebarMenuButton
+                                onClick={() => setFeedbackOpen(true)}
+                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
+                            >
+                                <TbMessageReport className='w-10 text-black/80' />
+                                <span className="font-semibold">Send Feedback</span>
+                            </SidebarMenuButton>
+                            <a
+                                href="https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex gap-2 items-center"
+                            >
+                                <FaGithub size={16} className='text-black/80' />
+                                <span className="font-semibold text-sm">Star on GitHub</span>
+                            </a>
+                        </SidebarMenu>
+                    </SidebarGroup>
+                </SidebarFooter>
+                <SidebarRail />
+            </Sidebar>
+
+            <BuyMeCoffeeModal open={buyMeCoffeeOpen} onOpenChange={setBuyMeCoffeeOpen} />
+            <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
+        </>
     )
 }

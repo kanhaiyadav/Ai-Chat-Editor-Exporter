@@ -67,7 +67,6 @@ export function NavChats({
                     <Collapsible
                         key={source}
                         asChild
-                        defaultOpen={source === "chatgpt"}
                         className="group/collapsible"
                     >
                         <SidebarMenuItem>

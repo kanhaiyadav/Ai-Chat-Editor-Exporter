@@ -115,61 +115,104 @@ function App() {
 
 
     useEffect(() => {
-        // Load chat data
-        chrome.storage.local.get(["chatData"], (result) => {
-            const cleanedChatData = result.chatData?.messages?.map((msg: Message) => ({
-                ...msg,
-                content: cleanHTML(msg.content)
-            }));
-            const chatDataWithSource = {
-                ...result.chatData,
-                messages: cleanedChatData,
-                source: result.chatData?.source || "chatgpt" as ChatSource, // Default to chatgpt for backward compatibility
+        const init = async () => {
+            // Helper to use chrome.storage with await
+            const getFromStorage = (keys: string[]): Promise<any> => {
+                return new Promise((resolve) => {
+                    chrome.storage.local.get(keys, (result) => {
+                        resolve(result);
+                    });
+                });
             };
-            setChatData(chatDataWithSource);
-            // Initialize all messages as selected
-            if (cleanedChatData) {
-                const initialSelectedMessages: Set<number> = new Set(cleanedChatData.map((_: Message, index: number) => index));
+
+            // 1️⃣ Load savedChatId first
+            const { savedChatId } = await getFromStorage(["savedChatId"]);
+
+            if (savedChatId) {
+                setCurrentChatId(savedChatId);
+
+                // 2️⃣ Load chat data
+                const { chatData } = await getFromStorage(["chatData"]);
+                const SavedChatData: ChatData = {
+                    ...chatData,
+                    source: chatData?.source || ("chatgpt" as ChatSource),
+                };
+                setChatData(SavedChatData);
+
+                // 3️⃣ Initialize selected messages
+                const initialSelectedMessages = new Set(
+                    SavedChatData?.messages.map((_: Message, index: number) => index)
+                );
                 setSelectedMessages(initialSelectedMessages);
 
-                // Set as original chat data for new chats from content script
-                // This allows tracking changes even when currentChatId is null
+                // 4️⃣ Load PDF settings
+                const { pdfSettings } = await getFromStorage(["pdfSettings"]);
+                if (pdfSettings) setSettings(pdfSettings);
+
+                // 5️⃣ Set original chat data
                 setOriginalChatData({
-                    messages: JSON.parse(JSON.stringify(cleanedChatData)),
+                    messages: SavedChatData?.messages || [],
                     selectedMessages: new Set(initialSelectedMessages),
-                    settings: JSON.parse(JSON.stringify(defaultSettings))
+                    settings: pdfSettings || defaultSettings,
                 });
-            }
-        });
+            } else {
 
-        // Load settings
-        chrome.storage.local.get(["pdfSettings"], (result) => {
-            if (result.pdfSettings) {
-                setSettings(result.pdfSettings);
-            }
-        });
+                const { chatData } = await getFromStorage(["chatData"]);
+                const cleanedChatData = chatData?.messages?.map((msg: Message) => ({
+                    ...msg,
+                    content: cleanHTML(msg.content),
+                }));
+                const chatDataWithSource = {
+                    ...chatData,
+                    messages: cleanedChatData,
+                    source: chatData?.source || ("chatgpt" as ChatSource),
+                };
+                setChatData(chatDataWithSource);
 
-        const listener = (changes: StorageChanges, areaName: string) => {
-            if (areaName === 'local') {
-                if (changes.chatData) {
-                    const cleanedData = changes.chatData.newValue?.map((msg: Message) => ({
-                        ...msg,
-                        content: cleanHTML(msg.content)
-                    }));
-                    setChatData(cleanedData);
+                if (cleanedChatData) {
+                    const initialSelectedMessages: Set<number> = new Set(
+                        cleanedChatData.map((_: Message, index: number) => index)
+                    );
+                    setSelectedMessages(initialSelectedMessages);
+                    setOriginalChatData({
+                        messages: JSON.parse(JSON.stringify(cleanedChatData)),
+                        selectedMessages: new Set(initialSelectedMessages),
+                        settings: JSON.parse(JSON.stringify(defaultSettings)),
+                    });
                 }
-                if (changes.pdfSettings) {
-                    setSettings(changes.pdfSettings.newValue);
-                }
+
+                const { pdfSettings } = await getFromStorage(["pdfSettings"]);
+                if (pdfSettings) setSettings(pdfSettings);
             }
+
+            // 🧏‍♀️ Add change listener
+            const listener = (changes: StorageChanges, areaName: string) => {
+                if (areaName === "local") {
+                    if (changes.chatData) {
+                        const cleanedData = changes.chatData.newValue?.map(
+                            (msg: Message) => ({
+                                ...msg,
+                                content: cleanHTML(msg.content),
+                            })
+                        );
+                        setChatData(cleanedData);
+                    }
+                    if (changes.pdfSettings) {
+                        setSettings(changes.pdfSettings.newValue);
+                    }
+                    if (changes.savedChatId) {
+                        setCurrentChatId(changes.savedChatId.newValue);
+                    }
+                }
+            };
+
+            chrome.storage.onChanged.addListener(listener);
+            return () => chrome.storage.onChanged.removeListener(listener);
         };
 
-        chrome.storage.onChanged.addListener(listener);
-
-        return () => {
-            chrome.storage.onChanged.removeListener(listener);
-        };
+        init();
     }, []);
+
 
     useEffect(() => {
         setSettings(prev => ({
@@ -203,6 +246,12 @@ function App() {
             const settingsChanged = originalChatData.settings
                 ? !deepEqual(settings, originalChatData.settings)
                 : false;
+            console.log("😂😂😂 Chat change tracking:", {
+                messagesChanged,
+                selectionChanged,
+                settingsChanged
+            });
+            console.log("😱😱😱", settings, originalChatData.settings);
             setChatChanged(messagesChanged || selectionChanged || settingsChanged);
         } else {
             setChatChanged(false);
@@ -426,7 +475,7 @@ function App() {
             source: chat.source,
         };
         setChatData(newChatData);
-        chrome.storage.local.set({ chatData: newChatData });
+        chrome.storage.local.set({ chatData: newChatData, savedChatId: chat.id! });
 
         // Track the current chat ID
         setCurrentChatId(chat.id!);
@@ -549,7 +598,7 @@ function App() {
     };
 
     // Filter messages based on selection
-    const filteredMessages = chatData?.messages.filter((_, index) => selectedMessages.has(index)) || null;
+    const filteredMessages = chatData?.messages?.filter((_, index) => selectedMessages.has(index)) || null;
 
     return (
         <div className='flex flex-col items-center h-screen w-full !overflow-hidden'>

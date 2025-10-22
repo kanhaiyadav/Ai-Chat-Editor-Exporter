@@ -11,6 +11,5 @@ export const cleanHTML = (html: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
     doc.querySelectorAll("button").forEach(el => el.remove());
-    console.log("Cleaned HTML:", doc.body.innerHTML);
     return doc.body.innerHTML;
 };

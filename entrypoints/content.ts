@@ -272,6 +272,8 @@ export default defineContentScript({
                                     messages,
                                     source: "chatgpt",
                                 },
+                                savedChatId: null,
+                                pdfSettings: null,
                             },
                             () => {
                                 chrome.runtime.sendMessage({

@@ -1,6 +1,5 @@
 import { Save, SaveAll, FileDown, Menu, Check, Merge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSidebar } from '@/components/ui/sidebar';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -22,19 +21,11 @@ export const PreviewToolbar = ({
     onMerge,
 }: PreviewToolbarProps) => {
 
-    const { open, setOpen } = useSidebar();
 
     return (
         <div className='sticky top-0 z-10 bg-accent border-b border-border/40 px-4 py-2 flex items-center justify-between gap-2 !rounded-none'>
             {/* Left side - Chat actions */}
             <div className='flex items-center gap-2'>
-                <Button
-                    onClick={() => setOpen(!open)}
-                    variant="ghost"
-                    size="sm"
-                >
-                    <Menu size={16} />
-                </Button>
                 <Button
                     onClick={onExportPDF}
                     size="sm"
@@ -48,7 +39,7 @@ export const PreviewToolbar = ({
                     onClick={onMerge}
                     size="sm"
                     className='gap-2'
-                    variant="secondary"
+                    variant="ghost"
                 >
                     <Merge size={16} />
                     Merge Chats

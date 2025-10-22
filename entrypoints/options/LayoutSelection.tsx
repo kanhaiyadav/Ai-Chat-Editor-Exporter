@@ -14,7 +14,7 @@ export const LayoutSelector = ({ selectedLayout, onLayoutChange }: LayoutSelecto
 
     return (
         <div>
-            <h2 className='!text-base !my-0 !mb-1'>Select Layout</h2>
+            <h2 className='text-sm mb-1 font-semibold'>Select Layout</h2>
             <div className='flex items-center gap-2'>
                 {layouts.map(({ value, image, alt }) => (
                     <div
