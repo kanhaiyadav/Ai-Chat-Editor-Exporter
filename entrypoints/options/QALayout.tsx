@@ -62,6 +62,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 lineHeight: '1.6',
                                 fontWeight: isQuestion ? "600" : "400",
+                                marginTop: !isQuestion ? "-15px" : "0"
                             }}>
                                 {
                                     message.content !== '' &&

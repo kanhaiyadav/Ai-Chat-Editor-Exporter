@@ -45,7 +45,6 @@ function App() {
     const [currentChatId, setCurrentChatId] = useState<number | null>(null);
     const [currentPresetId, setCurrentPresetId] = useState<number | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [zoom, setZoom] = useState(1);
     const [chatSaved, setChatSaved] = useState(false);
     const [presetSaved, setPresetSaved] = useState(false);
     const [originalSettings, setOriginalSettings] = useState<PDFSettings | null>(null);
@@ -428,18 +427,6 @@ function App() {
         setSidebarOpen(!sidebarOpen);
     };
 
-    const handleZoomIn = () => {
-        setZoom(prev => Math.min(prev + 0.1, 2));
-    };
-
-    const handleZoomOut = () => {
-        setZoom(prev => Math.max(prev - 0.1, 0.5));
-    };
-
-    const handleResetZoom = () => {
-        setZoom(1);
-    };
-
     const handleGeneratePDF = () => {
         window.print();
     };
@@ -462,15 +449,11 @@ function App() {
                             messages={filteredMessages}
                             settings={settings}
                             currentChatId={currentChatId}
-                            zoom={zoom}
                             chatSaved={chatSaved}
                             chatChanged={chatChanged}
                             onSaveChat={handleSaveChat}
                             onSaveAsChat={handleSaveAsChat}
                             onExportPDF={handleGeneratePDF}
-                            onZoomIn={handleZoomIn}
-                            onZoomOut={handleZoomOut}
-                            onResetZoom={handleResetZoom}
                         />
 
                         <SettingsPanel

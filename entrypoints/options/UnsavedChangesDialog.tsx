@@ -24,7 +24,7 @@ export const UnsavedChangesDialog = ({
 }: UnsavedChangesDialogProps) => {
     return (
         <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-            <DialogContent className='sm:max-w-[450px]'>
+            <DialogContent className='sm:max-w-[450px] bg-accent'>
                 <DialogHeader>
                     <div className='flex items-center gap-2'>
                         <AlertTriangle className='h-5 w-5 text-yellow-500' />
@@ -35,7 +35,7 @@ export const UnsavedChangesDialog = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <DialogFooter className='gap-2 sm:gap-0'>
+                <DialogFooter className='flex items-center gap-2 w-full'>
                     <Button
                         variant='outline'
                         onClick={onCancel}

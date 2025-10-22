@@ -1,31 +1,23 @@
-import { Save, SaveAll, FileDown, ZoomIn, ZoomOut, RotateCcw, Menu, Check } from 'lucide-react';
+import { Save, SaveAll, FileDown, Menu, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
-    zoom: number;
     chatSaved: boolean;
     chatChanged: boolean;
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
-    onZoomIn: () => void;
-    onZoomOut: () => void;
-    onResetZoom: () => void;
 }
 
 export const PreviewToolbar = ({
     currentChatId,
-    zoom,
     chatSaved,
     chatChanged,
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
-    onZoomIn,
-    onZoomOut,
-    onResetZoom,
 }: PreviewToolbarProps) => {
 
     const { open, setOpen } = useSidebar();
@@ -54,7 +46,7 @@ export const PreviewToolbar = ({
                     <>
                         <Button
                             onClick={onSaveChat}
-                            variant="secondary"
+                            variant="ghost"
                             size="sm"
                             className='gap-2'
                             disabled={!chatChanged}
@@ -73,7 +65,7 @@ export const PreviewToolbar = ({
                         </Button>
                         <Button
                             onClick={onSaveAsChat}
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
                             className='gap-2'
                         >
@@ -84,7 +76,7 @@ export const PreviewToolbar = ({
                 ) : (
                     <Button
                         onClick={onSaveAsChat}
-                        variant="secondary"
+                        variant="ghost"
                         size="sm"
                         className='gap-2'
                     >
@@ -92,42 +84,6 @@ export const PreviewToolbar = ({
                         Save As
                     </Button>
                 )}
-            </div>
-
-            {/* Right side - Zoom controls */}
-            <div className='flex items-center gap-2'>
-                <span className='text-sm text-muted-foreground min-w-[60px] text-center'>
-                    {Math.round(zoom * 100)}%
-                </span>
-                <Button
-                    onClick={onZoomOut}
-                    variant="ghost"
-                    size="sm"
-                    disabled={zoom <= 0.5}
-                    className='h-8 w-8 p-0'
-                    title='Zoom Out'
-                >
-                    <ZoomOut size={16} />
-                </Button>
-                <Button
-                    onClick={onResetZoom}
-                    variant="ghost"
-                    size="sm"
-                    className='h-8 w-8 p-0'
-                    title='Reset Zoom'
-                >
-                    <RotateCcw size={14} />
-                </Button>
-                <Button
-                    onClick={onZoomIn}
-                    variant="ghost"
-                    size="sm"
-                    disabled={zoom >= 2}
-                    className='h-8 w-8 p-0'
-                    title='Zoom In'
-                >
-                    <ZoomIn size={16} />
-                </Button>
             </div>
         </div>
     );
