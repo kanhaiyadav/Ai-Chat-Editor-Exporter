@@ -12,7 +12,6 @@ import {
     Github,
     MessageCircle,
     Coffee,
-    Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,6 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarProvider,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { PDFSettings } from './types';
@@ -68,17 +66,8 @@ export const LeftSidebar = ({
     const [showFeedback, setShowFeedback] = useState(false);
 
     // Chat handlers
-    const handleLoadChat = async (chat: SavedChat) => {
-        let preset: PDFSettings | null = null;
-
-        if (chat.presetId !== null) {
-            const savedPreset = await presetOperations.getPreset(chat.presetId);
-            if (savedPreset) {
-                preset = savedPreset.settings;
-            }
-        }
-
-        onLoadChat(chat, preset);
+    const handleLoadChat = (chat: SavedChat) => {
+        onLoadChat(chat, chat.settings);
         onClose();
     };
 
@@ -116,8 +105,8 @@ export const LeftSidebar = ({
                 editingChatName.trim(),
                 chat.title,
                 chat.messages,
-                chat.presetId,
-                chat.presetName
+                chat.source,
+                chat.settings
             );
             setEditingChatId(null);
             setEditingChatName('');
@@ -312,7 +301,7 @@ export const LeftSidebar = ({
                                                             </p>
                                                             <div className='flex items-center gap-2 flex-wrap'>
                                                                 <span className='text-xs text-muted-foreground bg-accent px-2 py-0.5 rounded'>
-                                                                    {chat.presetName}
+                                                                    {chat.source}
                                                                 </span>
                                                                 <span className='text-xs text-muted-foreground'>
                                                                     {chat.messages.length} msgs

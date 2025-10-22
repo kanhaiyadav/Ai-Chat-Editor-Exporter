@@ -1,4 +1,4 @@
-import { Save, SaveAll, FileDown, Menu, Check } from 'lucide-react';
+import { Save, SaveAll, FileDown, Menu, Check, Merge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 
@@ -9,6 +9,7 @@ interface PreviewToolbarProps {
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
+    onMerge: () => void;
 }
 
 export const PreviewToolbar = ({
@@ -18,6 +19,7 @@ export const PreviewToolbar = ({
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
+    onMerge,
 }: PreviewToolbarProps) => {
 
     const { open, setOpen } = useSidebar();
@@ -40,6 +42,16 @@ export const PreviewToolbar = ({
                 >
                     <FileDown size={16} />
                     Export PDF
+                </Button>
+
+                <Button
+                    onClick={onMerge}
+                    size="sm"
+                    className='gap-2'
+                    variant="secondary"
+                >
+                    <Merge size={16} />
+                    Merge Chats
                 </Button>
 
                 {currentChatId !== null ? (

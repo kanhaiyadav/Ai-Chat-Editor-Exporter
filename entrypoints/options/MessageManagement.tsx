@@ -50,6 +50,18 @@ interface SortableMessageItemProps {
     truncateText: (text: string, maxLength?: number) => string;
 }
 
+// Simple hash function to create stable IDs for messages
+const generateMessageHash = (message: Message): string => {
+    const content = `${message.role}-${message.content || ''}`;
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+        const char = content.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return `message-${Math.abs(hash)}`;
+};
+
 const SortableMessageItem = ({
     message,
     index,
@@ -59,6 +71,7 @@ const SortableMessageItem = ({
     getRoleBadgeColor,
     truncateText,
 }: SortableMessageItemProps) => {
+    const messageId = generateMessageHash(message);
     const {
         attributes,
         listeners,
@@ -66,7 +79,7 @@ const SortableMessageItem = ({
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: `message-${index}` });
+    } = useSortable({ id: messageId });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -176,11 +189,17 @@ export const MessageManagement = ({
         const { active, over } = event;
 
         if (over && active.id !== over.id && messages) {
-            const oldIndex = parseInt(active.id.toString().replace('message-', ''));
-            const newIndex = parseInt(over.id.toString().replace('message-', ''));
+            // Find indices by matching the message hashes
+            const activeId = active.id.toString();
+            const overId = over.id.toString();
 
-            const newMessages = arrayMove(messages, oldIndex, newIndex);
-            onReorderMessages(newMessages);
+            const oldIndex = messages.findIndex((msg) => generateMessageHash(msg) === activeId);
+            const newIndex = messages.findIndex((msg) => generateMessageHash(msg) === overId);
+
+            if (oldIndex !== -1 && newIndex !== -1) {
+                const newMessages = arrayMove(messages, oldIndex, newIndex);
+                onReorderMessages(newMessages);
+            }
         }
     };
 
@@ -249,13 +268,13 @@ export const MessageManagement = ({
                                     onDragEnd={handleDragEnd}
                                 >
                                     <SortableContext
-                                        items={messages.map((_, index) => `message-${index}`)}
+                                        items={messages.map((message) => generateMessageHash(message))}
                                         strategy={verticalListSortingStrategy}
                                     >
                                         <div className="space-y-2 mt-2">
                                             {messages.map((message, index) => (
                                                 <SortableMessageItem
-                                                    key={`message-${index}`}
+                                                    key={generateMessageHash(message)}
                                                     message={message}
                                                     index={index}
                                                     isSelected={selectedMessages.has(index)}

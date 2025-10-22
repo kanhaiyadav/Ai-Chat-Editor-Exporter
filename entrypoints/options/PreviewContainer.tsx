@@ -13,6 +13,7 @@ interface PreviewContainerProps {
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
+    onMerge: () => void;
 }
 
 export const PreviewContainer = ({
@@ -24,6 +25,7 @@ export const PreviewContainer = ({
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
+    onMerge,
 }: PreviewContainerProps) => {
     console.log("Rendering PreviewContainer with settings:", settings);
     return (
@@ -35,6 +37,7 @@ export const PreviewContainer = ({
                 onSaveChat={onSaveChat}
                 onSaveAsChat={onSaveAsChat}
                 onExportPDF={onExportPDF}
+                onMerge={onMerge}
             />
 
             <div
@@ -42,7 +45,7 @@ export const PreviewContainer = ({
             >
                 <div
                     id='chat-container'
-                    className='mx-auto px-8 shadow-lg relative'
+                    className='mx-auto px-8 shadow-lg relative pt-10'
                     style={{
                         maxWidth: '800px',
                         minHeight: '1000px',

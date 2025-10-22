@@ -8,9 +8,11 @@ import { SettingsPanel } from './SettingsPanel';
 import { SaveChatDialog } from './SaveChatDialog';
 import { SavePresetDialog } from './SavePresetDialog';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
-import { SavedChat } from '@/lib/settingsDB';
+import { MergeChatsDialog } from './MergeChatsDialog';
+import { SavedChat, SavedPreset } from '@/lib/settingsDB';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 interface StorageChange {
     newValue?: any;
@@ -25,6 +27,59 @@ interface ChatData {
     messages: Message[];
     source: ChatSource;
 }
+
+const deepEqual = (a: unknown, b: unknown): boolean => {
+    if (Object.is(a, b)) {
+        return true;
+    }
+
+    if (typeof a !== typeof b || a === null || b === null) {
+        return false;
+    }
+
+    if (Array.isArray(a) || Array.isArray(b)) {
+        if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) {
+            return false;
+        }
+        for (let i = 0; i < a.length; i++) {
+            if (!deepEqual(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    if (a instanceof Date || b instanceof Date) {
+        if (!(a instanceof Date) || !(b instanceof Date)) {
+            return false;
+        }
+        return a.getTime() === b.getTime();
+    }
+
+    if (typeof a === 'object' && typeof b === 'object') {
+        const objA = a as Record<string, unknown>;
+        const objB = b as Record<string, unknown>;
+        const keysA = Object.keys(objA);
+        const keysB = Object.keys(objB);
+
+        if (keysA.length !== keysB.length) {
+            return false;
+        }
+
+        for (const key of keysA) {
+            if (!Object.prototype.hasOwnProperty.call(objB, key)) {
+                return false;
+            }
+            if (!deepEqual(objA[key], objB[key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+};
 
 function App() {
     const [chatData, setChatData] = useState<ChatData | null>(null);
@@ -53,6 +108,10 @@ function App() {
     const [chatChanged, setChatChanged] = useState(false);
     const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = useState(false);
     const [pendingChatLoad, setPendingChatLoad] = useState<{ chat: SavedChat, preset: PDFSettings | null } | null>(null);
+    const [showMergeDialog, setShowMergeDialog] = useState(false);
+    const [pendingPreset, setPendingPreset] = useState<SavedPreset | null>(null);
+    const [showPresetWarning, setShowPresetWarning] = useState(false);
+    const [showResetWarning, setShowResetWarning] = useState(false);
 
 
     useEffect(() => {
@@ -125,7 +184,7 @@ function App() {
     // Track settings changes
     useEffect(() => {
         if (originalSettings && currentPresetId !== null) {
-            const changed = JSON.stringify(settings) !== JSON.stringify(originalSettings);
+            const changed = !deepEqual(settings, originalSettings);
             setSettingsChanged(changed);
         } else {
             setSettingsChanged(false);
@@ -136,10 +195,13 @@ function App() {
     // Works for both saved chats (currentChatId !== null) and new chats (currentChatId === null)
     useEffect(() => {
         if (originalChatData && chatData) {
-            const messagesChanged = JSON.stringify(chatData.messages) !== JSON.stringify(originalChatData.messages);
-            const selectionChanged = JSON.stringify([...selectedMessages].sort()) !== JSON.stringify([...originalChatData.selectedMessages].sort());
+            const messagesChanged = !deepEqual(chatData.messages, originalChatData.messages);
+            const selectionChanged = !deepEqual(
+                Array.from(selectedMessages).sort((a, b) => a - b),
+                Array.from(originalChatData.selectedMessages).sort((a, b) => a - b)
+            );
             const settingsChanged = originalChatData.settings
-                ? JSON.stringify(settings) !== JSON.stringify(originalChatData.settings)
+                ? !deepEqual(settings, originalChatData.settings)
                 : false;
             setChatChanged(messagesChanged || selectionChanged || settingsChanged);
         } else {
@@ -168,9 +230,17 @@ function App() {
         chrome.storage.local.set({ pdfSettings: newSettings });
     };
 
+    const handleResetSettingsRequest = () => {
+        setShowResetWarning(true);
+    };
+
     const resetSettings = () => {
-        setSettings(defaultSettings);
-        chrome.storage.local.set({ pdfSettings: defaultSettings });
+        const preservedHeaderText = settings.general.headerText;
+        const defaultClone: PDFSettings = JSON.parse(JSON.stringify(defaultSettings));
+        defaultClone.general.headerText = preservedHeaderText;
+        setSettings(defaultClone);
+        chrome.storage.local.set({ pdfSettings: defaultClone });
+        setShowResetWarning(false);
     };
 
     const toggleSection = (section: string) => {
@@ -219,11 +289,9 @@ function App() {
         setSelectedMessages(newSelectedMessages);
     };
 
-    const handleLoadPreset = (presetSettings: PDFSettings, presetId: number) => {
-        setSettings(presetSettings);
-        setCurrentPresetId(presetId);
-        setOriginalSettings(JSON.parse(JSON.stringify(presetSettings))); // Deep clone
-        chrome.storage.local.set({ pdfSettings: presetSettings });
+    const handleLoadPreset = (preset: SavedPreset) => {
+        setPendingPreset(preset);
+        setShowPresetWarning(true);
     };
 
     const handleSavePreset = async () => {
@@ -260,6 +328,28 @@ function App() {
         setCurrentPresetId(presetId);
         // Set original settings after creating new preset
         setOriginalSettings(JSON.parse(JSON.stringify(settings)));
+    };
+
+    const applyPendingPreset = () => {
+        if (!pendingPreset || !pendingPreset.id) {
+            setPendingPreset(null);
+            setShowPresetWarning(false);
+            return;
+        }
+
+        const presetSettings: PDFSettings = JSON.parse(JSON.stringify(pendingPreset.settings));
+        presetSettings.general.headerText = settings.general.headerText;
+        setSettings(presetSettings);
+        setCurrentPresetId(pendingPreset.id);
+        setOriginalSettings(JSON.parse(JSON.stringify(presetSettings)));
+        chrome.storage.local.set({ pdfSettings: presetSettings });
+        setPendingPreset(null);
+        setShowPresetWarning(false);
+    };
+
+    const cancelPendingPreset = () => {
+        setPendingPreset(null);
+        setShowPresetWarning(false);
     };
 
     const handleSaveChat = async () => {
@@ -431,6 +521,33 @@ function App() {
         window.print();
     };
 
+    const handleMergeChats = (mergedMessages: Message[]) => {
+        if (!chatData) return;
+
+        // Update chat data with merged messages
+        const updatedChatData = {
+            ...chatData,
+            title: chatData.title + ' (Merged)',
+            messages: mergedMessages
+        };
+        setChatData(updatedChatData);
+        chrome.storage.local.set({ chatData: updatedChatData });
+
+        // Select all merged messages
+        const newSelectedMessages = new Set(mergedMessages.map((_, index) => index));
+        setSelectedMessages(newSelectedMessages);
+
+        // Reset current chat ID as this is a new merged chat
+        setCurrentChatId(null);
+
+        // Update original chat data to track future changes
+        setOriginalChatData({
+            messages: JSON.parse(JSON.stringify(mergedMessages)),
+            selectedMessages: new Set(newSelectedMessages),
+            settings: JSON.parse(JSON.stringify(settings))
+        });
+    };
+
     // Filter messages based on selection
     const filteredMessages = chatData?.messages.filter((_, index) => selectedMessages.has(index)) || null;
 
@@ -454,6 +571,7 @@ function App() {
                             onSaveChat={handleSaveChat}
                             onSaveAsChat={handleSaveAsChat}
                             onExportPDF={handleGeneratePDF}
+                            onMerge={() => setShowMergeDialog(true)}
                         />
 
                         <SettingsPanel
@@ -466,7 +584,7 @@ function App() {
                             presetSaved={presetSaved}
                             onUpdateSettings={updateSettings}
                             onToggleSection={toggleSection}
-                            onResetSettings={resetSettings}
+                            onResetSettings={handleResetSettingsRequest}
                             onUpdateMessage={handleUpdateMessage}
                             onToggleMessage={handleToggleMessage}
                             onReorderMessages={handleReorderMessages}
@@ -501,6 +619,37 @@ function App() {
                 onSave={handleUnsavedChangesSave}
                 onDiscard={handleUnsavedChangesDiscard}
                 onCancel={handleUnsavedChangesCancel}
+            />
+
+            <MergeChatsDialog
+                isOpen={showMergeDialog}
+                onClose={() => setShowMergeDialog(false)}
+                currentMessages={chatData?.messages || []}
+                onMerge={handleMergeChats}
+            />
+
+            <ConfirmationDialog
+                open={showPresetWarning}
+                title='Apply preset settings?'
+                description={pendingPreset ? (
+                    <span>
+                        Applying the <strong>{pendingPreset.name}</strong> preset will overwrite your current styling and layout settings.
+                        This action cannot be undone.
+                    </span>
+                ) : 'Applying this preset will overwrite your current styling and layout settings. This action cannot be undone.'}
+                confirmLabel='Apply preset'
+                onConfirm={applyPendingPreset}
+                onCancel={cancelPendingPreset}
+            />
+
+            <ConfirmationDialog
+                open={showResetWarning}
+                title='Reset settings to default?'
+                description='Resetting will restore all styling and layout settings to their defaults. Your current configuration cannot be undone.'
+                confirmLabel='Reset'
+                destructive
+                onConfirm={resetSettings}
+                onCancel={() => setShowResetWarning(false)}
             />
         </div>
     );

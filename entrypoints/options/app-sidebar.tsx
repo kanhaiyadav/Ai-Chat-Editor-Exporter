@@ -171,7 +171,7 @@ const data = {
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;
-    onLoadPreset: (settings: PDFSettings, presetId: number) => void;
+    onLoadPreset: (preset: SavedPreset) => void;
 }
 
 export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarProps) {
@@ -187,7 +187,6 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
     );
 
     const { theme } = useTheme();
-    console.log("😂😂😂", theme);
 
     const data = {
         user: {
@@ -363,7 +362,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
     // Preset handlers
     const handleLoadPreset = (preset: SavedPreset, e: React.MouseEvent) => {
         e.stopPropagation();
-        onLoadPreset(preset.settings, preset.id!);
+        onLoadPreset(preset);
     };
 
     const handleDeletePreset = async (id: number, e: React.MouseEvent) => {
