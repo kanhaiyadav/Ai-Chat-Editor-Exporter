@@ -196,7 +196,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
         []
     );
 
-    const { theme } = useTheme();
+    const { effectiveTheme } = useTheme();
 
     const data = {
         user: {
@@ -219,29 +219,6 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                 name: "Evil Corp.",
                 logo: Command,
                 plan: "Free",
-            },
-        ],
-        navMain: [
-            {
-                title: "Chatgpt",
-                url: "#",
-                icon: theme === 'light' ? chatgptLight : chatgpt,
-                isActive: true,
-            },
-            {
-                title: "Claude",
-                url: "#",
-                icon: theme === 'light' ? claudeLight : claude,
-            },
-            {
-                title: "Gemini",
-                url: "#",
-                icon: theme === 'light' ? geminiLight : gemini,
-            },
-            {
-                title: "Deepseek",
-                url: "#",
-                icon: theme === 'light' ? deepseekLight : deepseek,
             },
         ],
         settingPresets: [
@@ -274,11 +251,11 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
 
     // Source icons mapping
     const sourceIcons: Record<string, string> = React.useMemo(() => ({
-        chatgpt: theme !== 'light' ? chatgptLight : chatgpt,
-        claude: theme !== 'light' ? claudeLight : claude,
-        gemini: theme !== 'light' ? geminiLight : gemini,
-        deepseek: theme !== 'light' ? deepseekLight : deepseek,
-    }), [theme]);
+        chatgpt: effectiveTheme !== 'light' ? chatgptLight : chatgpt,
+        claude: effectiveTheme !== 'light' ? claudeLight : claude,
+        gemini: effectiveTheme !== 'light' ? geminiLight : gemini,
+        deepseek: effectiveTheme !== 'light' ? deepseekLight : deepseek,
+    }), [effectiveTheme]);
 
 
     // Group chats by source
@@ -446,11 +423,10 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
         window.open('https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter', '_blank');
     };
 
-
     return (
         <>
-            <Sidebar collapsible="icon" {...props} className="h-full">
-                <SidebarHeader className="border-t-[3px] border-[#bbbbbb] dark:border-0">
+            <Sidebar collapsible="icon" {...props} className={effectiveTheme === 'light' ? 'h-full !border-t-[3px] !border-[#bbbbbb] dark:border-0' : 'h-full'}>
+                <SidebarHeader className="">
                     <ToggleSidebar teams={data.teams} />
                 </SidebarHeader>
                 <SidebarContent>
@@ -494,14 +470,14 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                                 onClick={() => setBuyMeCoffeeOpen(true)}
                                 className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
                             >
-                                <SiBuymeacoffee className='text-black/80' />
+                                <SiBuymeacoffee />
                                 <span className="font-semibold">Buy Me a Coffee</span>
                             </SidebarMenuButton>
                             <SidebarMenuButton
                                 onClick={() => setFeedbackOpen(true)}
                                 className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
                             >
-                                <TbMessageReport className='w-10 text-black/80' />
+                                <TbMessageReport />
                                 <span className="font-semibold">Send Feedback</span>
                             </SidebarMenuButton>
                             <a
@@ -510,7 +486,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                                 rel="noopener noreferrer"
                                 className="w-full hover:bg-card p-2 py-1 rounded-sm flex gap-2 items-center"
                             >
-                                <FaGithub size={16} className='text-black/80' />
+                                <FaGithub size={16} />
                                 <span className="font-semibold text-sm">Star on GitHub</span>
                             </a>
                         </SidebarMenu>

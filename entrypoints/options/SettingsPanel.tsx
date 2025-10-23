@@ -106,9 +106,9 @@ export const SettingsPanel = ({
     const presetDisplayName = currentPreset?.name || 'Untitled Settings Preset';
 
     return (
-        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border'>
+        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border border-border'>
             {/* Sticky Header with Preset Name */}
-            <div className='sticky top-0 z-10 bg-accent border-b px-6 py-3 pb-[15px]'>
+            <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-3 pb-[15px]'>
                 {isEditingPresetName ? (
                     <div className='space-y-2'>
                         <div className='flex items-center gap-2'>
@@ -220,7 +220,7 @@ export const SettingsPanel = ({
             </div>
 
             {/* Fixed Button Bar */}
-            <div className='flex flex-col gap-2 w-full bg-accent py-4 px-6 mt-auto shadow-lg border-t'>
+            <div className='flex flex-col gap-2 w-full bg-accent py-4 px-6 mt-auto shadow-lg border-t border-border'>
                 <div className='flex items-center gap-2 w-full'>
                     <Button
                         onClick={onSavePreset}

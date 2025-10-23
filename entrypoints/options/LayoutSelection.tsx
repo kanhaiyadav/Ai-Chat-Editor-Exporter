@@ -23,7 +23,7 @@ export const LayoutSelector = ({ selectedLayout, onLayoutChange }: LayoutSelecto
                         className={`w-full rounded-lg ${selectedLayout === value
                                 ? 'bg-primary/20 border-2 border-primary'
                                 : 'bg-card shadow-md'
-                            } hover:bg-primary/15 border cursor-pointer`}
+                            } hover:bg-primary/15 border border-border cursor-pointer`}
                     >
                         <img
                             src={image}

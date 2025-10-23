@@ -9,23 +9,26 @@ interface DocumentLayoutProps {
 export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
     return (
         <>
-            <div style={{
-                textAlign: 'center',
-                padding: '40px 0',
-                marginBottom: '10px',
-                fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
-            }}>
-                <h1 style={{
-                    margin: 0,
-                    fontSize: '32px',
-                    color: settings.document.titleColor,
-                }}>{settings.general.headerText}</h1>
-                <p style={{
-                    margin: '8px 0 0 0',
-                    fontSize: '14px',
-                    opacity: 0.7,
-                }}>{new Date().toLocaleDateString()}</p>
-            </div>
+            {
+                settings.general.includeHeader && (
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '40px 0',
+                        marginBottom: '10px',
+                        fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
+                    }}>
+                        <h1 style={{
+                            margin: 0,
+                            fontSize: '32px',
+                            color: settings.document.titleColor,
+                        }}>{settings.general.headerText}</h1>
+                        <p style={{
+                            margin: '8px 0 0 0',
+                            fontSize: '14px',
+                            opacity: 0.7,
+                        }}>{new Date().toLocaleDateString()}</p>
+                    </div>
+                )}
             {messages.map((message, index) => {
                 const isTopic = message.role === 'user';
                 const includeImage = isTopic ? settings.general.includeUserImages : settings.general.includeAIImages;

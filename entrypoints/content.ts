@@ -183,7 +183,7 @@ export default defineContentScript({
                                         }
                                     }
                                 });
-                            } else if (isAssistant) {
+                            } else {
                                 role = "assistant";
                                 const assistantContent = turn.querySelector(
                                     '[data-message-author-role="assistant"]'

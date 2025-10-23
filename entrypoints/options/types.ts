@@ -80,8 +80,8 @@ export const defaultSettings: PDFSettings = {
     qa: {
         questionColor: "#1e293b",
         answerColor: "#475569",
-        fontSize: 14,
-        fontFamily: "Tinos, serif",
+        fontSize: 19,
+        fontFamily: "Patrick Hand, cursive",
         showSeparator: true,
         separatorStyle: "line",
         numbering: true,
@@ -92,8 +92,8 @@ export const defaultSettings: PDFSettings = {
     document: {
         titleColor: "#1e293b",
         bodyColor: "#334155",
-        fontSize: 12,
-        fontFamily: "Bitter, serif",
+        fontSize: 18,
+        fontFamily: "Handlee, cursive",
         lineHeight: 1.6,
         paragraphSpacing: 16,
     },

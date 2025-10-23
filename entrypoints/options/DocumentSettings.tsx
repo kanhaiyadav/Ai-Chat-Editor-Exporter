@@ -73,7 +73,7 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
                                     value={[settings.fontSize]}
                                     onValueChange={(values) => onUpdate({ fontSize: values[0] })}
                                     min={10}
-                                    max={20}
+                                    max={24}
                                     step={1}
                                 />
                             </div>

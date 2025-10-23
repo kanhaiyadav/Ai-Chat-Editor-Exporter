@@ -91,7 +91,7 @@ const SortableMessageItem = ({
         <div
             ref={setNodeRef}
             style={style}
-            className="border rounded-lg p-3 bg-card hover:bg-accent/50 transition-colors"
+            className="border border-border rounded-lg p-3 bg-card hover:bg-accent/50 transition-colors"
         >
             <div className="flex items-start gap-3">
                 <Checkbox
@@ -226,8 +226,8 @@ export const MessageManagement = ({
 
     const getRoleBadgeColor = (role: string) => {
         return role === 'user'
-            ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-            : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+            ? 'bg-amber-100 !text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+            : 'bg-blue-100 !text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
     };
 
     const truncateText = (text: string, maxLength: number = 60) => {

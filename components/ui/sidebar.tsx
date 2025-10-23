@@ -236,7 +236,7 @@ function Sidebar({
           // Adjust the padding for floating and inset variants.
           variant === "floating" || variant === "inset"
             ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
-            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
+            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r border-border group-data-[side=right]:border-l",
           className
         )}
         {...props}
@@ -299,6 +299,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
         "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className
       )}
+          style={{ display: "none" }}
       {...props}
     />
   )

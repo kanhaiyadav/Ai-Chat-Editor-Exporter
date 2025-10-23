@@ -26,7 +26,7 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
     };
 
     return (
-        <div className="w-full border rounded-lg overflow-hidden bg-background shadow-sm">
+        <div className="w-full border  border-border rounded-lg overflow-hidden bg-background shadow-sm">
             {/* Editor Content */}
             <div className="bg-white max-h-[400px] overflow-y-auto" style={{ scrollbarColor: '#bebebe transparent' }}>
                 <div

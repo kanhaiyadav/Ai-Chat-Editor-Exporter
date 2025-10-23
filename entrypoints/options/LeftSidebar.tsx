@@ -247,7 +247,7 @@ export const LeftSidebar = ({
                                         {chats.map((chat) => (
                                             <div
                                                 key={chat.id}
-                                                className='group rounded-lg border bg-card p-3 hover:bg-accent/50 transition-colors cursor-pointer'
+                                                className='group rounded-lg border border-border bg-card p-3 hover:bg-accent/50 transition-colors cursor-pointer'
                                                 onClick={() => handleLoadChat(chat)}
                                             >
                                                 {editingChatId === chat.id ? (
@@ -373,7 +373,7 @@ export const LeftSidebar = ({
                                         {presets.map((preset) => (
                                             <div
                                                 key={preset.id}
-                                                className='group rounded-lg border bg-card p-3 hover:bg-accent/50 transition-colors cursor-pointer'
+                                                className='group rounded-lg border border-border bg-card p-3 hover:bg-accent/50 transition-colors cursor-pointer'
                                                 onClick={(e) => handleLoadPreset(preset, e)}
                                             >
                                                 {editingPresetId === preset.id ? (

@@ -284,7 +284,7 @@ export const MergeChatsDialog = ({
 
                 <div className="flex-1 flex gap-4 overflow-hidden">
                     {/* Left Section - Available Chats */}
-                    <div className="w-1/2 flex flex-col gap-3 border-r pr-4">
+                    <div className="w-1/2 flex flex-col gap-3 border-r border-border pr-4">
                         <div className='px-1'>
                             <label className="text-sm font-medium mb-2 block">
                                 Select Source
@@ -461,7 +461,7 @@ export const MergeChatsDialog = ({
                     </div>
                 </div>
 
-                <div className="flex gap-2 justify-end pt-4 border-t">
+                <div className="flex gap-2 justify-end pt-4 border-t border-border">
                     <Button variant="outline" onClick={handleClose}>
                         Cancel
                     </Button>
