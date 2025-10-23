@@ -1,13 +1,24 @@
 export default defineContentScript({
-    matches: [
-        "https://chatgpt.com/c/*",
-        "https://chat.openai.com/c/*",
-        "https://chatgpt.com/g/*",
-        "https://chat.openai.com/g/*",
-    ],
+    matches: ["https://chatgpt.com/*", "https://chat.openai.com/*"],
     main() {
+        let currentUrl = location.href;
+        let buttonCheckInterval: number | null = null;
+
+        // Function to check if we're on a chat page
+        function isOnChatPage() {
+            return (
+                location.href.includes("/c/") || location.href.includes("/g/")
+            );
+        }
+
         // Function to insert the button
         function insertExportButton() {
+            // Only insert button if we're on a chat page
+            if (!isOnChatPage()) {
+                console.log("Not on a chat page, skipping button insertion");
+                return;
+            }
+
             const headerDiv = document.querySelector(
                 "#conversation-header-actions"
             );
@@ -122,15 +133,9 @@ export default defineContentScript({
                                             typeEl?.textContent?.trim() ||
                                             "File";
 
-                                        // Try to find iframe with document URL when clicking the attachment
-                                        // Since we can't simulate clicks, we'll look for any iframe in the document
-                                        // that might have been opened, or extract from data attributes if available
-
-                                        // For now, we'll store the attachment info without direct URL
-                                        // since the URL is only revealed in the iframe when clicked
                                         attachments.push({
                                             name: fileName,
-                                            url: "", // URL not directly accessible without click
+                                            url: "",
                                             type: fileType,
                                         });
                                     }
@@ -289,24 +294,86 @@ export default defineContentScript({
                 });
 
                 console.log("✅ Export Chat button inserted successfully");
+
+                // Stop the interval once button is inserted
+                if (buttonCheckInterval) {
+                    clearInterval(buttonCheckInterval);
+                    buttonCheckInterval = null;
+                }
             }
         }
 
-        // Initial insertion attempt
-        const initialInterval = setInterval(() => {
-            const headerDiv = document.querySelector(
-                "#conversation-header-actions"
-            );
-            if (headerDiv) {
-                clearInterval(initialInterval);
-                insertExportButton();
+        // Function to check for URL changes and handle navigation
+        function checkUrlChange() {
+            if (location.href !== currentUrl) {
+                console.log(
+                    "URL changed from",
+                    currentUrl,
+                    "to",
+                    location.href
+                );
+                currentUrl = location.href;
+
+                // Clear any existing button when navigating away from chat page
+                const existingButton = document.querySelector(
+                    "#export-chat-button"
+                );
+                if (existingButton && !isOnChatPage()) {
+                    existingButton.remove();
+                    console.log("Removed button - not on chat page");
+                }
+
+                // If navigating to a chat page, start looking for the header
+                if (isOnChatPage()) {
+                    console.log(
+                        "Navigated to chat page, waiting for header..."
+                    );
+                    // Start checking for the header element
+                    if (buttonCheckInterval) {
+                        clearInterval(buttonCheckInterval);
+                    }
+                    buttonCheckInterval = window.setInterval(() => {
+                        insertExportButton();
+                    }, 300);
+
+                    // Stop checking after 15 seconds
+                    setTimeout(() => {
+                        if (buttonCheckInterval) {
+                            clearInterval(buttonCheckInterval);
+                            buttonCheckInterval = null;
+                        }
+                    }, 15000);
+                }
             }
-        }, 500);
+        }
+
+        // Initial insertion attempt if already on a chat page
+        if (isOnChatPage()) {
+            console.log("Already on chat page, starting button insertion...");
+            buttonCheckInterval = window.setInterval(() => {
+                insertExportButton();
+            }, 300);
+
+            // Stop checking after 15 seconds
+            setTimeout(() => {
+                if (buttonCheckInterval) {
+                    clearInterval(buttonCheckInterval);
+                    buttonCheckInterval = null;
+                }
+            }, 15000);
+        }
 
         // Set up MutationObserver to watch for DOM changes
-        const observer = new MutationObserver((mutations) => {
-            // Check if button needs to be re-inserted
-            insertExportButton();
+        const observer = new MutationObserver(() => {
+            checkUrlChange();
+
+            // Try to insert button if we're on a chat page and it's missing
+            if (
+                isOnChatPage() &&
+                !document.querySelector("#export-chat-button")
+            ) {
+                insertExportButton();
+            }
         });
 
         // Start observing the document body for changes
@@ -315,6 +382,9 @@ export default defineContentScript({
             subtree: true,
         });
 
-        console.log("MutationObserver set up to watch for navigation changes");
+        // Periodic URL check as fallback
+        setInterval(checkUrlChange, 1000);
+
+        console.log("✅ Content script initialized - watching for chat pages");
     },
 });

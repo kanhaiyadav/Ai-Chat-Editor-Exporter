@@ -463,95 +463,9 @@ button[aria-label="Copy table"] {
     margin-bottom: 3mm !important;
     margin-left: -20px !important;
     margin-right: 2mm !important;
+    margin-top: 3mm !important;
     background-color: var(--pdf-background);
 }
-
-/*
-@media print {
-    :root {
-        --background: #ffffff !important;
-    }
-
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
-
-    html,
-    body {
-        height: auto !important;
-        min-height: auto !important;
-        overflow: visible !important;
-    }
-
-    body * {
-        visibility: hidden;
-    }
-
-    #chat-container,
-    #chat-container * {
-        visibility: visible;
-    }
-
-    #chat-container {
-        position: static !important;
-        left: auto !important;
-        top: auto !important;
-        width: 100% !important;
-        max-width: none !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        overflow: visible !important;
-
-    }
-
-    .h-screen,
-    .min-h-screen {
-        height: auto !important;
-        min-height: auto !important;
-    }
-
-    .h-full,
-    .min-h-full {
-        height: auto !important;
-        min-height: auto !important;
-    }
-
-    .flex-1,
-    .grow,
-    [class*="flex-1"] {
-        flex: none !important;
-        height: auto !important;
-        min-height: auto !important;
-    }
-
-    .overflow-y-auto,
-    .overflow-x-auto,
-    .overflow-hidden,
-    .overflow-scroll,
-    .overflow-auto,
-    .min-h-0,
-    .max-h-full,
-    [style*="overflow"] {
-        overflow: visible !important;
-        max-height: none !important;
-    }
-
-    .\!overflow-hidden {
-        overflow: visible !important;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-}
-
-@page {
-    size: A4 portrait;
-    margin: 12mm;
-}
-*/
 
 
 .glass {

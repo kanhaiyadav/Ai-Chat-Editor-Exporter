@@ -28,8 +28,8 @@ export const Header = () => {
                 <div className='flex items-center gap-4'>
                     <img src="/chat2pdf2.png" alt="" className="h-[50px]" />
                     <div className='mt-[-5px]'>
-                        <h1 className='text-2xl text-black/75 font-bold'>AI Chat Editor & Exporter</h1>
-                        <p className='text-sm font-medium text-black/60 mt-[-3px]'>Convert AI chats to PDF</p>
+                        <h1 className='text-2xl text-black/75 font-bold'>Chat2Pdf</h1>
+                        <p className='text-sm font-medium text-black/60 mt-[-3px]'>AI Chat Editor & Exporter</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>

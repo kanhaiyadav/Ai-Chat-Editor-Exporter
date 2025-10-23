@@ -3,15 +3,11 @@
 import * as React from "react"
 import {
     AudioWaveform,
-    BookOpen,
-    Bot,
     Command,
     Frame,
     GalleryVerticalEnd,
     Map,
     PieChart,
-    Settings2,
-    SquareTerminal,
 } from "lucide-react"
 
 import { NavMain } from "./nav-main"
@@ -41,141 +37,11 @@ import geminiLight from "@/assets/gemini-fill-light.svg";
 import deepseekLight from "@/assets/deepseek-fill-light.svg";
 import { useLiveQuery } from "dexie-react-hooks"
 import { chatOperations, db, presetOperations, SavedChat, SavedPreset } from "@/lib/settingsDB"
-import { PDFSettings, ChatSource } from "./types"
+import { PDFSettings } from "./types"
 import { useTheme } from "@/lib/useTheme"
 import { TbMessageReport } from "react-icons/tb"
 import { SiBuymeacoffee } from "react-icons/si"
 import { FaGithub } from "react-icons/fa6"
-
-// This is sample data.
-const data = {
-    user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
-    navMain: [
-        {
-            title: "Chatgpt",
-            url: "#",
-            icon: chatgpt,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Claude",
-            url: "#",
-            icon: claude,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Gemini",
-            url: "#",
-            icon: gemini,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Deepseek",
-            url: "#",
-            icon: deepseek,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-    settingPresets: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
-        },
-        {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: Map,
-        },
-    ],
-}
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;

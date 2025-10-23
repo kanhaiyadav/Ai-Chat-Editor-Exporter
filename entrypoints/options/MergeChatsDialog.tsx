@@ -161,14 +161,14 @@ export const MergeChatsDialog = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const { theme } = useTheme();
+    const { effectiveTheme } = useTheme();
 
     const SourceIcons: Record<string, string> = useMemo(() => ({
-        chatgpt: theme === 'dark' ? chatgptLight : chatgpt,
-        claude: theme === 'dark' ? claudeLight : claude,
-        gemini: theme === 'dark' ? geminiLight : gemini,
-        deepseek: theme === 'dark' ? deepseekLight : deepseek,
-    }), [theme]);
+        chatgpt: effectiveTheme === 'dark' ? chatgptLight : chatgpt,
+        claude: effectiveTheme === 'dark' ? claudeLight : claude,
+        gemini: effectiveTheme === 'dark' ? geminiLight : gemini,
+        deepseek: effectiveTheme === 'dark' ? deepseekLight : deepseek,
+    }), [effectiveTheme]);
 
     // Get all chats for the selected source
     const allChats = useLiveQuery(async () => {
