@@ -181,7 +181,7 @@ export function NavPresets({
                         ))}
                     </>
                 ) : (
-                    <div className='text-center py-8 px-4 text-sm text-muted-foreground'>
+                    <div className='text-center py-4 px-4 text-sm text-muted-foreground'>
                         <Settings2 className='h-12 w-12 mx-auto mb-2 opacity-30' />
                         <p className='font-medium'>No saved presets yet</p>
                         <p className='text-xs mt-1'>

@@ -42,13 +42,25 @@ import { useTheme } from "@/lib/useTheme"
 import { TbMessageReport } from "react-icons/tb"
 import { SiBuymeacoffee } from "react-icons/si"
 import { FaGithub } from "react-icons/fa6"
+import { FiDownload, FiUpload } from "react-icons/fi"
+import {
+    ButtonGroup,
+    ButtonGroupSeparator,
+    ButtonGroupText,
+} from "@/components/ui/button-group"
+import { BsFiletypeJson } from "react-icons/bs";
+import { BsFileEarmarkArrowDown } from "react-icons/bs";
+import { Button } from "@/components/ui/button"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;
     onLoadPreset: (preset: SavedPreset) => void;
+    onExportChat?: (chat: SavedChat) => void;
+    onOpenBulkExport?: () => void;
+    onOpenImport?: () => void;
 }
 
-export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarProps) {
+export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, ...props }: AppSidebarProps) {
     const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
     const [feedbackOpen, setFeedbackOpen] = React.useState(false)
 
@@ -291,7 +303,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
 
     return (
         <>
-            <Sidebar collapsible="icon" {...props} className={effectiveTheme === 'light' ? 'h-full !border-t-[3px] !border-[#bbbbbb] dark:border-0' : 'h-full'}>
+            <Sidebar collapsible="icon" {...props} className={effectiveTheme === 'light' ? 'h-full !border-t-[3px] !border-t-[#bbbbbb] dark:border-0' : 'h-full'}>
                 <SidebarHeader className="">
                     <ToggleSidebar teams={data.teams} />
                 </SidebarHeader>
@@ -311,6 +323,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                         handleDuplicateChat={handleDuplicateChat}
                         formatDate={formatDate}
                         error={error}
+                        onExportChat={onExportChat}
                     />
                     <NavPresets
                         presets={presets || []}
@@ -329,33 +342,41 @@ export function AppSidebar({ onLoadChat, onLoadPreset, ...props }: AppSidebarPro
                     />
                 </SidebarContent>
                 <SidebarFooter>
+                    <SidebarGroup className="group-data-[collapsible=icon]:hidden mb-[-10px]">
+                        <SidebarGroupLabel>Backup & Import</SidebarGroupLabel>
+                        <SidebarMenu>
+                            <Button
+                                variant={'outline'}
+                                onClick={onOpenBulkExport}
+                                className="flex-1 [&_svg:not([class*='size-'])]:size-5"
+                            >
+                                <BsFiletypeJson />
+                                <span className="font-semibold">Backup Chats</span>
+                            </Button>
+                            <Button
+                                onClick={onOpenImport}
+                                variant={'outline'}
+                                className="flex-1 [&_svg:not([class*='size-'])]:size-5"
+                            >
+                                <BsFileEarmarkArrowDown />
+                                <span className="font-semibold">Import Chats</span>
+                            </Button>
+                        </SidebarMenu>
+                    </SidebarGroup>
+
                     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
                         <SidebarGroupLabel>Contribute</SidebarGroupLabel>
-                        <SidebarMenu>
-                            <SidebarMenuButton
-                                onClick={() => setBuyMeCoffeeOpen(true)}
-                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
-                            >
-                                <SiBuymeacoffee />
-                                <span className="font-semibold">Buy Me a Coffee</span>
-                            </SidebarMenuButton>
-                            <SidebarMenuButton
-                                onClick={() => setFeedbackOpen(true)}
-                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex items-center"
-                            >
-                                <TbMessageReport />
-                                <span className="font-semibold">Send Feedback</span>
-                            </SidebarMenuButton>
-                            <a
-                                href="https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full hover:bg-card p-2 py-1 rounded-sm flex gap-2 items-center"
-                            >
-                                <FaGithub size={16} />
-                                <span className="font-semibold text-sm">Star on GitHub</span>
-                            </a>
-                        </SidebarMenu>
+                        <ButtonGroup className="w-full">
+                            <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
+                            size={'lg'}
+                             onClick={() => setBuyMeCoffeeOpen(true)}><SiBuymeacoffee /></Button>
+                            <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-6 flex-1"
+                            size={'lg'}
+                             onClick={() => setFeedbackOpen(true)}><TbMessageReport /></Button>
+                            <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
+                            size={'lg'}
+                             onClick={handleStarRepo}><FaGithub size={16} /></Button>
+                        </ButtonGroup>
                     </SidebarGroup>
                 </SidebarFooter>
                 <SidebarRail />

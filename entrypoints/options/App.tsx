@@ -9,6 +9,9 @@ import { SaveChatDialog } from './SaveChatDialog';
 import { SavePresetDialog } from './SavePresetDialog';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { MergeChatsDialog } from './MergeChatsDialog';
+import { ExportChatDialog } from './ExportChatDialog';
+import { BulkExportChatsDialog } from './BulkExportChatsDialog';
+import { ImportChatDialog } from './ImportChatDialog';
 import { SavedChat, SavedPreset } from '@/lib/settingsDB';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
@@ -112,6 +115,10 @@ function App() {
     const [pendingPreset, setPendingPreset] = useState<SavedPreset | null>(null);
     const [showPresetWarning, setShowPresetWarning] = useState(false);
     const [showResetWarning, setShowResetWarning] = useState(false);
+    const [showExportChatDialog, setShowExportChatDialog] = useState(false);
+    const [exportingChat, setExportingChat] = useState<SavedChat | null>(null);
+    const [showBulkExportDialog, setShowBulkExportDialog] = useState(false);
+    const [showImportDialog, setShowImportDialog] = useState(false);
 
 
     useEffect(() => {
@@ -608,6 +615,12 @@ function App() {
                     className='h-full'
                     onLoadChat={handleLoadChat}
                     onLoadPreset={handleLoadPreset}
+                    onExportChat={(chat) => {
+                        setExportingChat(chat);
+                        setShowExportChatDialog(true);
+                    }}
+                    onOpenBulkExport={() => setShowBulkExportDialog(true)}
+                    onOpenImport={() => setShowImportDialog(true)}
                 />
                 <SidebarInset>
                     <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
@@ -621,6 +634,19 @@ function App() {
                             onSaveAsChat={handleSaveAsChat}
                             onExportPDF={handleGeneratePDF}
                             onMerge={() => setShowMergeDialog(true)}
+                            onExportChat={() => {
+                                if (currentChatId) {
+                                    // Load the current chat and set it for export
+                                    (async () => {
+                                        const { chatOperations } = await import('@/lib/settingsDB');
+                                        const chat = await chatOperations.getChat(currentChatId);
+                                        if (chat) {
+                                            setExportingChat(chat);
+                                            setShowExportChatDialog(true);
+                                        }
+                                    })();
+                                }
+                            }}
                         />
 
                         <SettingsPanel
@@ -699,6 +725,31 @@ function App() {
                 destructive
                 onConfirm={resetSettings}
                 onCancel={() => setShowResetWarning(false)}
+            />
+
+            <ExportChatDialog
+                isOpen={showExportChatDialog}
+                onClose={() => {
+                    setShowExportChatDialog(false);
+                    setExportingChat(null);
+                }}
+                chatName={exportingChat?.name || ''}
+                chatTitle={exportingChat?.title || ''}
+                messages={exportingChat?.messages || []}
+                source={exportingChat?.source || 'chatgpt'}
+            />
+
+            <BulkExportChatsDialog
+                isOpen={showBulkExportDialog}
+                onClose={() => setShowBulkExportDialog(false)}
+            />
+
+            <ImportChatDialog
+                isOpen={showImportDialog}
+                onClose={() => setShowImportDialog(false)}
+                onImportSuccess={() => {
+                    // Optional: refresh sidebar or show a notification
+                }}
             />
         </div>
     );

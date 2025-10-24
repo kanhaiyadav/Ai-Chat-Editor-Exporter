@@ -1,6 +1,6 @@
 "use client"
 
-import { MessageSquare, Pencil, Check, X, Copy, Trash2, type LucideIcon, MoreVertical } from "lucide-react"
+import { MessageSquare, Pencil, Check, X, Copy, Trash2, type LucideIcon, MoreVertical, Download } from "lucide-react"
 import { useState } from "react"
 
 import {
@@ -24,7 +24,8 @@ import { SavedChat } from "@/lib/settingsDB"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { BsFiletypeJson } from "react-icons/bs";
 
 export function NavChats({
     chats,
@@ -41,6 +42,7 @@ export function NavChats({
     handleDuplicateChat,
     formatDate,
     error,
+    onExportChat,
 }: {
     chats: SavedChat[]
     chatsBySource: Record<string, SavedChat[]>
@@ -56,6 +58,7 @@ export function NavChats({
     handleDuplicateChat: (chat: SavedChat, e: React.MouseEvent) => void
     formatDate: (date: Date) => string
     error: string
+    onExportChat?: (chat: SavedChat) => void
 }) {
     const { isMobile } = useSidebar()
 
@@ -168,27 +171,37 @@ export function NavChats({
                                                                 align={isMobile ? "end" : "start"}
                                                             >
                                                                 <div
-                                                                    className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        onExportChat?.(chat);
+                                                                    }}
+                                                                        className="flex gap-1 w-full px-2 py-1 items-center hover:bg-accent hover:shadow-sm cursor-pointer"
+                                                                >
+                                                                    <BsFiletypeJson size={20} />
+                                                                    <span className="ml-2">Export Chat</span>
+                                                                </div>
+                                                                <div
+                                                                    className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                     onClick={(e) => handleStartEditChat(chat, e)}
                                                                     title='Rename'
                                                                 >
-                                                                    <Pencil size={15} />
+                                                                    <Pencil size={16} />
                                                                     <span className='ml-2'>Rename</span>
                                                                 </div>
                                                                 <div
-                                                                    className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
+                                                                    className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                     onClick={(e) => handleDuplicateChat(chat, e)}
                                                                     title='Duplicate'
                                                                 >
-                                                                    <Copy size={15} />
+                                                                    <Copy size={16} />
                                                                     <span className='ml-2'>Duplicate</span>
                                                                 </div>
                                                                 <div
-                                                                    className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
+                                                                    className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-red-500/20 hover:shadow-sm cursor-pointer text-destructive hover:text-destructive"
                                                                     onClick={(e) => handleDeleteChat(chat.id!, e)}
                                                                     title='Delete'
                                                                 >
-                                                                    <Trash2 size={15} />
+                                                                    <Trash2 size={18} />
                                                                     <span className='ml-2'>Delete</span>
                                                                 </div>
                                                             </DropdownMenuContent>

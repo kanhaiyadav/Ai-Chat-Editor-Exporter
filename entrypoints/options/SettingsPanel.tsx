@@ -256,7 +256,7 @@ export const SettingsPanel = ({
                     onClick={onResetSettings}
                     variant="outline"
                     className="w-full"
-                    size="sm"
+                    size="lg"
                 >
                     <RotateCcw size={14} className='mr-1' />
                     Reset to Default

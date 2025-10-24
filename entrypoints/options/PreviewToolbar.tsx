@@ -1,5 +1,8 @@
-import { Save, SaveAll, FileDown, Menu, Check, Merge } from 'lucide-react';
+import { Save, SaveAll, Check, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FaRegFilePdf } from "react-icons/fa6";
+import { PiGitMerge } from "react-icons/pi";
+import { BsFiletypeJson } from "react-icons/bs";
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -9,6 +12,7 @@ interface PreviewToolbarProps {
     onSaveAsChat: () => void;
     onExportPDF: () => void;
     onMerge: () => void;
+    onExportChat?: () => void;
 }
 
 export const PreviewToolbar = ({
@@ -19,6 +23,7 @@ export const PreviewToolbar = ({
     onSaveAsChat,
     onExportPDF,
     onMerge,
+    onExportChat,
 }: PreviewToolbarProps) => {
 
 
@@ -29,21 +34,33 @@ export const PreviewToolbar = ({
                 <Button
                     onClick={onExportPDF}
                     size="sm"
-                    className='gap-2'
+                    className="gap-2 [&_svg:not([class*='size-'])]:size-5"
                 >
-                    <FileDown size={16} />
+                    <FaRegFilePdf />
                     Export PDF
                 </Button>
 
                 <Button
                     onClick={onMerge}
                     size="sm"
-                    className='gap-2'
+                    className="gap-2 [&_svg:not([class*='size-'])]:size-5"
                     variant="ghost"
                 >
-                    <Merge size={16} />
+                    <PiGitMerge size={16} />
                     Merge Chats
                 </Button>
+
+                {onExportChat && currentChatId !== null && (
+                    <Button
+                        onClick={onExportChat}
+                        size="sm"
+                        className="gap-2 [&_svg:not([class*='size-'])]:size-5"
+                        variant="ghost"
+                    >
+                        <BsFiletypeJson />
+                        Export Chat
+                    </Button>
+                )}
 
                 {currentChatId !== null ? (
                     <>
@@ -51,7 +68,7 @@ export const PreviewToolbar = ({
                             onClick={onSaveChat}
                             variant="ghost"
                             size="sm"
-                            className='gap-2'
+                            className="gap-2 [&_svg:not([class*='size-'])]:size-5"
                             disabled={!chatChanged}
                         >
                             {chatSaved ? (
