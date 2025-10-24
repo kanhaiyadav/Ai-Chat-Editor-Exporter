@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "chat2pdf",
+  "description": "A powerful Chrome extension that transforms AI chat conversations into beautifully formatted PDFs.",
   "private": true,
   "version": "0.0.0",
   "type": "module",
