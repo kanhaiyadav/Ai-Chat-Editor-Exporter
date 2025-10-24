@@ -42,6 +42,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                         <div style={{
                             marginBottom: '16px',
                             paddingLeft: !isQuestion && settings.qa.indentAnswer ? '24px' : '0',
+                            width: '100%',
                         }}
                             className='flex gap-2'
                         >
@@ -62,8 +63,10 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 lineHeight: '1.6',
                                 fontWeight: isQuestion ? "600" : "400",
-                                marginTop: !isQuestion ? "-15px" : "0"
-                            }}>
+                                marginTop: !isQuestion ? "-15px" : "0",
+                            }}
+                                className='flex-1 min-w-0'
+                            >
                                 {
                                     message.content !== '' &&
                                     <div dangerouslySetInnerHTML={{ __html: message.content }} />

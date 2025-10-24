@@ -80,7 +80,7 @@ export const defaultSettings: PDFSettings = {
     qa: {
         questionColor: "#1e293b",
         answerColor: "#475569",
-        fontSize: 19,
+        fontSize: 18,
         fontFamily: "Patrick Hand, cursive",
         showSeparator: true,
         separatorStyle: "line",

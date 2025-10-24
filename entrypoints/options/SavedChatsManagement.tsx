@@ -35,16 +35,8 @@ export const SavedChatsManagement = ({
     const [error, setError] = useState('');
 
     const handleLoadChat = async (chat: SavedChat) => {
-        let preset: PDFSettings | null = null;
-
-        if (chat.presetId !== null) {
-            const savedPreset = await presetOperations.getPreset(chat.presetId);
-            if (savedPreset) {
-                preset = savedPreset.settings;
-            }
-        }
-
-        onLoadChat(chat, preset);
+        // Chat stores full settings directly, so use that
+        onLoadChat(chat, chat.settings);
     };
 
     const handleDeleteChat = async (id: number) => {
@@ -79,8 +71,8 @@ export const SavedChatsManagement = ({
                 editingName.trim(),
                 chat.title,
                 chat.messages,
-                chat.presetId,
-                chat.presetName
+                chat.source,
+                chat.settings
             );
             setEditingId(null);
             setEditingName('');
@@ -190,8 +182,8 @@ export const SavedChatsManagement = ({
                                                         {chat.title}
                                                     </p>
                                                     <div className='flex items-center gap-2 mt-1'>
-                                                        <span className='text-xs text-muted-foreground'>
-                                                            Preset: {chat.presetName}
+                                                        <span className='text-xs text-muted-foreground capitalize'>
+                                                            {chat.source}
                                                         </span>
                                                         <span className='text-xs text-muted-foreground'>
                                                             • {chat.messages.length} messages

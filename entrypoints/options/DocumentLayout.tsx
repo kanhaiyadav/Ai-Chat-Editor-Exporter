@@ -38,7 +38,7 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                     }}>
                         {
                             message.content !== '' &&
-                            <p style={{
+                            <div style={{
                                 color: settings.document.bodyColor,
                                 fontSize: isTopic ? `${settings.document.fontSize + 3}px` : `${settings.document.fontSize}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
@@ -51,7 +51,7 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                                 marginBottom: isTopic ? '-5px' : '',
                             }}>
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                            </p>
+                            </div>
                         }
                         {
                             includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
