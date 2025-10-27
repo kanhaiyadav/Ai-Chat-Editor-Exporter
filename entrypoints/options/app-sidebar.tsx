@@ -390,14 +390,14 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                         <SidebarGroupLabel>Contribute</SidebarGroupLabel>
                         <ButtonGroup className="w-full">
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
-                            size={'lg'}
-                             onClick={() => setBuyMeCoffeeOpen(true)}><SiBuymeacoffee /></Button>
+                                size={'lg'}
+                                onClick={() => setBuyMeCoffeeOpen(true)}><SiBuymeacoffee /></Button>
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-6 flex-1"
-                            size={'lg'}
-                             onClick={() => setFeedbackOpen(true)}><TbMessageReport /></Button>
+                                size={'lg'}
+                                onClick={() => setFeedbackOpen(true)}><TbMessageReport /></Button>
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
-                            size={'lg'}
-                             onClick={handleStarRepo}><FaGithub size={16} /></Button>
+                                size={'lg'}
+                                onClick={handleStarRepo}><FaGithub size={16} /></Button>
                         </ButtonGroup>
                     </SidebarGroup>
                 </SidebarFooter>
@@ -406,7 +406,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
 
             <BuyMeCoffeeModal open={buyMeCoffeeOpen} onOpenChange={setBuyMeCoffeeOpen} />
             <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
-            
+
             <ConfirmationDialog
                 open={deleteConfirmOpen}
                 title="Delete Chat"
@@ -419,7 +419,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                     setPendingDeleteChatId(null);
                 }}
             />
-            
+
             <ConfirmationDialog
                 open={deletePresetConfirmOpen}
                 title="Delete Preset"

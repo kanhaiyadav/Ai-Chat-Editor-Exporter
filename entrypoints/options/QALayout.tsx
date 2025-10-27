@@ -25,7 +25,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
             )}
             {messages.map((message, index) => {
                 const isQuestion = message.role === 'user';
-                const includeImage = isQuestion ? settings.general.includeUserImages : settings.general.includeAIImages;    
+                const includeImage = isQuestion ? settings.general.includeUserImages : settings.general.includeAIImages;
                 if (isQuestion) questionNumber++;
 
                 const separator = settings.qa.showSeparator && index > 0 && isQuestion ? (
@@ -43,9 +43,10 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                             marginBottom: '16px',
                             paddingLeft: !isQuestion && settings.qa.indentAnswer ? '24px' : '0',
                             width: '100%',
-                        }}
-                            className='flex gap-2'
-                        >
+                            display: 'flex',
+                            gap: '8px',
+                            overflow: 'hidden',
+                        }}>
                             <div style={{
                                 fontWeight: 'bold',
                                 color: isQuestion ? settings.qa.questionColor : settings.qa.answerColor,
@@ -53,6 +54,7 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 marginBottom: '8px',
                                 whiteSpace: 'nowrap',
+                                flexShrink: 0,
                             }}>
                                 {settings.qa.numbering && isQuestion ? `${questionNumber}. ` : ''}
                                 {isQuestion ? settings.qa.questionPrefix : settings.qa.answerPrefix}
@@ -64,9 +66,12 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 lineHeight: '1.6',
                                 fontWeight: isQuestion ? "600" : "400",
                                 marginTop: !isQuestion ? "-15px" : "0",
-                            }}
-                                className='flex-1 min-w-0'
-                            >
+                                flex: 1,
+                                minWidth: 0,
+                                overflow: 'hidden',
+                                wordWrap: 'break-word',
+                                overflowWrap: 'break-word',
+                            }}>
                                 {
                                     message.content !== '' &&
                                     <div dangerouslySetInnerHTML={{ __html: message.content }} />
@@ -74,19 +79,19 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 {
                                     includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
                                         <div key={imgIndex} style={{ marginTop: '12px' }}>
-                                            <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%' }} />
+                                            <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
                                         </div>
                                     ))
                                 }
                                 {
                                     settings.general.includeUserAttachments && message.attachments && message.attachments.length > 0 &&
-                                    <div className="mt-2">
-                                        <p className=" italic text-black/70 text-xs">*Note: we don't support viewing or downloading documents</p>
-                                        <div className="flex gap-3 flex-wrap mt-[-5px]">
+                                    <div style={{ marginTop: '8px' }}>
+                                        <p style={{ margin: '0 0 8px 0', fontStyle: 'italic', color: '#4b5563', fontSize: '12px' }}>*Note: we don't support viewing or downloading documents</p>
+                                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '-5px' }}>
                                             {
                                                 message.attachments.map((attachment, attIndex) => (
-                                                    <div key={attIndex} style={{ marginTop: '10px' }} className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md shadow w-fit">
-                                                        <HiDocumentText className="inline-block w-5 h-5 text-black/60" />
+                                                    <div key={attIndex} style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f3f4f6', padding: '8px 16px', borderRadius: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', width: 'fit-content' }}>
+                                                        <HiDocumentText style={{ width: '20px', height: '20px', color: '#6b7280' }} />
                                                         <span>{attachment.name}</span>
                                                     </div>
                                                 ))

@@ -251,9 +251,11 @@ function App() {
                 Array.from(selectedMessages).sort((a, b) => a - b),
                 Array.from(originalChatData.selectedMessages).sort((a, b) => a - b)
             );
+            console.log('🤔🤔🤔', { originalSettings: originalChatData.settings, settings });
             const settingsChanged = originalChatData.settings
                 ? !deepEqual(settings, originalChatData.settings)
                 : false;
+            console.log('😂😂😂', { messagesChanged, selectionChanged, settingsChanged });
             setChatChanged(messagesChanged || selectionChanged || settingsChanged);
         } else {
             setChatChanged(false);
@@ -456,7 +458,9 @@ function App() {
         if (chatData) {
             const clearedChatData = {
                 ...chatData,
-                messages: []
+                messages: [],
+                title: "",
+                source: ""
             };
             setChatData(null);
             setOriginalChatData(null);

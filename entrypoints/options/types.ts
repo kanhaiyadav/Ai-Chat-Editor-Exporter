@@ -106,7 +106,7 @@ export const defaultSettings: PDFSettings = {
         includeAIImages: true,
         includeUserImages: true,
         includeUserAttachments: true,
-        headerText: "AI Conversation Export",
+        headerText: "",
         includeFooter: true,
         fontFamily: null,
     },
