@@ -31,7 +31,7 @@ export const UnsavedChangesDialog = ({
                         <DialogTitle>Unsaved Changes</DialogTitle>
                     </div>
                     <DialogDescription>
-                        You have unsaved changes to the current chat. Would you like to save them before switching?
+                        You have unsaved changes to the current chat. Would you like to save them before closing?
                     </DialogDescription>
                 </DialogHeader>
 

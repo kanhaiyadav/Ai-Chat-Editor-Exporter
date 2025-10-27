@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useState } from "react"
 import {
     AudioWaveform,
     Command,
@@ -16,6 +17,7 @@ import { NavPresets } from "./nav-presets"
 import { ToggleSidebar } from "./team-switcher"
 import { BuyMeCoffeeModal } from "@/components/BuyMeCoffeeModal"
 import { FeedbackModal } from "@/components/FeedbackModal"
+import { ConfirmationDialog } from "./ConfirmationDialog"
 import {
     Sidebar,
     SidebarContent,
@@ -58,9 +60,10 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onExportChat?: (chat: SavedChat) => void;
     onOpenBulkExport?: () => void;
     onOpenImport?: () => void;
+    closeChat: () => void;
 }
 
-export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, ...props }: AppSidebarProps) {
+export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, closeChat, ...props }: AppSidebarProps) {
     const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
     const [feedbackOpen, setFeedbackOpen] = React.useState(false)
 
@@ -126,6 +129,10 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
     const [error, setError] = useState('');
     const [showBuyMeCoffee, setShowBuyMeCoffee] = useState(false);
     const [showFeedback, setShowFeedback] = useState(false);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [pendingDeleteChatId, setPendingDeleteChatId] = useState<number | null>(null);
+    const [deletePresetConfirmOpen, setDeletePresetConfirmOpen] = useState(false);
+    const [pendingDeletePresetId, setPendingDeletePresetId] = useState<number | null>(null);
 
     // Source icons mapping
     const sourceIcons: Record<string, string> = React.useMemo(() => ({
@@ -162,9 +169,17 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
 
     const handleDeleteChat = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (confirm('Are you sure you want to delete this saved chat?')) {
-            await chatOperations.deleteChat(id);
+        setPendingDeleteChatId(id);
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDeleteChat = async () => {
+        if (pendingDeleteChatId !== null) {
+            closeChat();
+            await chatOperations.deleteChat(pendingDeleteChatId);
+            setPendingDeleteChatId(null);
         }
+        setDeleteConfirmOpen(false);
     };
 
     const handleStartEditChat = (chat: SavedChat, e: React.MouseEvent) => {
@@ -232,9 +247,16 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
 
     const handleDeletePreset = async (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (confirm('Are you sure you want to delete this preset?')) {
-            await presetOperations.deletePreset(id);
+        setPendingDeletePresetId(id);
+        setDeletePresetConfirmOpen(true);
+    };
+
+    const confirmDeletePreset = async () => {
+        if (pendingDeletePresetId !== null) {
+            await presetOperations.deletePreset(pendingDeletePresetId);
+            setPendingDeletePresetId(null);
         }
+        setDeletePresetConfirmOpen(false);
     };
 
     const handleStartEditPreset = (preset: SavedPreset, e: React.MouseEvent) => {
@@ -384,6 +406,32 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
 
             <BuyMeCoffeeModal open={buyMeCoffeeOpen} onOpenChange={setBuyMeCoffeeOpen} />
             <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
+            
+            <ConfirmationDialog
+                open={deleteConfirmOpen}
+                title="Delete Chat"
+                description="Are you sure you want to delete this saved chat? This action cannot be undone."
+                confirmLabel="Delete"
+                destructive
+                onConfirm={confirmDeleteChat}
+                onCancel={() => {
+                    setDeleteConfirmOpen(false);
+                    setPendingDeleteChatId(null);
+                }}
+            />
+            
+            <ConfirmationDialog
+                open={deletePresetConfirmOpen}
+                title="Delete Preset"
+                description="Are you sure you want to delete this preset? This action cannot be undone."
+                confirmLabel="Delete"
+                destructive
+                onConfirm={confirmDeletePreset}
+                onCancel={() => {
+                    setDeletePresetConfirmOpen(false);
+                    setPendingDeletePresetId(null);
+                }}
+            />
         </>
     )
 }

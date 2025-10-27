@@ -1,4 +1,4 @@
-import { Save, SaveAll, Check, Download } from 'lucide-react';
+import { Save, SaveAll, Check, Download, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FaRegFilePdf } from "react-icons/fa6";
 import { PiGitMerge } from "react-icons/pi";
@@ -13,6 +13,7 @@ interface PreviewToolbarProps {
     onExportPDF: () => void;
     onMerge: () => void;
     onExportChat?: () => void;
+    onCloseChat?: () => void;
 }
 
 export const PreviewToolbar = ({
@@ -24,13 +25,49 @@ export const PreviewToolbar = ({
     onExportPDF,
     onMerge,
     onExportChat,
+    onCloseChat,
 }: PreviewToolbarProps) => {
 
+    const [chatDataExists, setChatDataExists] = useState(false);
+
+    useEffect(() => {
+        chrome.storage.local.get(['chatData']).then((result) => {
+            if (result.chatData) {
+                setChatDataExists(result.chatData.messages.length > 0);
+            }else {
+                setChatDataExists(false);
+            }
+        });
+
+        const listener = () => {
+            chrome.storage.local.get(['chatData']).then((result) => {
+                if (result.chatData) {
+                    setChatDataExists(result.chatData.messages.length > 0);
+                } else {
+                    setChatDataExists(false);
+                }
+            });
+        };
+        chrome.storage.onChanged.addListener(listener);
+        return () => {
+            chrome.storage.onChanged.removeListener(listener);
+        };
+    }, [currentChatId]);
+
+    const handleCloseChat = () => {
+        if (onCloseChat) {
+            onCloseChat();
+        }
+    };
+
+    if (!chatDataExists) {
+        return null;
+    }
 
     return (
         <div className='sticky top-0 z-10 bg-accent border-b border-border/40 px-4 py-2 flex items-center justify-between gap-2 !rounded-none'>
             {/* Left side - Chat actions */}
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2 w-full'>
                 <Button
                     onClick={onExportPDF}
                     size="sm"
@@ -104,6 +141,18 @@ export const PreviewToolbar = ({
                         Save As
                     </Button>
                 )}
+                {
+                    (currentChatId || chatDataExists) && (
+                        <Button
+                            variant={'ghost'}
+                            size="sm"
+                            className="ml-auto gap-2 !bg-red-500/10 group"
+                            onClick={handleCloseChat}
+                        >
+                            <X className='text-red-600 group-hover:text-red-500' />
+                            <span className='text-red-600 group-hover:text-red-500'>Close chat</span>
+                        </Button>
+                    )}
             </div>
         </div>
     );

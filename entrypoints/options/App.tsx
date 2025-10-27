@@ -111,6 +111,7 @@ function App() {
     const [chatChanged, setChatChanged] = useState(false);
     const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = useState(false);
     const [pendingChatLoad, setPendingChatLoad] = useState<{ chat: SavedChat, preset: PDFSettings | null } | null>(null);
+    const [pendingCloseChat, setPendingCloseChat] = useState(false);
     const [showMergeDialog, setShowMergeDialog] = useState(false);
     const [pendingPreset, setPendingPreset] = useState<SavedPreset | null>(null);
     const [showPresetWarning, setShowPresetWarning] = useState(false);
@@ -253,12 +254,6 @@ function App() {
             const settingsChanged = originalChatData.settings
                 ? !deepEqual(settings, originalChatData.settings)
                 : false;
-            console.log("😂😂😂 Chat change tracking:", {
-                messagesChanged,
-                selectionChanged,
-                settingsChanged
-            });
-            console.log("😱😱😱", settings, originalChatData.settings);
             setChatChanged(messagesChanged || selectionChanged || settingsChanged);
         } else {
             setChatChanged(false);
@@ -450,6 +445,27 @@ function App() {
         setShowSaveChatDialog(true);
     };
 
+    const handleCloseChat = () => {
+        if (chatChanged) {
+            setPendingCloseChat(true);
+            setShowUnsavedChangesDialog(true);
+            return;
+        }
+
+        // Clear messages array in chatData
+        if (chatData) {
+            const clearedChatData = {
+                ...chatData,
+                messages: []
+            };
+            setChatData(null);
+            setOriginalChatData(null);
+
+            // Update storage with empty messages and clear pdf settings
+            chrome.storage.local.set({ chatData: clearedChatData, pdfSettings: null, savedChatId: null });
+        }
+    };
+
     const handleChatCreated = (chatId: number) => {
         setCurrentChatId(chatId);
         chrome.storage.local.set({ savedChatId: chatId, pdfSettings: settings });
@@ -547,18 +563,46 @@ function App() {
             }
         }
 
-        // Close dialog and load pending chat
+        // Close dialog
         setShowUnsavedChangesDialog(false);
-        if (pendingChatLoad) {
+
+        // Handle pending action after save
+        if (pendingCloseChat) {
+            // Proceed with closing chat
+            if (chatData) {
+                const clearedChatData = {
+                    ...chatData,
+                    messages: []
+                };
+                setChatData(null);
+                setOriginalChatData(null);
+                chrome.storage.local.set({ chatData: clearedChatData, pdfSettings: null, savedChatId: null });
+            }
+            setPendingCloseChat(false);
+        } else if (pendingChatLoad) {
             loadChatData(pendingChatLoad.chat, pendingChatLoad.preset);
             setPendingChatLoad(null);
         }
     };
 
     const handleUnsavedChangesDiscard = () => {
-        // Close dialog and load pending chat
+        // Close dialog
         setShowUnsavedChangesDialog(false);
-        if (pendingChatLoad) {
+
+        // Handle pending action
+        if (pendingCloseChat) {
+            // Proceed with closing chat without saving
+            if (chatData) {
+                const clearedChatData = {
+                    ...chatData,
+                    messages: []
+                };
+                setChatData(null);
+                setOriginalChatData(null);
+                chrome.storage.local.set({ chatData: clearedChatData, pdfSettings: null, savedChatId: null });
+            }
+            setPendingCloseChat(false);
+        } else if (pendingChatLoad) {
             loadChatData(pendingChatLoad.chat, pendingChatLoad.preset);
             setPendingChatLoad(null);
         }
@@ -568,6 +612,7 @@ function App() {
         // Just close dialog and clear pending
         setShowUnsavedChangesDialog(false);
         setPendingChatLoad(null);
+        setPendingCloseChat(false);
     };
 
     const handleToggleSidebar = () => {
@@ -622,6 +667,7 @@ function App() {
                     }}
                     onOpenBulkExport={() => setShowBulkExportDialog(true)}
                     onOpenImport={() => setShowImportDialog(true)}
+                    closeChat={handleCloseChat}
                 />
                 <SidebarInset>
                     <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
@@ -635,6 +681,7 @@ function App() {
                             onSaveAsChat={handleSaveAsChat}
                             onExportPDF={handleGeneratePDF}
                             onMerge={() => setShowMergeDialog(true)}
+                            onCloseChat={handleCloseChat}
                             onExportChat={() => {
                                 if (currentChatId) {
                                     // Load the current chat and set it for export

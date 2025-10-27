@@ -15,6 +15,7 @@ interface PreviewContainerProps {
     onExportPDF: () => void;
     onMerge: () => void;
     onExportChat?: () => void;
+    onCloseChat?: () => void;
 }
 
 export const PreviewContainer = ({
@@ -28,6 +29,7 @@ export const PreviewContainer = ({
     onExportPDF,
     onMerge,
     onExportChat,
+    onCloseChat,
 }: PreviewContainerProps) => {
     return (
         <div className='flex-1 h-full flex flex-col bg-background mt-1'>
@@ -40,6 +42,7 @@ export const PreviewContainer = ({
                 onExportPDF={onExportPDF}
                 onMerge={onMerge}
                 onExportChat={onExportChat}
+                onCloseChat={onCloseChat}
             />
 
             <div
