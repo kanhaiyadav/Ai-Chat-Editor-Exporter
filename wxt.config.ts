@@ -7,7 +7,7 @@ export default defineConfig({
     modules: ["@wxt-dev/module-react"],
     manifest: {
         name: "Chat2Pdf",
-        description: "A Chrome extension for converting AI chats to PDF",
+        description: "A browser extension for converting AI chats to PDF",
         version: "13.0.0",
         permissions: ["activeTab", "downloads", "storage"],
         host_permissions: [

@@ -452,6 +452,7 @@ function App() {
 
     const handleChatCreated = (chatId: number) => {
         setCurrentChatId(chatId);
+        chrome.storage.local.set({ savedChatId: chatId, pdfSettings: settings });
         // Set original chat data after creating new chat
         if (chatData && filteredMessages) {
             setOriginalChatData({

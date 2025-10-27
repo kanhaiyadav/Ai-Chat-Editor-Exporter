@@ -4,7 +4,7 @@
   <img src="public/chat2pdf2.png" alt="Chat2Pdf Logo" width="200" style="border-radius: 12px; margin: 20px 0;">
 </div>
 
-A powerful Chrome extension that transforms AI chat conversations into beautifully formatted PDFs. Currently supports exporting ChatGPT conversations with rich text editing, customization, and export capabilities. Support for Claude, Gemini, DeepSeek, and other platforms is planned for future releases.
+A powerful browser extension that transforms AI chat conversations into beautifully formatted PDFs. Currently supports exporting ChatGPT conversations with rich text editing, customization, and export capabilities. Support for Claude, Gemini, DeepSeek, and other platforms is planned for future releases.
 
 ## Table of Contents
 
@@ -70,7 +70,7 @@ npm install
 npm run build
 ```
 
-4. **Load in Chrome**:
+4. **Load in Chromimum browsers**:
 
 -   Open `chrome://extensions/`
 -   Enable "Developer mode" (top-right)
