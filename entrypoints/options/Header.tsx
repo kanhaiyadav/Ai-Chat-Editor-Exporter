@@ -19,7 +19,7 @@ export const Header = () => {
 
 
     const handleGithubClick = () => {
-        window.open('https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter', '_blank');
+        window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
     };
 
     return (

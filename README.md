@@ -54,7 +54,7 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter.git
+git clone https://github.com/kanhaiyadav/Chat2Pdf.git
 cd Ai-Chat-Editor-Exporter
 ```
 
@@ -388,7 +388,7 @@ C2Pdf_wxt/
 ### Setup
 
 ```bash
-git clone https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter.git
+git clone https://github.com/kanhaiyadav/Chat2Pdf.git
 cd Ai-Chat-Editor-Exporter
 npm install
 npm run dev
@@ -484,7 +484,7 @@ We welcome contributions!
 
 ### Getting Help
 
--   **GitHub Issues**: [Report bugs or request features](https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter/issues)
+-   **GitHub Issues**: [Report bugs or request features](https://github.com/kanhaiyadav/Chat2Pdf/issues)
 -   **Feedback Form**: Use the feedback button in the extension
 -   **Buy Me Coffee**: Support development
 -   **Star the repo**: Show your support!
@@ -527,7 +527,7 @@ A: Yes! All data is stored locally. Nothing is sent to external servers.
 A: Currently, the extension supports ChatGPT. Support for Claude, Gemini, DeepSeek, and other AI chat platforms is planned for future releases.
 
 **Q: When will support for other platforms be added?**
-A: We're actively working on adding support for Claude, Gemini, and DeepSeek. The timeline depends on community feedback and platform specifics. Follow our [GitHub](https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter) for updates!
+A: We're actively working on adding support for Claude, Gemini, and DeepSeek. The timeline depends on community feedback and platform specifics. Follow our [GitHub](https://github.com/kanhaiyadav/Chat2Pdf) for updates!
 
 **Q: Can I edit exported PDFs?**
 A: Edit before export using the Message Management feature.
@@ -542,7 +542,7 @@ A: Yes! Use the "Merge Chats" feature.
 A: Saved chats will be lost. Export important ones to PDF first.
 
 **Q: How do I report bugs?**
-A: Open an issue on [GitHub](https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter/issues).
+A: Open an issue on [GitHub](https://github.com/kanhaiyadav/Chat2Pdf/issues).
 
 **Q: Can I contribute?**
 A: Absolutely! See the Contributing section above.
@@ -558,8 +558,8 @@ A: Absolutely! See the Contributing section above.
 ## Connect
 
 -   **GitHub**: [@kanhaiyadav](https://github.com/kanhaiyadav)
--   **Project**: [Ai-Chat-Editor-Exporter](https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter)
--   **Issues**: [Report bugs](https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter/issues)
+-   **Project**: [Ai-Chat-Editor-Exporter](https://github.com/kanhaiyadav/Chat2Pdf)
+-   **Issues**: [Report bugs](https://github.com/kanhaiyadav/Chat2Pdf/issues)
 
 ---
 

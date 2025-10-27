@@ -320,7 +320,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
     };
 
     const handleStarRepo = () => {
-        window.open('https://github.com/kanhaiyadav/Ai-Chat-Editor-Exporter', '_blank');
+        window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
     };
 
     return (
