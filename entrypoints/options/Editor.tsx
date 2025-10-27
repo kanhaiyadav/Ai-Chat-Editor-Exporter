@@ -19,6 +19,8 @@ import {
     Link as LinkIcon,
     Palette,
     Settings2,
+    LucideTable,
+    Upload
 } from "lucide-react";
 
 interface ChatEditorProps {
@@ -43,6 +45,8 @@ function ImageDialog({
     const [height, setHeight] = useState('auto');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const [uploadedImageSrc, setUploadedImageSrc] = useState<string>('');
+
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -50,15 +54,17 @@ function ImageDialog({
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64Image = event.target?.result as string;
-            insertImage(base64Image);
+            setUploadedImageSrc(base64Image);
         };
         reader.readAsDataURL(file);
     };
 
     const insertImage = (src: string) => {
+        console.log('insertImage called with src length:', src.length);
         const widthStyle = width ? `width: ${width}px;` : '';
         const heightStyle = height !== 'auto' ? `height: ${height}px;` : 'height: auto;';
         const imageHtml = `<img src="${src}" alt="image" style="max-width: 100%; ${widthStyle} ${heightStyle} margin: 8px 0; border-radius: 4px; display: block;" />`;
+        console.log('calling onInsert for image');
         onInsert(imageHtml);
         resetForm();
         onOpenChange(false);
@@ -77,11 +83,12 @@ function ImageDialog({
         setImageUrl('');
         setWidth('');
         setHeight('auto');
+        setUploadedImageSrc('');
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md bg-card">
                 <DialogHeader>
                     <DialogTitle>Insert Image</DialogTitle>
                 </DialogHeader>
@@ -125,11 +132,18 @@ function ImageDialog({
                             />
                             <Button
                                 variant="outline"
-                                className="w-full"
+                                className="w-full h-10 hover:bg-primary/5 hover:text-primary hover:!border-primary"
                                 onClick={() => fileInputRef.current?.click()}
                             >
-                                Choose Image
+                                <Upload size={16} className="mr-2" />
+                                {uploadedImageSrc ? 'Change Image' : 'Choose Image'}
                             </Button>
+                            {uploadedImageSrc && (
+                                <div className="mt-3 p-2 bg-gray-100 rounded">
+                                    <p className="text-xs text-gray-600 mb-2">Preview:</p>
+                                    <img src={uploadedImageSrc} alt="preview" style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '4px' }} />
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -144,7 +158,7 @@ function ImageDialog({
                                 placeholder="https://example.com/image.jpg"
                                 value={imageUrl}
                                 onChange={(e) => setImageUrl(e.target.value)}
-                                className="mt-1"
+                                className="mt-1 !h-10"
                             />
                         </div>
                     )}
@@ -163,7 +177,7 @@ function ImageDialog({
                                 placeholder="Auto"
                                 value={width}
                                 onChange={(e) => setWidth(e.target.value)}
-                                className="mt-1"
+                                className="mt-1 h-10"
                             />
                         </div>
                         <div>
@@ -176,19 +190,29 @@ function ImageDialog({
                                 placeholder="Auto"
                                 value={height === 'auto' ? '' : height}
                                 onChange={(e) => setHeight(e.target.value || 'auto')}
-                                className="mt-1"
+                                className="mt-1 h-10"
                             />
-                            <p className="text-xs text-gray-500 mt-1">Leave empty for auto</p>
                         </div>
                     </div>
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
                     <Button
-                        onClick={imageSource === 'upload' ? () => fileInputRef.current?.click() : handleInsertUrl}
+                        type="button"
+                        onClick={() => {
+                            if (imageSource === 'upload') {
+                                if (!uploadedImageSrc) {
+                                    alert('Please select an image first');
+                                    return;
+                                }
+                                insertImage(uploadedImageSrc);
+                            } else {
+                                handleInsertUrl();
+                            }
+                        }}
                     >
                         Insert Image
                     </Button>
@@ -217,6 +241,7 @@ function TableDialog({
     const [alternateBgColor, setAlternateBgColor] = useState('#f9fafb');
 
     const insertTable = () => {
+        console.log('insertTable called');
         const rowNum = parseInt(rows);
         const colNum = parseInt(cols);
 
@@ -231,7 +256,7 @@ function TableDialog({
         if (hasHeader) {
             tableHtml += '<thead><tr style="background-color: ' + headerBgColor + ';">';
             for (let j = 0; j < colNum; j++) {
-                tableHtml += '<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold;">Header ' + (j + 1) + '</th>';
+                tableHtml += '<th style="border: 1px solid #d1d5db; padding: 8px; text-align: left; font-weight: bold; background-color: ' + headerBgColor + ';">Header ' + (j + 1) + '</th>';
             }
             tableHtml += '</tr></thead>';
         }
@@ -248,6 +273,8 @@ function TableDialog({
         }
         tableHtml += '</tbody></table>';
 
+        console.log('tableHtml:', tableHtml);
+        console.log('calling onInsert');
         onInsert(tableHtml);
         resetForm();
         onOpenChange(false);
@@ -265,7 +292,7 @@ function TableDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="!max-w-xl bg-card">
                 <DialogHeader>
                     <DialogTitle>Insert Table</DialogTitle>
                 </DialogHeader>
@@ -283,7 +310,7 @@ function TableDialog({
                                 min="1"
                                 value={rows}
                                 onChange={(e) => setRows(e.target.value)}
-                                className="mt-1"
+                                className="mt-1 h-10"
                             />
                         </div>
                         <div>
@@ -296,7 +323,7 @@ function TableDialog({
                                 min="1"
                                 value={cols}
                                 onChange={(e) => setCols(e.target.value)}
-                                className="mt-1"
+                                className="mt-1 h-10"
                             />
                         </div>
                     </div>
@@ -304,7 +331,7 @@ function TableDialog({
                     <Separator />
 
                     {/* Header Settings */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-8">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <Checkbox
                                 checked={hasHeader}
@@ -312,6 +339,15 @@ function TableDialog({
                             />
                             <span className="text-sm font-medium">Include Table Header</span>
                         </label>
+                        <div className="flex items-center justify-between">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <Checkbox
+                                    checked={alternateRows}
+                                    onCheckedChange={(checked) => setAlternateRows(checked as boolean)}
+                                />
+                                <span className="text-sm font-medium">Alternate Row Colors</span>
+                            </label>
+                        </div>
                     </div>
 
                     {hasHeader && (
@@ -332,7 +368,7 @@ function TableDialog({
                                     type="text"
                                     value={headerBgColor}
                                     onChange={(e) => setHeaderBgColor(e.target.value)}
-                                    className="flex-1"
+                                    className="flex-1 h-10"
                                     placeholder="#e5e7eb"
                                 />
                             </div>
@@ -342,7 +378,7 @@ function TableDialog({
                     <Separator />
 
                     {/* Body Color Settings */}
-                    <div className="space-y-3">
+                    <div className="flex items-center gap-4">
                         <div>
                             <Label htmlFor="body-color" className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
@@ -360,21 +396,13 @@ function TableDialog({
                                     type="text"
                                     value={bodyBgColor}
                                     onChange={(e) => setBodyBgColor(e.target.value)}
-                                    className="flex-1"
+                                    className="flex-1 h-10"
                                     placeholder="#ffffff"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <Checkbox
-                                    checked={alternateRows}
-                                    onCheckedChange={(checked) => setAlternateRows(checked as boolean)}
-                                />
-                                <span className="text-sm font-medium">Alternate Row Colors</span>
-                            </label>
-                        </div>
+                        
 
                         {alternateRows && (
                             <div>
@@ -394,20 +422,60 @@ function TableDialog({
                                         type="text"
                                         value={alternateBgColor}
                                         onChange={(e) => setAlternateBgColor(e.target.value)}
-                                        className="flex-1"
+                                        className="flex-1 h-10"
                                         placeholder="#f9fafb"
                                     />
                                 </div>
                             </div>
                         )}
                     </div>
+
+                    <Separator />
+
+                    {/* Table Preview */}
+                    <div>
+                        <Label htmlFor="alternate-color" className="text-sm mb-2">
+                            Preview ({parseInt(rows)} rows × {parseInt(cols)} cols):
+                        </Label>
+                        <div className="overflow-x-auto text-xs">
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                                {hasHeader && (
+                                    <thead>
+                                        <tr style={{ backgroundColor: headerBgColor }}>
+                                            {Array.from({ length: Math.min(parseInt(cols), 3) }).map((_, j) => (
+                                                <th key={j} style={{ border: '1px solid #d1d5db', padding: '4px', textAlign: 'left', fontWeight: 'bold' }}>
+                                                    H{j + 1}
+                                                </th>
+                                            ))}
+                                            {parseInt(cols) > 3 && <th style={{ border: '1px solid #d1d5db', padding: '4px' }}>...</th>}
+                                        </tr>
+                                    </thead>
+                                )}
+                                <tbody>
+                                    {Array.from({ length: Math.min(parseInt(rows), 2) }).map((_, i) => {
+                                        const rowBgColor = alternateRows && i % 2 === 1 ? alternateBgColor : bodyBgColor;
+                                        return (
+                                            <tr key={i} style={{ backgroundColor: rowBgColor }}>
+                                                {Array.from({ length: Math.min(parseInt(cols), 3) }).map((_, j) => (
+                                                    <td key={j} style={{ border: '1px solid #d1d5db', padding: '4px' }}>
+                                                        C
+                                                    </td>
+                                                ))}
+                                                {parseInt(cols) > 3 && <td style={{ border: '1px solid #d1d5db', padding: '4px' }}>...</td>}
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
-                    <Button onClick={insertTable}>Insert Table</Button>
+                    <Button type="button" onClick={insertTable}>Insert Table</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -426,18 +494,22 @@ function CodeBlockDialog({
 }) {
     const [language, setLanguage] = useState('javascript');
     const [fontSize, setFontSize] = useState('14');
-    const [bgColor, setBgColor] = useState('#1e293b');
-    const [textColor, setTextColor] = useState('#f1f5f9');
+    const [headerBgColor, setHeaderBgColor] = useState('#f5f5f5');
+    const [headerTextColor, setHeaderTextColor] = useState('#555555');
+    const [bgColor, setBgColor] = useState('#fafafa');
+    const [textColor, setTextColor] = useState('#333333');
     const [showLanguageLabel, setShowLanguageLabel] = useState(true);
 
     const insertCodeBlock = () => {
-        const languageLabel = showLanguageLabel ? `<div style="background-color: #0f172a; color: #94a3b8; padding: 4px 8px; font-size: 12px; border-radius: 4px 4px 0 0; font-weight: bold;">${language}</div>` : '';
+        console.log('insertCodeBlock called');
+        const languageLabel = showLanguageLabel ? `<div style="background-color: ${headerBgColor}; color: ${headerTextColor}; padding: 4px 8px; font-size: 12px; border-radius: 4px 4px 0 0; font-weight: bold;">${language}</div>` : '';
 
         const codeHtml = `<div style="margin: 8px 0; border-radius: 4px; overflow: hidden;">
-            ${languageLabel}
-            <pre class="prose" style="background-color: ${bgColor}; color: ${textColor}; padding: 12px; margin: 0; font-size: ${fontSize}px; overflow-x: auto;"><code class="language-${language}">// ${language} code here</code></pre>
+            <pre class="prose" style="background-color: ${bgColor}; color: ${textColor}; padding: 12px; margin: 0; font-size: ${fontSize}px; overflow-x: auto;"> ${languageLabel} <code class="language-${language}">// ${language} code here</code></pre>
         </div>`;
 
+        console.log('codeHtml:', codeHtml);
+        console.log('calling onInsert');
         onInsert(codeHtml);
         resetForm();
         onOpenChange(false);
@@ -446,99 +518,151 @@ function CodeBlockDialog({
     const resetForm = () => {
         setLanguage('javascript');
         setFontSize('14');
-        setBgColor('#1e293b');
-        setTextColor('#f1f5f9');
+        setHeaderBgColor('#f5f5f5');
+        setHeaderTextColor('#555555');
+        setBgColor('#fafafa');
+        setTextColor('#333333');
         setShowLanguageLabel(true);
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Insert Code Block</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
-                    {/* Language */}
-                    <div>
-                        <Label htmlFor="language" className="text-sm">
-                            Language
-                        </Label>
-                        <Input
-                            id="language"
-                            placeholder="e.g., javascript, python, java"
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
-                            className="mt-1"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                            Examples: javascript, python, java, typescript, css, html, sql
-                        </p>
-                    </div>
+                    <div className="flex gap-4">
+                        {/* Language */}
+                        <div>
+                            <Label htmlFor="language" className="text-sm">
+                                Language
+                            </Label>
+                            <Input
+                                id="language"
+                                placeholder="e.g., javascript, python, java"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                className="mt-1 h-10"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Examples: javascript, python, java, typescript, css, html, sql
+                            </p>
+                        </div>
 
-                    <Separator />
-
-                    {/* Font Size */}
-                    <div>
-                        <Label htmlFor="font-size" className="text-sm">
-                            Font Size: {fontSize}px
-                        </Label>
-                        <input
-                            id="font-size"
-                            type="range"
-                            min="10"
-                            max="24"
-                            value={fontSize}
-                            onChange={(e) => setFontSize(e.target.value)}
-                            className="w-full mt-1"
-                        />
+                        {/* Font Size */}
+                        <div>
+                            <Label htmlFor="font-size" className="text-sm">
+                                Font Size: {fontSize}px
+                            </Label>
+                            <input
+                                id="font-size"
+                                type="number"
+                                min="10"
+                                max="24"
+                                value={fontSize}
+                                onChange={(e) => setFontSize(e.target.value)}
+                                className="w-full mt-1"
+                            />
+                        </div>
                     </div>
 
                     <Separator />
 
                     {/* Colors */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 flex gap-4">
+                        {
+                            showLanguageLabel && (
+                                <div>
+                                    <div>
+                                        <Label className="text-sm flex items-center gap-2">
+                                            <Palette size={16} />
+                                            Language Label Colors
+                                        </Label>
+                                        <div className="flex gap-2 mt-1">
+                                            <Input
+                                                type="color"
+                                                value={headerBgColor}
+                                                onChange={(e) => setHeaderBgColor(e.target.value)}
+                                                className="w-12 h-10 p-1 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={headerBgColor}
+                                                onChange={(e) => setHeaderBgColor(e.target.value)}
+                                                className="flex-1 h-10"
+                                                placeholder="#f5f5f5"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label className="text-sm flex items-center gap-2">
+                                            <Palette size={16} />
+                                            Language Label Text Color
+                                        </Label>
+                                        <div className="flex gap-2 mt-1">
+                                            <Input
+                                                type="color"
+                                                value={headerTextColor}
+                                                onChange={(e) => setHeaderTextColor(e.target.value)}
+                                                className="w-12 h-10 p-1 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={headerTextColor}
+                                                onChange={(e) => setHeaderTextColor(e.target.value)}
+                                                className="flex-1 h-10"
+                                                placeholder="#f5f5f5"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
                         <div>
-                            <Label className="text-sm flex items-center gap-2">
-                                <Palette size={16} />
-                                Background Color
-                            </Label>
-                            <div className="flex gap-2 mt-1">
-                                <Input
-                                    type="color"
-                                    value={bgColor}
-                                    onChange={(e) => setBgColor(e.target.value)}
-                                    className="w-12 h-10 p-1 cursor-pointer"
-                                />
-                                <Input
-                                    type="text"
-                                    value={bgColor}
-                                    onChange={(e) => setBgColor(e.target.value)}
-                                    className="flex-1"
-                                    placeholder="#1e293b"
-                                />
+                            <div>
+                                <Label className="text-sm flex items-center gap-2">
+                                    <Palette size={16} />
+                                    Background Color
+                                </Label>
+                                <div className="flex gap-2 mt-1">
+                                    <Input
+                                        type="color"
+                                        value={bgColor}
+                                        onChange={(e) => setBgColor(e.target.value)}
+                                        className="w-12 h-10 p-1 cursor-pointer"
+                                    />
+                                    <Input
+                                        type="text"
+                                        value={bgColor}
+                                        onChange={(e) => setBgColor(e.target.value)}
+                                        className="flex-1 h-10"
+                                        placeholder="#1e293b"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <Label className="text-sm flex items-center gap-2">
-                                <Palette size={16} />
-                                Text Color
-                            </Label>
-                            <div className="flex gap-2 mt-1">
-                                <Input
-                                    type="color"
-                                    value={textColor}
-                                    onChange={(e) => setTextColor(e.target.value)}
-                                    className="w-12 h-10 p-1 cursor-pointer"
-                                />
-                                <Input
-                                    type="text"
-                                    value={textColor}
-                                    onChange={(e) => setTextColor(e.target.value)}
-                                    className="flex-1"
-                                    placeholder="#f1f5f9"
-                                />
+                            <div>
+                                <Label className="text-sm flex items-center gap-2">
+                                    <Palette size={16} />
+                                    Text Color
+                                </Label>
+                                <div className="flex gap-2 mt-1">
+                                    <Input
+                                        type="color"
+                                        value={textColor}
+                                        onChange={(e) => setTextColor(e.target.value)}
+                                        className="w-12 h-10 p-1 cursor-pointer"
+                                    />
+                                    <Input
+                                        type="text"
+                                        value={textColor}
+                                        onChange={(e) => setTextColor(e.target.value)}
+                                        className="flex-1 h-10"
+                                        placeholder="#f1f5f9"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -561,7 +685,7 @@ function CodeBlockDialog({
                         <p className="text-xs text-gray-600 mb-2">Preview:</p>
                         <div style={{ borderRadius: '4px', overflow: 'hidden' }}>
                             {showLanguageLabel && (
-                                <div style={{ backgroundColor: '#0f172a', color: '#94a3b8', padding: '4px 8px', fontSize: '12px', fontWeight: 'bold' }}>
+                                <div style={{ backgroundColor: headerBgColor, color: headerTextColor, padding: '4px 8px', fontSize: '12px', fontWeight: 'bold' }}>
                                     {language}
                                 </div>
                             )}
@@ -573,10 +697,10 @@ function CodeBlockDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
-                    <Button onClick={insertCodeBlock}>Insert Code Block</Button>
+                    <Button type="button" onClick={insertCodeBlock}>Insert Code Block</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -600,6 +724,7 @@ function LinkDialog({
     const [underline, setUnderline] = useState(true);
 
     const insertLink = () => {
+        console.log('insertLink called');
         if (!url.trim()) {
             alert('Please enter a URL');
             return;
@@ -610,6 +735,8 @@ function LinkDialog({
 
         const linkHtml = `<a href="${url}" style="color: ${linkColor}; ${textDecorationStyle}" data-active-color="${activeLinkColor}">${text}</a>`;
 
+        console.log('linkHtml:', linkHtml);
+        console.log('calling onInsert');
         onInsert(linkHtml);
         resetForm();
         onOpenChange(false);
@@ -625,7 +752,7 @@ function LinkDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="bg-card">
                 <DialogHeader>
                     <DialogTitle>Insert Link</DialogTitle>
                 </DialogHeader>
@@ -641,7 +768,7 @@ function LinkDialog({
                             placeholder="https://example.com"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
-                            className="mt-1"
+                            className="mt-1 h-10"
                         />
                     </div>
 
@@ -662,7 +789,7 @@ function LinkDialog({
                     <Separator />
 
                     {/* Colors */}
-                    <div className="space-y-3">
+                    <div className="flex items-center gap-4">
                         <div>
                             <Label className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
@@ -679,7 +806,7 @@ function LinkDialog({
                                     type="text"
                                     value={linkColor}
                                     onChange={(e) => setLinkColor(e.target.value)}
-                                    className="flex-1"
+                                    className="flex-1 h-10"
                                     placeholder="#0066cc"
                                 />
                             </div>
@@ -701,7 +828,7 @@ function LinkDialog({
                                     type="text"
                                     value={activeLinkColor}
                                     onChange={(e) => setActiveLinkColor(e.target.value)}
-                                    className="flex-1"
+                                    className="flex-1 h-10"
                                     placeholder="#003399"
                                 />
                             </div>
@@ -722,8 +849,8 @@ function LinkDialog({
                     </div>
 
                     {/* Preview */}
-                    <div className="p-3 rounded-lg bg-gray-100">
-                        <p className="text-xs text-gray-600 mb-2">Preview:</p>
+                    <div className="p-3 rounded-lg bg-accent">
+                        <p className="text-xs mb-2">Preview:</p>
                         <a
                             href={url || '#'}
                             style={{
@@ -737,10 +864,10 @@ function LinkDialog({
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                         Cancel
                     </Button>
-                    <Button onClick={insertLink}>Insert Link</Button>
+                    <Button type="button" onClick={insertLink}>Insert Link</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -750,6 +877,7 @@ function LinkDialog({
 export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
     const isInitialMount = useRef(true);
+    const savedRangeRef = useRef<Range | null>(null);
 
     // Dialog states
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
@@ -778,10 +906,37 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
         handleInput();
     };
 
+    const saveCursorPosition = () => {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0) {
+            savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+            console.log('Cursor position saved');
+        }
+    };
+
+    const restoreCursorPosition = () => {
+        const sel = window.getSelection();
+        if (sel && savedRangeRef.current) {
+            sel.removeAllRanges();
+            sel.addRange(savedRangeRef.current);
+            console.log('Cursor position restored');
+        }
+    };
+
     const insertElement = (html: string) => {
-        document.execCommand('insertHTML', false, html);
-        editorRef.current?.focus();
-        handleInput();
+        console.log('insertElement called with html length:', html.length);
+        if (editorRef.current) {
+            restoreCursorPosition();
+            editorRef.current.focus();
+            // Just use execCommand directly - it will insert at current cursor position
+            setTimeout(() => {
+                const success = document.execCommand('insertHTML', false, html);
+                console.log('execCommand result:', success);
+                handleInput();
+            }, 0);
+        } else {
+            console.error('editorRef is null!');
+        }
     };
 
     const insertSeparator = () => {
@@ -814,7 +969,7 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
             />
 
             {/* Toolbar */}
-            <div className="bg-gray-100 border-b border-border p-3 flex flex-wrap gap-1">
+            <div className="bg-accent border-b border-border p-3 flex flex-wrap gap-1">
                 {/* Text Formatting */}
                 <Button
                     size="sm"
@@ -844,7 +999,7 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                     <Underline size={16} />
                 </Button>
 
-                <div className="w-px bg-border"></div>
+                <div className="w-px bg-border mx-1"></div>
 
                 {/* Headings */}
                 <Button
@@ -866,7 +1021,7 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                     <Heading2 size={16} />
                 </Button>
 
-                <div className="w-px bg-border"></div>
+                <div className="w-px bg-border mx-1"></div>
 
                 {/* Lists */}
                 <Button
@@ -888,13 +1043,13 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                     <ListOrdered size={16} />
                 </Button>
 
-                <div className="w-px bg-border"></div>
+                <div className="w-px bg-border mx-1"></div>
 
                 {/* Code & Special */}
                 <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setCodeBlockDialogOpen(true)}
+                    onClick={() => { saveCursorPosition(); setCodeBlockDialogOpen(true); }}
                     title="Code Block"
                     className="w-9 h-9 p-0"
                 >
@@ -903,29 +1058,29 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                 <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setLinkDialogOpen(true)}
+                    onClick={() => { saveCursorPosition(); setLinkDialogOpen(true); }}
                     title="Insert Link"
                     className="w-9 h-9 p-0 text-xs"
                 >
                     <LinkIcon size={16} />
                 </Button>
 
-                <div className="w-px bg-border"></div>
+                <div className="w-px bg-border mx-1"></div>
 
                 {/* Table & Media */}
                 <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setTableDialogOpen(true)}
+                    onClick={() => { saveCursorPosition(); setTableDialogOpen(true); }}
                     title="Insert Table"
                     className="w-9 h-9 p-0"
                 >
-                    <Settings2 size={16} />
+                    <LucideTable size={16} />
                 </Button>
                 <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setImageDialogOpen(true)}
+                    onClick={() => { saveCursorPosition(); setImageDialogOpen(true); }}
                     title="Insert Image"
                     className="w-9 h-9 p-0"
                 >

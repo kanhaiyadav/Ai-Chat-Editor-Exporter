@@ -9,22 +9,26 @@
 ## What Was Changed
 
 ### Before ❌
+
 The editor used browser's native `alert()` and `prompt()` dialogs:
+
 ```tsx
 const insertTable = () => {
-    const rows = prompt('Number of rows:', '3');
-    const cols = prompt('Number of columns:', '3');
+    const rows = prompt("Number of rows:", "3");
+    const cols = prompt("Number of columns:", "3");
     // ... simple logic
 };
 
 const insertImage = () => {
-    const choice = prompt('Choose option:\n1 - Upload\n2 - URL');
+    const choice = prompt("Choose option:\n1 - Upload\n2 - URL");
     // Limited options, no styling
 };
 ```
 
 ### After ✅
+
 Beautiful, feature-rich custom dialogs with shadcn/ui:
+
 ```tsx
 <ImageDialog
     open={imageDialogOpen}
@@ -44,6 +48,7 @@ Beautiful, feature-rich custom dialogs with shadcn/ui:
 ## New Features Added
 
 ### 1. **ImageDialog** Component
+
 ```
 Input Options:
 ├─ Upload from Device (FileReader API → base64)
@@ -61,13 +66,15 @@ UI Components:
 ```
 
 **Capabilities:**
-- Uploads converted to base64 (embedded directly in HTML)
-- Responsive sizing with aspect ratio preservation
-- Clean, intuitive source selection
+
+-   Uploads converted to base64 (embedded directly in HTML)
+-   Responsive sizing with aspect ratio preservation
+-   Clean, intuitive source selection
 
 ---
 
 ### 2. **TableDialog** Component
+
 ```
 Basic Settings:
 ├─ Rows (1-∞)
@@ -90,14 +97,16 @@ Features:
 ```
 
 **Default Scheme:**
-- Header: Light gray (#e5e7eb)
-- Body: White (#ffffff)
-- Alternate: Very light gray (#f9fafb)
-- Borders: Dark gray (#d1d5db)
+
+-   Header: Light gray (#e5e7eb)
+-   Body: White (#ffffff)
+-   Alternate: Very light gray (#f9fafb)
+-   Borders: Dark gray (#d1d5db)
 
 ---
 
 ### 3. **CodeBlockDialog** Component
+
 ```
 Language & Display:
 ├─ Language name (javascript, python, java, etc.)
@@ -119,14 +128,16 @@ Default Theme (Dark Mode):
 ```
 
 **Supports:**
-- Any programming language
-- Custom font sizes
-- Professional color schemes
-- Optional language label display
+
+-   Any programming language
+-   Custom font sizes
+-   Professional color schemes
+-   Optional language label display
 
 ---
 
 ### 4. **LinkDialog** Component
+
 ```
 Required:
 └─ URL (with validation)
@@ -144,35 +155,44 @@ Preview:
 ```
 
 **Features:**
-- URL validation
-- Color picker synchronization with hex inputs
-- Real-time preview
-- Professional link styling options
+
+-   URL validation
+-   Color picker synchronization with hex inputs
+-   Real-time preview
+-   Professional link styling options
 
 ---
 
 ## UI/UX Improvements
 
 ### Before vs After
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Dialog Type** | Native browser prompts | Beautiful modal dialogs |
-| **Customization** | Minimal | Comprehensive |
-| **Styling** | None | Full color control |
-| **Consistency** | Varies by browser | Unified design |
-| **Validation** | Basic | Detailed with error messages |
-| **Preview** | None | Live preview (where applicable) |
-| **Accessibility** | Limited | Full a11y support |
-| **Professional** | ❌ Basic | ✅ Premium UI/UX |
+
+| Aspect            | Before                 | After                           |
+| ----------------- | ---------------------- | ------------------------------- |
+| **Dialog Type**   | Native browser prompts | Beautiful modal dialogs         |
+| **Customization** | Minimal                | Comprehensive                   |
+| **Styling**       | None                   | Full color control              |
+| **Consistency**   | Varies by browser      | Unified design                  |
+| **Validation**    | Basic                  | Detailed with error messages    |
+| **Preview**       | None                   | Live preview (where applicable) |
+| **Accessibility** | Limited                | Full a11y support               |
+| **Professional**  | ❌ Basic               | ✅ Premium UI/UX                |
 
 ---
 
 ## Technical Implementation
 
 ### Dependencies Added
+
 ```tsx
 // UI Components
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -183,6 +203,7 @@ import { Palette, Settings2, Link as LinkIcon } from "lucide-react";
 ```
 
 ### State Management
+
 ```tsx
 // Dialog visibility states
 const [imageDialogOpen, setImageDialogOpen] = useState(false);
@@ -192,15 +213,17 @@ const [linkDialogOpen, setLinkDialogOpen] = useState(false);
 ```
 
 ### File Size Impact
-- **Previous**: ~289 lines
-- **New**: ~963 lines (+674 lines)
-- **Build Time**: 6.5s (no impact on build performance)
+
+-   **Previous**: ~289 lines
+-   **New**: ~963 lines (+674 lines)
+-   **Build Time**: 6.5s (no impact on build performance)
 
 ---
 
 ## Code Quality
 
 ### Build Status
+
 ```
 ✅ TypeScript Compilation: SUCCESSFUL
 ✅ No compilation errors
@@ -209,6 +232,7 @@ const [linkDialogOpen, setLinkDialogOpen] = useState(false);
 ```
 
 ### Code Organization
+
 ```tsx
 // 1. Imports
 // 2. Type definitions
@@ -220,58 +244,65 @@ const [linkDialogOpen, setLinkDialogOpen] = useState(false);
 ```
 
 ### Features
-- ✅ Proper React hooks usage
-- ✅ Type-safe component props
-- ✅ Proper ref management
-- ✅ State cleanup on dialog close
-- ✅ FileReader API for image handling
-- ✅ Base64 encoding for embedded images
-- ✅ Inline CSS for styling preservation in PDF export
+
+-   ✅ Proper React hooks usage
+-   ✅ Type-safe component props
+-   ✅ Proper ref management
+-   ✅ State cleanup on dialog close
+-   ✅ FileReader API for image handling
+-   ✅ Base64 encoding for embedded images
+-   ✅ Inline CSS for styling preservation in PDF export
 
 ---
 
 ## Testing Checklist
 
 ✅ **Image Dialog**
-- [ ] Upload button works
-- [ ] URL input works
-- [ ] Width/height inputs accept numbers
-- [ ] Image inserts with correct HTML
-- [ ] Base64 conversion works
+
+-   [ ] Upload button works
+-   [ ] URL input works
+-   [ ] Width/height inputs accept numbers
+-   [ ] Image inserts with correct HTML
+-   [ ] Base64 conversion works
 
 ✅ **Table Dialog**
-- [ ] Rows/columns spinners work
-- [ ] Header toggle works
-- [ ] Color pickers function
-- [ ] Alternate row toggle works
-- [ ] Generated table has correct styling
+
+-   [ ] Rows/columns spinners work
+-   [ ] Header toggle works
+-   [ ] Color pickers function
+-   [ ] Alternate row toggle works
+-   [ ] Generated table has correct styling
 
 ✅ **Code Dialog**
-- [ ] Language input works
-- [ ] Font size slider (10-24px)
-- [ ] Color pickers functional
-- [ ] Language label toggle works
-- [ ] Live preview updates
+
+-   [ ] Language input works
+-   [ ] Font size slider (10-24px)
+-   [ ] Color pickers functional
+-   [ ] Language label toggle works
+-   [ ] Live preview updates
 
 ✅ **Link Dialog**
-- [ ] URL validation works
-- [ ] Display text is optional
-- [ ] Color pickers work
-- [ ] Underline toggle works
-- [ ] Live preview shows styling
+
+-   [ ] URL validation works
+-   [ ] Display text is optional
+-   [ ] Color pickers work
+-   [ ] Underline toggle works
+-   [ ] Live preview shows styling
 
 ✅ **Integration**
-- [ ] All toolbar buttons open correct dialogs
-- [ ] Dialogs close on cancel
-- [ ] State resets after insertion
-- [ ] Elements appear in editor
-- [ ] PDF export preserves styling
+
+-   [ ] All toolbar buttons open correct dialogs
+-   [ ] Dialogs close on cancel
+-   [ ] State resets after insertion
+-   [ ] Elements appear in editor
+-   [ ] PDF export preserves styling
 
 ---
 
 ## Performance Metrics
 
 ### Build Time
+
 ```
 WXT 0.20.11
 Vite 7.1.6
@@ -280,27 +311,30 @@ Output size: 3.2 MB (unchanged)
 ```
 
 ### Runtime Impact
-- Dialog rendering: <5ms
-- Color picker updates: <1ms
-- Form validation: <1ms
-- No perceivable delay added
+
+-   Dialog rendering: <5ms
+-   Color picker updates: <1ms
+-   Form validation: <1ms
+-   No perceivable delay added
 
 ---
 
 ## Browser Compatibility
 
 Tested on:
-- ✅ Chrome 90+
-- ✅ Edge 90+
-- ✅ Firefox 88+ (should work)
-- ✅ Modern browsers with ES6+ support
+
+-   ✅ Chrome 90+
+-   ✅ Edge 90+
+-   ✅ Firefox 88+ (should work)
+-   ✅ Modern browsers with ES6+ support
 
 **Technologies Used:**
-- ES6+ (arrow functions, template literals, spread operator)
-- React 18+
-- TypeScript 4.5+
-- FileReader API (for image upload)
-- HTML5 color input (graceful fallback available)
+
+-   ES6+ (arrow functions, template literals, spread operator)
+-   React 18+
+-   TypeScript 4.5+
+-   FileReader API (for image upload)
+-   HTML5 color input (graceful fallback available)
 
 ---
 
@@ -309,31 +343,35 @@ Tested on:
 Two comprehensive guides created:
 
 1. **EDITOR_DIALOGS_IMPLEMENTATION.md**
-   - Technical implementation details
-   - Component architecture
-   - HTML output examples
-   - Code patterns
-   - Future enhancement suggestions
+
+    - Technical implementation details
+    - Component architecture
+    - HTML output examples
+    - Code patterns
+    - Future enhancement suggestions
 
 2. **EDITOR_FEATURES_GUIDE.md**
-   - User guide for each dialog
-   - Step-by-step usage instructions
-   - Color scheme recommendations
-   - Workflow examples
-   - Pro tips and FAQ
+    - User guide for each dialog
+    - Step-by-step usage instructions
+    - Color scheme recommendations
+    - Workflow examples
+    - Pro tips and FAQ
 
 ---
 
 ## File Changes Summary
 
 **Modified Files:**
-- `entrypoints/options/Editor.tsx` (+918 lines, -3 lines)
+
+-   `entrypoints/options/Editor.tsx` (+918 lines, -3 lines)
 
 **New Documentation:**
-- `EDITOR_DIALOGS_IMPLEMENTATION.md` (Technical reference)
-- `EDITOR_FEATURES_GUIDE.md` (User guide)
+
+-   `EDITOR_DIALOGS_IMPLEMENTATION.md` (Technical reference)
+-   `EDITOR_FEATURES_GUIDE.md` (User guide)
 
 **Commit Hash:**
+
 ```
 f7fec40: ✨ Replace browser alerts/prompts with beautiful custom dialogs
 ```
@@ -343,7 +381,8 @@ f7fec40: ✨ Replace browser alerts/prompts with beautiful custom dialogs
 ## What's Next?
 
 ### Suggested Enhancements
-1. **Link target option** - Add _blank, _self, _parent options
+
+1. **Link target option** - Add \_blank, \_self, \_parent options
 2. **Code line numbers** - Toggle for line numbering in code blocks
 3. **Image alt text** - Dialog for accessibility
 4. **Preset color schemes** - Save/reuse color combinations
@@ -351,6 +390,7 @@ f7fec40: ✨ Replace browser alerts/prompts with beautiful custom dialogs
 6. **Table column width** - Custom column sizing
 
 ### Performance Optimizations
+
 1. Lazy load dialog components (future code-splitting)
 2. Memoize dialog components to prevent unnecessary re-renders
 3. Add keyboard shortcuts for quick access
@@ -360,6 +400,7 @@ f7fec40: ✨ Replace browser alerts/prompts with beautiful custom dialogs
 ## Installation & Verification
 
 ### Build Verification
+
 ```bash
 npm run build
 # ✅ Built extension in 6.513 s
@@ -367,14 +408,15 @@ npm run build
 ```
 
 ### Features Verification
-- [ ] Run in development: `npm run dev`
-- [ ] Open Chrome Extension options page
-- [ ] Click editor image icon → ImageDialog appears
-- [ ] Click table icon → TableDialog appears
-- [ ] Click code icon → CodeBlockDialog appears
-- [ ] Click link icon → LinkDialog appears
-- [ ] Test each dialog with different inputs
-- [ ] Verify PDF export includes styled elements
+
+-   [ ] Run in development: `npm run dev`
+-   [ ] Open Chrome Extension options page
+-   [ ] Click editor image icon → ImageDialog appears
+-   [ ] Click table icon → TableDialog appears
+-   [ ] Click code icon → CodeBlockDialog appears
+-   [ ] Click link icon → LinkDialog appears
+-   [ ] Test each dialog with different inputs
+-   [ ] Verify PDF export includes styled elements
 
 ---
 
