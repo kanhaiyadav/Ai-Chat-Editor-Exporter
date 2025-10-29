@@ -28,7 +28,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, X, Merge } from 'lucide-react';
+import { GripVertical, X } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, SavedChat, chatOperations } from '@/lib/settingsDB';
 import { ChatSource, Message } from './types';
@@ -41,6 +41,8 @@ import chatgptLight from "@/assets/openai-light.svg";
 import claudeLight from "@/assets/claude-light.svg";
 import geminiLight from "@/assets/gemini-fill-light.svg";
 import deepseekLight from "@/assets/deepseek-fill-light.svg";
+import { PiGitMerge } from 'react-icons/pi';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface MergeChatsDialogProps {
     isOpen: boolean;
@@ -77,7 +79,7 @@ const SortableChatCard = ({
     onCheck,
     isDraggable = false,
 }: SortableChatCardProps) => {
-    
+
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
         useSortable({
             id: `chat-${chat.id}`,
@@ -95,8 +97,8 @@ const SortableChatCard = ({
             ref={setNodeRef}
             style={style}
             className={`border rounded-lg p-3 transition-colors ${chat.isCurrentChat
-                    ? 'bg-primary/10 border-primary hover:bg-primary/15'
-                    : 'bg-card border-border hover:bg-accent/50'
+                ? 'bg-primary/10 border-primary hover:bg-primary/15'
+                : 'bg-card border-border hover:bg-accent/50'
                 }`}
         >
             <div className="flex items-start gap-3">
@@ -118,15 +120,12 @@ const SortableChatCard = ({
                         />
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{chat.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">
-                                {chat.name}
+                            <p className="text-xs text-muted-foreground">
+                                {chat.messages.length} messages
                             </p>
                         </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        {chat.messages.length} messages
-                        {chat.isCurrentChat && ' (Current)'}
-                    </p>
+                    
                 </div>
                 {onRemove ? (
                     <Button
@@ -274,12 +273,17 @@ export const MergeChatsDialog = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent className="!max-w-4xl h-[80vh] flex flex-col bg-accent">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                        <Merge size={20} />
-                        Merge Chats
-                    </DialogTitle>
+            <DialogContent className="!max-w-4xl h-[80vh] flex flex-col bg-card">
+                <DialogHeader className='flex flex-row gap-3 items-center'>
+                    <PiGitMerge size={27} />
+                    <div>
+                        <DialogTitle className="flex items-center gap-2">
+                            Merge Chats
+                        </DialogTitle>
+                        <DialogDescription className=" text-xs text-muted-foreground">
+                            Select and merge multiple chats into one consolidated chat.
+                        </DialogDescription>
+                    </div>
                 </DialogHeader>
 
                 <div className="flex-1 flex gap-4 overflow-hidden">
@@ -293,7 +297,7 @@ export const MergeChatsDialog = ({
                                 setSelectedSource(value as ChatSource);
                                 setSelectedChats(new Set());
                             }}>
-                                <SelectTrigger className='border-black/20 dark:border-input'>
+                                <SelectTrigger className=''>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -319,7 +323,6 @@ export const MergeChatsDialog = ({
                                 placeholder="Search by title or name..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="h-9 border-black/20 dark:border-input"
                             />
                         </div>
 
@@ -470,7 +473,7 @@ export const MergeChatsDialog = ({
                         disabled={mergedChats.length <= 1}
                         className="gap-2"
                     >
-                        <Merge size={16} />
+                        <PiGitMerge size={16} />
                         Merge Chats
                     </Button>
                 </div>

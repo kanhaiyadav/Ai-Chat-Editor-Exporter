@@ -8,7 +8,7 @@ export default defineConfig({
     manifest: {
         name: "Chat2Pdf",
         description: "A browser extension for converting AI chats to PDF",
-        version: "1.5.0",
+        version: "13.2.0",
         permissions: ["activeTab", "downloads", "storage"],
         host_permissions: [
             "https://chatgpt.com/*",

@@ -25,11 +25,11 @@ export const Header = () => {
     return (
         <>
             <div className='w-full flex items-center justify-between px-[50px] h-[65px] py-4 bg-primary'>
-                <div className='flex items-center gap-4'>
-                    <img src="/chat2pdf2.png" alt="" className="h-[50px]" />
+                <div className='flex items-center gap-2'>
+                    <img src="/chat2pdf_white.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
                     <div className='mt-[-5px]'>
-                        <h1 className='text-2xl text-black/75 font-bold'>Chat2Pdf</h1>
-                        <p className='text-sm font-medium text-black/60 mt-[-3px]'>AI Chat Editor & Exporter</p>
+                        <h1 className='text-2xl text-white text-shadow-md font-bold'>Chat2Pdf</h1>
+                        <p className='text-sm font-medium text-white/90 text-shadow-sm mt-[-3px]'>AI Chat Editor & Exporter</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>

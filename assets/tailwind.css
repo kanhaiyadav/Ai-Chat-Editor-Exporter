@@ -152,23 +152,23 @@
     scrollbar-color: #bebebe transparent;
 }
 
-#chat-container hr {
+#chat-container hr, #editor hr {
     @apply my-4 opacity-30;
 }
 
-#chat-container h1 {
+#chat-container h1, #editor h1 {
     @apply text-2xl font-bold;
 }
 
-#chat-container h2 {
+#chat-container h2, #editor h2 {
     @apply text-xl font-bold mt-6 mb-2;
 }
 
-#chat-container h3 {
+#chat-container h3, #editor h3 {
     @apply text-lg font-bold mt-6 mb-2;
 }
 
-#chat-container ul {
+#chat-container ul, #editor ul {
     list-style-type: disc;
     margin-left: 2rem;
     @apply space-y-1;

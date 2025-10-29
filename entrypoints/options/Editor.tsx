@@ -13,6 +13,7 @@ import {
     ListOrdered,
     Heading1,
     Heading2,
+    Heading3,
     Code,
     Image as ImageIcon,
     Minus,
@@ -20,7 +21,9 @@ import {
     Palette,
     Settings2,
     LucideTable,
-    Upload
+    Upload,
+    RotateCcw,
+    RotateCw
 } from "lucide-react";
 
 interface ChatEditorProps {
@@ -402,7 +405,7 @@ function TableDialog({
                             </div>
                         </div>
 
-                        
+
 
                         {alternateRows && (
                             <div>
@@ -970,6 +973,28 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
 
             {/* Toolbar */}
             <div className="bg-accent border-b border-border p-3 flex flex-wrap gap-1">
+                {/* Undo/Redo */}
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => applyFormat('undo')}
+                    title="Undo (Ctrl+Z)"
+                    className="w-9 h-9 p-0"
+                >
+                    <RotateCcw size={16} />
+                </Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => applyFormat('redo')}
+                    title="Redo (Ctrl+Y)"
+                    className="w-9 h-9 p-0"
+                >
+                    <RotateCw size={16} />
+                </Button>
+
+                <div className="w-px bg-border mx-1"></div>
+
                 {/* Text Formatting */}
                 <Button
                     size="sm"
@@ -1019,6 +1044,15 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
                     className="w-9 h-9 p-0"
                 >
                     <Heading2 size={16} />
+                </Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => applyFormat('formatBlock', '<h3>')}
+                    title="Heading 3"
+                    className="w-9 h-9 p-0"
+                >
+                    <Heading3 size={16} />
                 </Button>
 
                 <div className="w-px bg-border mx-1"></div>
@@ -1098,7 +1132,7 @@ export function ChatEditor({ initialHtml, onChange }: ChatEditorProps) {
             </div>
 
             {/* Editor Content */}
-            <div className="bg-white max-h-[400px] overflow-y-auto flex-1" style={{ scrollbarColor: '#bebebe transparent' }}>
+            <div id="editor" className="bg-white max-h-[400px] overflow-y-auto flex-1" style={{ scrollbarColor: '#bebebe transparent' }}>
                 <div
                     ref={editorRef}
                     contentEditable
