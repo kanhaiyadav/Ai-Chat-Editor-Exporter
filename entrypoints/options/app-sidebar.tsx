@@ -43,7 +43,7 @@ import { PDFSettings } from "./types"
 import { useTheme } from "@/lib/useTheme"
 import { TbMessageReport } from "react-icons/tb"
 import { SiBuymeacoffee } from "react-icons/si"
-import { FaGithub } from "react-icons/fa6"
+import { FaGithub, FaStar } from "react-icons/fa6"
 import { FiDownload, FiUpload } from "react-icons/fi"
 import {
     ButtonGroup,
@@ -127,8 +127,6 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
     const [editingPresetId, setEditingPresetId] = useState<number | null>(null);
     const [editingPresetName, setEditingPresetName] = useState('');
     const [error, setError] = useState('');
-    const [showBuyMeCoffee, setShowBuyMeCoffee] = useState(false);
-    const [showFeedback, setShowFeedback] = useState(false);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [pendingDeleteChatId, setPendingDeleteChatId] = useState<number | null>(null);
     const [deletePresetConfirmOpen, setDeletePresetConfirmOpen] = useState(false);
@@ -323,6 +321,10 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
         window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
     };
 
+    const handleReview = () => {
+        window.open('https://microsoftedge.microsoft.com/addons/detail/chat2pdf/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
+    }
+
     return (
         <>
             <Sidebar collapsible="icon" {...props} className={effectiveTheme === 'light' ? 'h-full !border-t-[3px] !border-t-[#bbbbbb] dark:border-0' : 'h-full'}>
@@ -391,13 +393,19 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                         <ButtonGroup className="w-full">
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
                                 size={'lg'}
+                                title="Buy me a coffee"
                                 onClick={() => setBuyMeCoffeeOpen(true)}><SiBuymeacoffee /></Button>
-                            <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-6 flex-1"
-                                size={'lg'}
-                                onClick={() => setFeedbackOpen(true)}><TbMessageReport /></Button>
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
                                 size={'lg'}
-                                onClick={handleStarRepo}><FaGithub size={16} /></Button>
+                                title="Write us a review"
+                                onClick={handleReview}>
+                                <FaStar size={16} className="text-primary"/>
+                            </Button>
+                            <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
+                                size={'lg'}
+                                title="Star github repositor"
+                                onClick={handleStarRepo}><FaGithub size={16} />
+                            </Button>
                         </ButtonGroup>
                     </SidebarGroup>
                 </SidebarFooter>

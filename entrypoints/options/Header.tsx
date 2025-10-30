@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SiBuymeacoffee } from "react-icons/si";
-import { FaGithub } from "react-icons/fa6";
+import { FaGithub, FaStar } from "react-icons/fa6";
 import { TbMessageReport } from "react-icons/tb";
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,23 +22,27 @@ export const Header = () => {
         window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
     };
 
+    const handleReview = () => {
+        window.open('https://microsoftedge.microsoft.com/addons/detail/chat2pdf/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
+    };
+
     return (
         <>
             <div className='w-full flex items-center justify-between px-[50px] h-[65px] py-4 bg-primary'>
                 <div className='flex items-center gap-2'>
-                    <img src="/chat2pdf_white.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
+                    <img src="/chat2pdf_dark.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
                     <div className='mt-[-5px]'>
-                        <h1 className='text-2xl text-white text-shadow-md font-bold'>Chat2Pdf</h1>
-                        <p className='text-sm font-medium text-white/90 text-shadow-sm mt-[-3px]'>AI Chat Editor & Exporter</p>
+                        <h1 className='text-2xl text-[#3b2304] text-shadow-md font-bold'>Chat2Pdf</h1>
+                        <p className='text-sm font-medium text-[#744915] text-shadow-sm mt-[-3px]'>AI Chat Editor & Exporter</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>
                     <ThemeToggle />
-                    <TbMessageReport
+                    <FaStar
                         className='text-black/80 cursor-pointer hover:text-black transition-colors'
-                        size={26}
-                        onClick={() => setFeedbackOpen(true)}
-                        title="Send Feedback"
+                        size={24}
+                        onClick={handleReview}
+                        title="Write us a review"
                     />
                     <SiBuymeacoffee
                         className='text-black/80 cursor-pointer hover:text-black transition-colors'

@@ -1,4 +1,4 @@
-import { defineConfig } from 'wxt';
+import { defineConfig } from "wxt";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
@@ -8,7 +8,7 @@ export default defineConfig({
     manifest: {
         name: "Chat2Pdf",
         description: "A browser extension for converting AI chats to PDF",
-        version: "13.2.0",
+        version: "13.2.1",
         permissions: ["activeTab", "downloads", "storage"],
         host_permissions: [
             "https://chatgpt.com/*",
