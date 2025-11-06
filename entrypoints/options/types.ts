@@ -4,6 +4,7 @@ export interface Message {
     images?: string[];
     attachments?: Array<{
         name: string;
+        preview: string;
         type: string;
         url: string;
     }>;
@@ -64,7 +65,7 @@ export interface PDFSettings {
 }
 
 export const defaultSettings: PDFSettings = {
-    layout: "chat",
+    layout: "qa",
     chat: {
         userBubbleColor: "#ffcc41",
         userTextColor: "#000000",

@@ -3,11 +3,12 @@ import { Message, PDFSettings } from './types';
 import { HiDocumentText } from "react-icons/hi";
 
 interface ChatLayoutProps {
+    source: 'chatgpt' | 'claude' | 'deepseek' | 'gemini';
     messages: Message[];
     settings: PDFSettings;
 }
 
-export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
+export const ChatLayout = ({ messages, settings, source }: ChatLayoutProps) => {
 
     return (
         <>
@@ -81,8 +82,15 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 marginRight: '8px',
                                 flexShrink: 0,
                             }}>
-
-                                <img src="/chat/chatgpt.png" alt="" className='w-[50px]' />
+                                {
+                                    source === 'chatgpt' ? (<img src="/chat/chatgpt.png" alt="" className='w-[50px]' />) : (
+                                        source === 'claude' ? (<img src="/chat/claude.png" alt="" className='w-[50px]' />) : (
+                                            source === 'deepseek' ? (<img src="/chat/deepseek.png" alt="" className='w-[50px]' />) : (
+                                                <img src="/chat/gemini.png" alt="" className='w-[50px]' />
+                                            )
+                                        )
+                                    )
+                                }
                             </div>
                         )}
                         <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
@@ -90,23 +98,31 @@ export const ChatLayout = ({ messages, settings }: ChatLayoutProps) => {
                                 message.content !== "" &&
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
                             }
-                            {
-                               includeImage && message.images && message.images.length > 0 && message.images.map((src, imgIndex) => (
-                                    <div key={imgIndex} style={{ marginTop: '10px' }}>
-                                        <img src={src} alt={`Generated image ${imgIndex + 1}`} style={{ maxWidth: '100%', borderRadius: '8px' }} />
-                                    </div>
-                                ))
-                            }
+                            <div className="w-full grid grid-cols-2 gap-2">
+                                {
+                                    includeImage && message.images && message.images.length > 0 && message.images.map((src, imgIndex) => (
+                                        <div key={imgIndex} style={{ marginTop: '10px' }}>
+                                            <img src={src} alt={`Generated image ${imgIndex + 1}`} style={{ maxWidth: '100%', borderRadius: '8px', maxHeight: '400px' }} />
+                                        </div>
+                                    ))
+                                }
+                            </div>
                             {
                                 settings.general.includeUserAttachments && message.attachments && message.attachments.length > 0 &&
                                 <div className="mt-2">
-                                    <p className=" italic text-black/70 text-xs">*Note: we don't support viewing or downloading documents</p>
-                                    <div className="flex gap-3 flex-wrap mt-[-5px]">
+                                    <p className=" italic text-black/70 text-xs">*Note: we don't support viewing or downloading attachments</p>
+                                    <div className="flex gap-2 flex-wrap mt-[-5px]">
                                         {
                                             message.attachments.map((attachment, attIndex) => (
-                                                <div key={attIndex} style={{ marginTop: '10px' }} className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md shadow w-fit">
-                                                    <HiDocumentText className="inline-block w-5 h-5 text-black/60" />
-                                                    <span>{attachment.name}</span>
+                                                <div key={attIndex} className="flex flex-col bg-gray-100 px-4 py-2 rounded-md shadow w-fit max-w-[32%]">
+                                                    <div className="flex items-center gap-2">
+                                                        <HiDocumentText size={20} className="inline-block text-black/60" />
+                                                        <span>{attachment.name}</span>
+                                                    </div>
+                                                    {
+                                                        attachment.preview &&
+                                                        <p className="text-[11px] leading-[12px] text-black/60 line-clamp-5">{attachment.preview + "..."}</p>
+                                                    }
                                                 </div>
                                             ))
                                         }

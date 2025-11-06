@@ -13,6 +13,7 @@ export default defineConfig({
         host_permissions: [
             "https://chatgpt.com/*",
             "https://chat.openai.com/*",
+            "https://claude.ai/*",
         ],
         options_ui: {
             page: "options.html",

@@ -76,13 +76,15 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                     message.content !== '' &&
                                     <div dangerouslySetInnerHTML={{ __html: message.content }} />
                                 }
-                                {
-                                    includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
-                                        <div key={imgIndex} style={{ marginTop: '12px' }}>
-                                            <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
-                                        </div>
-                                    ))
-                                }
+                                <div className="w-full grid grid-cols-2 gap-2">
+                                    {
+                                        includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
+                                            <div key={imgIndex} style={{ marginTop: '12px' }}>
+                                                <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%', height: 'auto', maxHeight: '400px' }} />
+                                            </div>
+                                        ))
+                                    }
+                                </div>
                                 {
                                     settings.general.includeUserAttachments && message.attachments && message.attachments.length > 0 &&
                                     <div style={{ marginTop: '8px' }}>
@@ -90,9 +92,15 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '-5px' }}>
                                             {
                                                 message.attachments.map((attachment, attIndex) => (
-                                                    <div key={attIndex} style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f3f4f6', padding: '8px 16px', borderRadius: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', width: 'fit-content' }}>
-                                                        <HiDocumentText style={{ width: '20px', height: '20px', color: '#6b7280' }} />
-                                                        <span>{attachment.name}</span>
+                                                    <div key={attIndex} className="flex flex-col bg-gray-100 px-4 py-2 rounded-md shadow w-fit max-w-[32%]">
+                                                        <div className="flex items-center gap-2">
+                                                            <HiDocumentText size={20} className="inline-block text-black/60" />
+                                                            <span>{attachment.name}</span>
+                                                        </div>
+                                                        {
+                                                            attachment.preview &&
+                                                            <p className="text-[11px] leading-[12px] text-black/60 line-clamp-5">{attachment.preview + "..."}</p>
+                                                        }
                                                     </div>
                                                 ))
                                             }

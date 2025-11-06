@@ -53,13 +53,15 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                                 <div dangerouslySetInnerHTML={{ __html: message.content }} />
                             </div>
                         }
-                        {
-                            includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
-                                <div key={imgIndex} style={{ marginTop: '12px' }}>
-                                    <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%' }} />
-                                </div>
-                            ))
-                        }
+                        <div className="w-full grid grid-cols-2 gap-2">
+                            {
+                                includeImage && message.images && message.images.map((imgSrc, imgIndex) => (
+                                    <div key={imgIndex} style={{ marginTop: '12px' }}>
+                                        <img src={imgSrc} alt={`Image ${imgIndex + 1}`} style={{ maxWidth: '100%', height: 'auto', maxHeight: '400px' }} />
+                                    </div>
+                                ))
+                            }
+                        </div>
                         {
                             settings.general.includeUserAttachments && message.attachments && message.attachments.length > 0 &&
                             <div className="mt-2">
@@ -67,9 +69,15 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                                 <div className="flex gap-3 flex-wrap mt-[-5px]">
                                     {
                                         message.attachments.map((attachment, attIndex) => (
-                                            <div key={attIndex} style={{ marginTop: '10px' }} className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-md shadow w-fit">
-                                                <HiDocumentText className="inline-block w-5 h-5 text-black/60" />
-                                                <span>{attachment.name}</span>
+                                            <div key={attIndex} className="flex flex-col bg-gray-100 px-4 py-2 rounded-md shadow w-fit max-w-[32%]">
+                                                <div className="flex items-center gap-2">
+                                                    <HiDocumentText size={20} className="inline-block text-black/60" />
+                                                    <span>{attachment.name}</span>
+                                                </div>
+                                                {
+                                                    attachment.preview &&
+                                                    <p className="text-[11px] leading-[12px] text-black/60 line-clamp-5">{attachment.preview + "..."}</p>
+                                                }
                                             </div>
                                         ))
                                     }

@@ -29,6 +29,7 @@ interface ChatData {
     title: string;
     messages: Message[];
     source: ChatSource;
+    artifacts: Array<any>;
 }
 
 const deepEqual = (a: unknown, b: unknown): boolean => {
@@ -168,8 +169,9 @@ function App() {
                 const { chatData } = await getFromStorage(["chatData"]);
                 const cleanedChatData = chatData?.messages?.map((msg: Message) => ({
                     ...msg,
-                    content: cleanHTML(msg.content),
+                    content: cleanHTML(msg.content, chatData?.source),
                 }));
+
                 const chatDataWithSource = {
                     ...chatData,
                     messages: cleanedChatData,
@@ -197,10 +199,10 @@ function App() {
             const listener = (changes: StorageChanges, areaName: string) => {
                 if (areaName === "local") {
                     if (changes.chatData) {
-                        const cleanedData = changes.chatData.newValue?.map(
+                        const cleanedData = changes.chatData.newValue?.messages?.map(
                             (msg: Message) => ({
                                 ...msg,
-                                content: cleanHTML(msg.content),
+                                content: cleanHTML(msg.content, chatData?.source || "chatgpt"),
                             })
                         );
                         setChatData(cleanedData);
@@ -501,6 +503,7 @@ function App() {
             title: chat.title,
             messages: chat.messages,
             source: chat.source,
+            artifacts: [],
         };
         setChatData(newChatData);
         chrome.storage.local.set({ chatData: newChatData, savedChatId: chat.id! });
@@ -676,9 +679,11 @@ function App() {
                 <SidebarInset>
                     <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
                         <PreviewContainer
+                            source={chatData?.source || 'chatgpt'}
                             messages={filteredMessages}
                             settings={settings}
                             currentChatId={currentChatId}
+                            artifacts={chatData?.artifacts || []}
                             chatSaved={chatSaved}
                             chatChanged={chatChanged}
                             onSaveChat={handleSaveChat}
