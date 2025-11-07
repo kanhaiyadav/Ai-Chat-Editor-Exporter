@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { FaRegFilePdf } from "react-icons/fa6";
 import { PiGitMerge } from "react-icons/pi";
 import { BsFiletypeJson } from "react-icons/bs";
+import { useState, useEffect } from 'react';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -34,7 +35,7 @@ export const PreviewToolbar = ({
         chrome.storage.local.get(['chatData']).then((result) => {
             if (result.chatData) {
                 setChatDataExists(result.chatData.messages.length > 0);
-            }else {
+            } else {
                 setChatDataExists(false);
             }
         });

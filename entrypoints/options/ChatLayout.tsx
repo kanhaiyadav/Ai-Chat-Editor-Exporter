@@ -1,6 +1,7 @@
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Message, PDFSettings } from './types';
 import { HiDocumentText } from "react-icons/hi";
+import { decodeHTMLEntities } from './utils';
 
 interface ChatLayoutProps {
     source: 'chatgpt' | 'claude' | 'deepseek' | 'gemini';
@@ -95,8 +96,10 @@ export const ChatLayout = ({ messages, settings, source }: ChatLayoutProps) => {
                         )}
                         <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
                             {
-                                message.content !== "" &&
-                                <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                                message.content !== "" && (isUser ?
+                                    <div style={{ whiteSpace: 'pre-wrap' }}>{decodeHTMLEntities(message.content)}</div> :
+                                    <div dangerouslySetInnerHTML={{ __html: message.content }} />)
+
                             }
                             <div className="w-full grid grid-cols-2 gap-2">
                                 {

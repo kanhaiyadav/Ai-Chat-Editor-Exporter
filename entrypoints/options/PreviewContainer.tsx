@@ -62,11 +62,12 @@ export const PreviewContainer = ({
         const maxAttempts = 5;
 
         const replaceArtifacts = () => {
-            const artifactsHTML = Array.from(
+            const artifactsHTML = source === 'claude' ? Array.from(
                 doc.querySelectorAll("div.artifact-block-cell.group\\/artifact-block")
-            )
-                .map((el) => el.closest("div.flex.text-left.font-ui.rounded-lg"))
-                .filter(Boolean);
+            ).map((el) => el.closest("div.flex.text-left.font-ui.rounded-lg"))
+                .filter(Boolean) : Array.from(
+                    doc.querySelectorAll("div.attachment-container")
+                )
 
             console.log("✅ artifactsHTML:", artifactsHTML, "attempts:", attempts);
 
@@ -75,15 +76,42 @@ export const PreviewContainer = ({
                 artifacts.forEach((artifact) => {
                     const index = artifact['artifactIndex'];
                     const artifactHTML = artifactsHTML[index];
+
+                    // Create header
                     const header = document.createElement("div");
-                    header.innerHTML = `<div class="flex flex-col gap-1 py-4 min-w-0 flex-1"><div class="leading-tight text-sm line-clamp-1">${artifact.title}</div><div class="text-xs line-clamp-1 text-text-400 opacity-100 transition-opacity duration-200">${artifact.subtitle}</div></div>`;
+                    header.innerHTML = `<div class="flex flex-col gap-1 py-4 min-w-0 flex-1"><div class="leading-tight text-sm line-clamp-1">${artifact.title}</div><div class="text-xs line-clamp-1 text-text-400 opacity-100 transition-opacity duration-200">${artifact.subtitle || ''}</div></div>`;
                     if (header instanceof Element) {
                         header.classList.add("px-4", "bg-accent", "bg-gray-100", "border-b", "border-[#ddd]");
                     }
+
                     if (artifactHTML) {
                         const artifactDiv = document.createElement("div");
                         artifactDiv.className = "artifact claude-code";
-                        artifactDiv.innerHTML = artifact.content;
+
+                        // Check if this is code content (from Monaco) or HTML content (from Claude)
+                        const isCodeContent = source === 'gemini' || (artifact.type && artifact.type !== 'html' && artifact.type !== 'text');
+
+                        if (isCodeContent) {
+                            // Render as code block with syntax highlighting
+                            const codeContainer = document.createElement("div");
+                            codeContainer.className = "code-artifact-container";
+                            codeContainer.style.cssText = "color: #424242; border-radius: 0; overflow-x: auto;";
+
+                            const pre = document.createElement("pre");
+                            pre.style.cssText = "margin: 0; padding: 16px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;";
+
+                            const code = document.createElement("code");
+                            code.className = `language-${artifact.type || 'typescript'}`;
+                            code.textContent = artifact.content; // Use textContent to prevent HTML rendering
+
+                            pre.appendChild(code);
+                            codeContainer.appendChild(pre);
+                            artifactDiv.appendChild(codeContainer);
+                        } else {
+                            // Render as HTML (for Claude artifacts that are HTML/React)
+                            artifactDiv.innerHTML = artifact.content;
+                        }
+
                         if (header) {
                             artifactDiv.prepend(header);
                         }

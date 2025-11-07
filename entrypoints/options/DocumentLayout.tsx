@@ -1,5 +1,6 @@
 import { HiDocumentText } from 'react-icons/hi2';
 import { Message, PDFSettings } from './types';
+import { decodeHTMLEntities } from './utils';
 
 interface DocumentLayoutProps {
     messages: Message[];
@@ -50,7 +51,9 @@ export const DocumentLayout = ({ messages, settings }: DocumentLayoutProps) => {
                                 marginTop: isTopic ? '10px' : '',
                                 marginBottom: isTopic ? '-5px' : '',
                             }}>
-                                <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                                {isTopic ?
+                                    <div style={{ whiteSpace: 'pre-wrap' }}>{decodeHTMLEntities(message.content)}</div> :
+                                    <div dangerouslySetInnerHTML={{ __html: message.content }} />}
                             </div>
                         }
                         <div className="w-full grid grid-cols-2 gap-2">

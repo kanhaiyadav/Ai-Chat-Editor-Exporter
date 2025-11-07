@@ -1,5 +1,6 @@
 import { HiDocumentText } from 'react-icons/hi2';
 import { Message, PDFSettings } from './types';
+import { decodeHTMLEntities } from './utils';
 
 interface QALayoutProps {
     messages: Message[];
@@ -74,7 +75,9 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                             }}>
                                 {
                                     message.content !== '' &&
-                                    <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                                    (isQuestion ?
+                                        <div style={{ whiteSpace: 'pre-wrap' }}>{decodeHTMLEntities(message.content)}</div> :
+                                        <div dangerouslySetInnerHTML={{ __html: message.content }} />)
                                 }
                                 <div className="w-full grid grid-cols-2 gap-2">
                                     {

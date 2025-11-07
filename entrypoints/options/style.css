@@ -223,3 +223,15 @@ table::before {
     display: block;
     overflow-wrap: anywhere;
 }
+
+
+/* Gemini specific styles */
+.attachment-container {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px 10px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    align-items: center;
+    gap: 10px;
+}

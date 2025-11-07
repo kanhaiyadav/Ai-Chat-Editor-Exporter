@@ -7,6 +7,12 @@ export const getThemeStyles = (theme: 'light' | 'dark' | 'sepia') => {
     return themes[theme];
 };
 
+export const decodeHTMLEntities = (text: string): string => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+};
+
 export const cleanHTML = (html: string, source: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
@@ -34,6 +40,21 @@ export const cleanHTML = (html: string, source: string) => {
             // Insert wrapper before the table and move the table inside it
             table.parentNode?.insertBefore(wrapper, table);
             wrapper.appendChild(table);
+        });
+    }
+
+    if (source === "gemini") {
+        // Remove empty attachment containers
+        const attachments = doc.querySelectorAll("div.attachment-container");
+        attachments.forEach(attachment => {
+            // Check if the element has any meaningful text content
+            // or any visible child elements (img, video, etc.)
+            const hasText = attachment.textContent?.trim().length > 0;
+            const hasMedia = attachment.querySelector('img, video, audio, iframe, canvas');
+
+            if (!hasText && !hasMedia) {
+                attachment.remove();
+            }
         });
     }
 

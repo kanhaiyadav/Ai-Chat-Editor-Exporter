@@ -8,12 +8,24 @@ export default defineConfig({
     manifest: {
         name: "Chat2Pdf",
         description: "A browser extension for converting AI chats to PDF",
-        version: "13.2.1",
-        permissions: ["activeTab", "downloads", "storage"],
+        version: "13.3.0",
+        content_security_policy: {
+            extension_pages: "script-src 'self'; object-src 'self'",
+        },
+        permissions: ["scripting", "activeTab", "downloads", "storage"],
         host_permissions: [
             "https://chatgpt.com/*",
             "https://chat.openai.com/*",
             "https://claude.ai/*",
+            "https://gemini.google.com/*",
+            "https://lh3.google.com/*",
+            "https://lh3.googleusercontent.com/*",
+        ],
+        web_accessible_resources: [
+            {
+                resources: ["monaco-extractor.js"],
+                matches: ["https://gemini.google.com/*"],
+            },
         ],
         options_ui: {
             page: "options.html",
