@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useTheme } from '@/lib/useTheme';
 import { Message, PDFSettings, defaultSettings, ChatSource } from './types';
 import { cleanHTML } from './utils';
@@ -198,14 +199,17 @@ function App() {
             // 🧏‍♀️ Add change listener
             const listener = (changes: StorageChanges, areaName: string) => {
                 if (areaName === "local") {
-                    if (changes.chatData) {
-                        const cleanedData = changes.chatData.newValue?.messages?.map(
+                    if (changes.chatData && changes.chatData.newValue) {
+                        const cleanedMessages = changes.chatData.newValue.messages?.map(
                             (msg: Message) => ({
                                 ...msg,
-                                content: cleanHTML(msg.content, chatData?.source || "chatgpt"),
+                                content: cleanHTML(msg.content, changes.chatData.newValue.source || "chatgpt"),
                             })
                         );
-                        setChatData(cleanedData);
+                        setChatData({
+                            ...changes.chatData.newValue,
+                            messages: cleanedMessages
+                        });
                     }
                     if (changes.pdfSettings) {
                         setSettings(changes.pdfSettings.newValue);
@@ -228,7 +232,7 @@ function App() {
         setSettings(prev => ({
             ...prev,
             general: {
-                ...prev.general,
+                ...prev?.general,
                 headerText: chatData?.title || ''
             }
         }));
@@ -324,24 +328,55 @@ function App() {
         });
     };
 
-    const handleReorderMessages = (newOrder: Message[]) => {
-        const newChatData = { ...chatData!, messages: newOrder, source: chatData!.source };
-        setChatData(newChatData);
-        chrome.storage.local.set({ chatData: newChatData });
+    const generateMessageHash = (message: Message): string => {
+        const content = `${message.role}-${message.content || ''}`;
+        let hash = 0;
+        for (let i = 0; i < content.length; i++) {
+            const char = content.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return `message-${Math.abs(hash)}`;
+    };
 
-        // Update selected messages indices based on new order
-        // We need to maintain the selection based on message identity, not index
-        // For simplicity, we'll rebuild the selected set with updated indices
+    const handleReorderMessages = (newOrder: Message[]) => {
+        if (!chatData) return;
+
+        // Create a map of message hash to original index for all messages
+        const hashToOldIndex = new Map<string, number>();
+        chatData.messages.forEach((msg, index) => {
+            const hash = generateMessageHash(msg);
+            hashToOldIndex.set(hash, index);
+        });
+
+        // Create a set of hashes for selected messages
+        const selectedHashes = new Set<string>();
+        chatData.messages.forEach((msg, index) => {
+            if (selectedMessages.has(index)) {
+                const hash = generateMessageHash(msg);
+                selectedHashes.add(hash);
+            }
+        });
+
+        // Find new indices for selected messages
         const newSelectedMessages = new Set<number>();
-        newOrder.forEach((message, newIndex) => {
-            const oldIndex = chatData?.messages.findIndex(
-                (msg) => msg.role === message.role && msg.content === message.content
-            );
-            if (oldIndex !== undefined && oldIndex !== -1 && selectedMessages.has(oldIndex)) {
+        newOrder.forEach((msg, newIndex) => {
+            const hash = generateMessageHash(msg);
+            if (selectedHashes.has(hash)) {
                 newSelectedMessages.add(newIndex);
             }
         });
-        setSelectedMessages(newSelectedMessages);
+
+        // Update both states synchronously using flushSync to prevent render inconsistencies
+        const newChatData = { ...chatData, messages: newOrder, source: chatData.source };
+
+        flushSync(() => {
+            setChatData(newChatData);
+            setSelectedMessages(newSelectedMessages);
+        });
+
+        // Save to chrome storage after state updates
+        chrome.storage.local.set({ chatData: newChatData });
     };
 
     const handleLoadPreset = (preset: SavedPreset) => {

@@ -1,20 +1,10 @@
 import { useState } from 'react';
 import { SiBuymeacoffee } from "react-icons/si";
 import { FaGithub, FaStar } from "react-icons/fa6";
-import { TbMessageReport } from "react-icons/tb";
-import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { FeedbackModal } from '@/components/FeedbackModal';
 import { BuyMeCoffeeModal } from '@/components/BuyMeCoffeeModal';
-import { useSidebar } from '@/components/ui/sidebar';
-
-interface HeaderProps {
-    onToggleSidebar: () => void;
-}
 
 export const Header = () => {
-    const [feedbackOpen, setFeedbackOpen] = useState(false);
     const [coffeeOpen, setCoffeeOpen] = useState(false);
 
 
@@ -33,7 +23,7 @@ export const Header = () => {
                     <img src="/chat2pdf_dark.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
                     <div className='mt-[-5px]'>
                         <h1 className='text-2xl text-[#3b2304] text-shadow-md font-bold'>Chat2Pdf</h1>
-                        <p className='text-sm font-medium text-[#744915] text-shadow-sm mt-[-3px]'>AI Chat Editor & Exporter</p>
+                        <p className='text-sm font-medium text-[#744915] text-shadow-sm mt-[-3px]'>Edit & Export AI chats</p>
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>
@@ -58,8 +48,6 @@ export const Header = () => {
                     />
                 </div>
             </div>
-
-            <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
             <BuyMeCoffeeModal open={coffeeOpen} onOpenChange={setCoffeeOpen} />
         </>
     );

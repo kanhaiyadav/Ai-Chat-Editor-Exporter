@@ -353,16 +353,6 @@ div[class*="_tableWrapper"] td {
     max-width: 0; /* force wrapping instead of overflow */
 }
 
-/* Make first column (No.) narrower but visible */
-div[class*="_tableWrapper"] th:first-child,
-div[class*="_tableWrapper"] td:first-child {
-    width: 50px; /* Fixed width for index column */
-    min-width: 50px; /* Ensure minimum width */
-    max-width: 50px; /* Prevent expansion */
-    white-space: nowrap;
-    text-align: center; /* Center the numbers */
-}
-
 /* Alternate row background */
 div[class*="_tableWrapper"] tbody tr:nth-child(even) {
     background-color: var(--chat-table-even-row);

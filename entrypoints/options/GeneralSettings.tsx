@@ -19,8 +19,8 @@
 export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: GeneralSettingsProps) => {
 
     useEffect(() => {
-        document.documentElement.style.setProperty('--pdf-background', settings.backgroundColor);
-    }, [settings.backgroundColor]);
+        document.documentElement.style.setProperty('--pdf-background', settings?.backgroundColor);
+    }, [settings?.backgroundColor]);
 
     const handleColorChange = (value: string) => {
         onUpdate({ backgroundColor: value });
@@ -49,13 +49,13 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     <div className='flex items-center gap-3'>
                                         <input
                                             type="color"
-                                            value={settings.backgroundColor}
+                                            value={settings?.backgroundColor}
                                             onChange={(e) => handleColorChange(e.target.value)}
                                             className='h-10 w-16 rounded cursor-pointer border-2 border-gray-300'
                                         />
                                         <Input
                                             type="text"
-                                            value={settings.backgroundColor}
+                                            value={settings?.backgroundColor}
                                             onChange={(e) => handleColorChange(e.target.value)}
                                             className='flex-1'
                                             placeholder="#000000"
@@ -66,17 +66,17 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                 <div className='flex items-center justify-between'>
                                     <Label className='text-sm font-medium text-foreground/70'>Include Header</Label>
                                     <Switch
-                                        checked={settings.includeHeader}
+                                        checked={settings?.includeHeader}
                                         onCheckedChange={(checked) => onUpdate({ includeHeader: checked })}
                                     />
                                 </div>
 
-                                {settings.includeHeader && (
+                                {settings?.includeHeader && (
                                     <div>
                                         <Label className='block text-sm font-medium text-foreground/70 mb-2'>Header Text</Label>
                                         <Input
                                             type="text"
-                                            value={settings.headerText}
+                                            value={settings?.headerText}
                                             onChange={(e) => onUpdate({ headerText: e.target.value })}
                                         />
                                     </div>
@@ -85,7 +85,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                 <div>
                                     <Label className='block text-sm font-medium text-foreground/70 mb-2'>Font Family</Label>
                                     <div className='flex'>
-                                        <Select value={settings.fontFamily?.type} onValueChange={(value) => onUpdate({ fontFamily: { type: value, value: settings.fontFamily?.value || '' } })}>
+                                        <Select value={settings?.fontFamily?.type} onValueChange={(value) => onUpdate({ fontFamily: { type: value, value: settings.fontFamily?.value || '' } })}>
                                             <SelectTrigger className="w-[130px]">
                                                 <SelectValue placeholder="Select a font family" />
                                             </SelectTrigger>
@@ -98,12 +98,12 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                             </SelectContent>
                                         </Select>
 
-                                        <Select value={settings.fontFamily?.value} onValueChange={(value) => onUpdate({ fontFamily: { type: settings.fontFamily?.type || '', value } })}>
+                                        <Select value={settings?.fontFamily?.value} onValueChange={(value) => onUpdate({ fontFamily: { type: settings.fontFamily?.type || '', value } })}>
                                             <SelectTrigger className="flex-1 ml-2">
                                                 <SelectValue placeholder="Variant" />   
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {fontFamilies.find(group => group.type === settings.fontFamily?.type)?.values.map((variant) => (
+                                                {fontFamilies.find(group => group.type === settings?.fontFamily?.type)?.values.map((variant) => (
                                                     <SelectItem key={variant} value={variant}>
                                                         {variant}
                                                     </SelectItem>
@@ -116,7 +116,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                 <div className='flex items-center justify-between'>
                                     <Label className='text-sm font-medium text-foreground/70'>Include AI Generated Images</Label>
                                     <Switch
-                                        checked={settings.includeAIImages}
+                                        checked={settings?.includeAIImages}
                                         onCheckedChange={(checked) => onUpdate({ includeAIImages: checked })}
                                     />
                                 </div>
@@ -124,7 +124,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                 <div className='flex items-center justify-between'>
                                     <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Images</Label>
                                     <Switch
-                                        checked={settings.includeUserImages}
+                                        checked={settings?.includeUserImages}
                                         onCheckedChange={(checked) => onUpdate({ includeUserImages: checked })}
                                     />
                                 </div>
@@ -132,7 +132,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                 <div className='flex items-center justify-between'>
                                     <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Docs</Label>
                                     <Switch
-                                        checked={settings.includeUserAttachments}
+                                        checked={settings?.includeUserAttachments}
                                         onCheckedChange={(checked) => onUpdate({ includeUserAttachments: checked })}
                                     />
                                 </div>

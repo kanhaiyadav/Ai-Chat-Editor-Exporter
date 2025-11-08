@@ -2,6 +2,7 @@ import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Message, PDFSettings } from './types';
 import { HiDocumentText } from "react-icons/hi";
 import { decodeHTMLEntities } from './utils';
+import { basename } from "path";
 
 interface ChatLayoutProps {
     source: 'chatgpt' | 'claude' | 'deepseek' | 'gemini';
@@ -117,10 +118,21 @@ export const ChatLayout = ({ messages, settings, source }: ChatLayoutProps) => {
                                     <div className="flex gap-2 flex-wrap mt-[-5px]">
                                         {
                                             message.attachments.map((attachment, attIndex) => (
-                                                <div key={attIndex} className="flex flex-col bg-gray-100 px-4 py-2 rounded-md shadow w-fit max-w-[32%]">
+                                                <div key={attIndex} className="flex flex-col bg-gray-100 px-2 py-2 rounded-md shadow w-fit max-w-[33%]">
                                                     <div className="flex items-center gap-2">
                                                         <HiDocumentText size={20} className="inline-block text-black/60" />
-                                                        <span>{attachment.name}</span>
+                                                        <span>{(() => {
+                                                            const name = attachment.name;
+                                                            const extensionIndex = name.split('.').length > 1 ? name.lastIndexOf('.') : -1;
+                                                            if (extensionIndex !== -1) {
+                                                                const baseName = name.slice(0, extensionIndex);
+                                                                if (baseName.length > 20) {
+                                                                    return baseName.slice(0, 7) + '...' + baseName.slice(7, 9) + name.slice(extensionIndex);
+                                                                }
+                                                                return baseName;
+                                                            }
+                                                            return name;
+                                                        })()}</span>
                                                     </div>
                                                     {
                                                         attachment.preview &&

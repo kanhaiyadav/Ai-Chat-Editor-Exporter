@@ -224,7 +224,6 @@ table::before {
     overflow-wrap: anywhere;
 }
 
-
 /* Gemini specific styles */
 .attachment-container {
     border: 1px solid #ddd;
@@ -234,4 +233,42 @@ table::before {
     background-color: #f9f9f9;
     align-items: center;
     gap: 10px;
+}
+
+.deepseek-code {
+   background-color: #f9f9f9 !important; /* light neutral background */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 1rem 0;
+    border: 1px solid #e0e0e0;
+}
+
+.deepseek-code>div{
+    padding: 8px 12px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 13px;
+    background: #00000005;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+}
+
+.deepseek-code pre {
+    margin: 0;
+    padding: 0px 15px !important;
+    padding-bottom: 10px !important;
+    overflow-x: auto;
+}
+
+.deepseek-code pre code {
+    background: transparent;
+    color: var(--chat-code-text);
+    white-space: pre-wrap; /* allow long lines to wrap */
+    word-break: break-word;
+    display: block;
+    overflow-wrap: anywhere;
 }

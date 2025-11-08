@@ -11,12 +11,10 @@ import {
     PieChart,
 } from "lucide-react"
 
-import { NavMain } from "./nav-main"
 import { NavChats } from "./nav-chats"
 import { NavPresets } from "./nav-presets"
 import { ToggleSidebar } from "./team-switcher"
 import { BuyMeCoffeeModal } from "@/components/BuyMeCoffeeModal"
-import { FeedbackModal } from "@/components/FeedbackModal"
 import { ConfirmationDialog } from "./ConfirmationDialog"
 import {
     Sidebar,
@@ -26,7 +24,6 @@ import {
     SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarRail,
 } from "@/components/ui/sidebar"
 import chatgpt from "@/assets/openai.svg";
@@ -41,14 +38,10 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { chatOperations, db, presetOperations, SavedChat, SavedPreset } from "@/lib/settingsDB"
 import { PDFSettings } from "./types"
 import { useTheme } from "@/lib/useTheme"
-import { TbMessageReport } from "react-icons/tb"
 import { SiBuymeacoffee } from "react-icons/si"
 import { FaGithub, FaStar } from "react-icons/fa6"
-import { FiDownload, FiUpload } from "react-icons/fi"
 import {
     ButtonGroup,
-    ButtonGroupSeparator,
-    ButtonGroupText,
 } from "@/components/ui/button-group"
 import { BsFiletypeJson } from "react-icons/bs";
 import { BsFileEarmarkArrowDown } from "react-icons/bs";
@@ -65,7 +58,6 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, closeChat, ...props }: AppSidebarProps) {
     const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
-    const [feedbackOpen, setFeedbackOpen] = React.useState(false)
 
     const chats = useLiveQuery(
         () => db.chats.orderBy('updatedAt').reverse().toArray(),
@@ -413,7 +405,6 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
             </Sidebar>
 
             <BuyMeCoffeeModal open={buyMeCoffeeOpen} onOpenChange={setBuyMeCoffeeOpen} />
-            <FeedbackModal open={feedbackOpen} onOpenChange={setFeedbackOpen} />
 
             <ConfirmationDialog
                 open={deleteConfirmOpen}

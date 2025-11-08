@@ -31,8 +31,9 @@ export const cleanHTML = (html: string, source: string) => {
                 header.classList.add("claude-code-header");
             }
         });
+    }
 
-        // 3. Wrap all tables in a div._tableWrapper
+    if (source !== "chatgpt") {
         doc.querySelectorAll("table").forEach(table => {
             const wrapper = doc.createElement("div");
             wrapper.className = "_tableWrapper";
@@ -42,6 +43,7 @@ export const cleanHTML = (html: string, source: string) => {
             wrapper.appendChild(table);
         });
     }
+
 
     if (source === "gemini") {
         // Remove empty attachment containers
@@ -55,6 +57,13 @@ export const cleanHTML = (html: string, source: string) => {
             if (!hasText && !hasMedia) {
                 attachment.remove();
             }
+        });
+    }
+
+    if (source === "deepseek") {
+        // Handle DeepSeek-specific code blocks
+        doc.querySelectorAll("pre").forEach(pre => {
+            pre.querySelectorAll("style").forEach(style => style.remove());
         });
     }
 

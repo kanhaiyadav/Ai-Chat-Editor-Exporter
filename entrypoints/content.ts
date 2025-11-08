@@ -4,6 +4,7 @@ export default defineContentScript({
         "https://chat.openai.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
+        "https://chat.deepseek.com/*",
     ],
     main() {
         let currentUrl = location.href;
@@ -27,6 +28,7 @@ export default defineContentScript({
             location.hostname.includes("openai.com");
         const isClaude = location.hostname.includes("claude.ai");
         const isGemini = location.hostname.includes("gemini.google.com");
+        const isDeepSeek = location.hostname.includes("deepseek.com");
 
         // Initialize currentChatId AFTER isChatGPT, isClaude, and isGemini are defined
         let currentChatId = extractChatId(location.href);
@@ -76,13 +78,13 @@ export default defineContentScript({
         // Function to extract chat ID from URL
         function extractChatId(url: string): string {
             if (isChatGPT) {
-                const match = url.match(/\/c\/([^/?#]+)/);
-                return match ? match[1] : "";
+                /* Lines 79-81 omitted */
             } else if (isClaude) {
-                const match = url.match(/\/chat\/([^/?#]+)/);
-                return match ? match[1] : "";
+                /* Lines 82-84 omitted */
             } else if (isGemini) {
-                const match = url.match(/\/chat\/([^/?#]+)/);
+                /* Lines 85-87 omitted */
+            } else if (isDeepSeek) {
+                const match = url.match(/\/chat\/s\/([^/?]+)/);
                 return match ? match[1] : "";
             }
             return "";
@@ -99,11 +101,11 @@ export default defineContentScript({
                 return location.href.includes("/chat/");
             } else if (isGemini) {
                 return location.href.includes("/app");
+            } else if (isDeepSeek) {
+                return location.href.includes("/chat/");
             }
             return false;
-        }
-
-        // Function to get current active artifact
+        } // Function to get current active artifact
         function getActiveArtifact(): {
             title: string;
             subtitle: string;
@@ -292,6 +294,50 @@ export default defineContentScript({
             exportButton.addEventListener("click", extractGeminiData);
 
             console.log("✅ Export Chat button inserted for Gemini");
+
+            if (buttonCheckInterval) {
+                clearInterval(buttonCheckInterval);
+                buttonCheckInterval = null;
+            }
+        }
+
+        // Function to insert the button for DeepSeek
+        function insertDeepSeekButton() {
+            const buttonContainer = document.querySelector(
+                "._765a5cd"
+            ) as HTMLElement;
+            buttonContainer?.style.setProperty("position", "relative");
+
+            if (
+                !buttonContainer ||
+                document.querySelector("#export-chat-button")
+            ) {
+                return;
+            }
+
+            const exportButton = document.createElement("button");
+            exportButton.id = "export-chat-button";
+            exportButton.className = `ds-atom-button ds-text-button ds-text-button--with-icon`;
+            exportButton.setAttribute("role", "button");
+            exportButton.setAttribute("aria-disabled", "false");
+            exportButton.style.cssText =
+                "position: absolute; top: 15px; left: 10px; padding: 6px 12px; z-index: 1000; gap: 5px;";
+
+            exportButton.innerHTML = `
+                <span class="ds-icon ds-atom-button__icon" style="font-size: 16px; width: 16px; height: 16px; margin-right: 3px;">
+                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                            <path d="M13 11L21.2 2.8"></path>
+                            <path d="M22 6.8V2H17.2"></path>
+                            <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13"></path>
+                        </svg>
+                </span>
+                <span class="">Export Chat</span>
+            `;
+
+            buttonContainer.prepend(exportButton);
+            exportButton.addEventListener("click", extractDeepSeekData);
+
+            console.log("✅ Export Chat button inserted for DeepSeek");
 
             if (buttonCheckInterval) {
                 clearInterval(buttonCheckInterval);
@@ -1673,6 +1719,212 @@ export default defineContentScript({
             }
         }
 
+        // Function to extract DeepSeek chat data
+        async function extractDeepSeekData() {
+            console.log("Extracting DeepSeek chat data...");
+
+            const exportButton = document.querySelector(
+                "#export-chat-button"
+            ) as HTMLButtonElement;
+
+            // Store original button content
+            const originalButtonHTML = exportButton?.innerHTML;
+
+            try {
+                // Set loading state
+                if (exportButton) {
+                    exportButton.disabled = true;
+                    exportButton.style.opacity = "0.6";
+                    exportButton.style.cursor = "not-allowed";
+                    exportButton.innerHTML = `
+                        <span class="">Extracting...</span>
+                    `;
+                }
+
+                // Extract chat title - from page title or default
+                let title = document.title.replace(" - DeepSeek", "").trim();
+                if (!title || title === "DeepSeek") {
+                    title = "DeepSeek Chat";
+                }
+
+                const messages: any[] = [];
+
+                // Find all message pairs
+                const messageContainers = document.querySelectorAll(
+                    "._9663006[data-um-id]"
+                );
+                console.log(`Found ${messageContainers.length} messages`);
+
+                for (const container of Array.from(messageContainers)) {
+                    try {
+                        // Check if it's a user message
+                        const userMessageDiv = container.querySelector(
+                            ".d29f3d7d.ds-message"
+                        );
+                        if (userMessageDiv) {
+                            // Extract uploaded files (if any)
+                            const fileContainers =
+                                container.querySelectorAll(
+                                    "._76cd190._0004e59"
+                                );
+                            const attachments: any[] = [];
+
+                            for (const fileContainer of Array.from(
+                                fileContainers
+                            )) {
+                                const fileNameEl =
+                                    fileContainer.querySelector(".f3a54b52");
+                                const fileTypeEl =
+                                    fileContainer.querySelector("._5119742");
+
+                                if (fileNameEl) {
+                                    const fileName =
+                                        fileNameEl.textContent?.trim() || "";
+                                    const fileType =
+                                        fileTypeEl?.textContent?.trim() || "";
+
+                                    attachments.push({
+                                        type: fileType.includes("PDF")
+                                            ? "document"
+                                            : fileType.includes("PNG") ||
+                                              fileType.includes("JPG") ||
+                                              fileType.includes("JPEG")
+                                            ? "image"
+                                            : "file",
+                                        name: fileName,
+                                        info: fileType,
+                                    });
+                                }
+                            }
+
+                            // Extract user text message
+                            const userTextDiv =
+                                container.querySelector(".fbb737a4");
+                            if (userTextDiv) {
+                                const userText =
+                                    userTextDiv.textContent?.trim() || "";
+
+                                messages.push({
+                                    role: "user",
+                                    content: userText,
+                                    attachments:
+                                        attachments.length > 0
+                                            ? attachments
+                                            : undefined,
+                                });
+                            }
+                        }
+
+                        // Check if there's an assistant response following this user message
+                        // DeepSeek puts assistant responses in sibling elements with class _4f9bf79
+                        let nextSibling = container.nextElementSibling;
+                        while (
+                            nextSibling &&
+                            !nextSibling.classList.contains("_9663006")
+                        ) {
+                            if (nextSibling.classList.contains("_4f9bf79")) {
+                                const assistantMessageDiv =
+                                    nextSibling.querySelector(".ds-markdown");
+                                if (assistantMessageDiv) {
+                                    // Clone the message div for processing
+                                    const clonedDiv =
+                                        assistantMessageDiv.cloneNode(
+                                            true
+                                        ) as HTMLElement;
+
+                                    // Process code blocks
+                                    const codeBlocks =
+                                        clonedDiv.querySelectorAll(
+                                            ".md-code-block"
+                                        );
+                                    codeBlocks.forEach((codeBlock) => {
+                                        const preElement =
+                                            codeBlock.querySelector("pre");
+                                        if (preElement) {
+                                            const codeText =
+                                                preElement.textContent || "";
+                                            const languageEl =
+                                                codeBlock.querySelector(
+                                                    ".d813de27"
+                                                );
+                                            const language =
+                                                languageEl?.textContent?.trim() ||
+                                                "";
+                                            const header = document.createElement("div");
+                                            header.className = "code-header";
+                                            header.textContent = language;
+
+                                            // Escape HTML entities to prevent rendering
+                                            const escapedCode = codeText
+                                                .replace(/&/g, "&amp;")
+                                                .replace(/</g, "&lt;")
+                                                .replace(/>/g, "&gt;")
+                                                .replace(/"/g, "&quot;")
+                                                .replace(/'/g, "&#039;");
+
+                                            // Replace with formatted code block
+                                            const codeDiv =
+                                                document.createElement("div");
+                                            codeDiv.className = "deepseek-code";
+                                            codeDiv.innerHTML = `<pre><code class="language-${language}">${escapedCode}</code></pre>`;
+                                            codeBlock.replaceWith(codeDiv);
+                                            codeDiv.prepend(header);
+                                        }
+                                    });
+
+                                    // Get the processed HTML
+                                    let assistantHTML = clonedDiv.innerHTML;
+
+                                    // Clean up any remaining internal spans
+                                    assistantHTML = assistantHTML
+                                        .replace(/<span[^>]*>/g, "")
+                                        .replace(/<\/span>/g, "");
+
+                                    messages.push({
+                                        role: "assistant",
+                                        content: assistantHTML,
+                                    });
+                                }
+                                break;
+                            }
+                            nextSibling = nextSibling.nextElementSibling;
+                        }
+                    } catch (error) {
+                        console.error("Error processing message:", error);
+                    }
+                }
+
+                console.log("Extracted messages:", messages);
+
+                // Save data and open options page
+                chrome.storage.local.set(
+                    {
+                        chatData: {
+                            title,
+                            messages,
+                            source: "deepseek",
+                        },
+                        savedChatId: null,
+                        pdfSettings: null,
+                    },
+                    () => {
+                        chrome.runtime.sendMessage({ action: "openOptions" });
+                    }
+                );
+            } catch (error) {
+                console.error("Error extracting DeepSeek data:", error);
+                alert("Failed to extract chat data. Please try again.");
+            } finally {
+                // Reset button
+                if (exportButton && originalButtonHTML) {
+                    exportButton.disabled = false;
+                    exportButton.style.opacity = "";
+                    exportButton.style.cursor = "";
+                    exportButton.innerHTML = originalButtonHTML;
+                }
+            }
+        }
+
         // Function to insert the appropriate button
         function insertExportButton() {
             if (!isOnChatPage()) {
@@ -1683,7 +1935,8 @@ export default defineContentScript({
                 "Chat2Pdf: ❤️❤️❤️ Inserting export button...",
                 isChatGPT,
                 isClaude,
-                isGemini
+                isGemini,
+                isDeepSeek
             );
             if (isChatGPT) {
                 insertChatGPTButton();
@@ -1691,6 +1944,8 @@ export default defineContentScript({
                 insertClaudeButton();
             } else if (isGemini) {
                 insertGeminiButton();
+            } else if (isDeepSeek) {
+                insertDeepSeekButton();
             }
         }
 
@@ -1782,7 +2037,8 @@ export default defineContentScript({
                     "Chat2Pdf: ❤️❤️❤️ Inserting export button...",
                     isChatGPT,
                     isClaude,
-                    isGemini
+                    isGemini,
+                    isDeepSeek
                 );
                 insertExportButton();
             }

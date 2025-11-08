@@ -170,11 +170,11 @@ export const SettingsPanel = ({
             >
 
                 <LayoutSelector
-                    selectedLayout={settings.layout}
+                    selectedLayout={settings && settings.layout}
                     onLayoutChange={(layout) => onUpdateSettings({ layout })}
                 />
 
-                {settings.layout === 'chat' && (
+                {settings && settings.layout === 'chat' && (
                     <ChatSettings
                         settings={settings.chat}
                         isExpanded={expandedSections.chatStyle}
@@ -183,7 +183,7 @@ export const SettingsPanel = ({
                     />
                 )}
 
-                {settings.layout === 'qa' && (
+                {settings && settings.layout === 'qa' && (
                     <QASettings
                         settings={settings.qa}
                         isExpanded={expandedSections.qaStyle}
@@ -192,7 +192,7 @@ export const SettingsPanel = ({
                     />
                 )}
 
-                {settings.layout === 'document' && (
+                {settings && settings.layout === 'document' && (
                     <DocumentSettings
                         settings={settings.document}
                         isExpanded={expandedSections.documentStyle}
@@ -202,7 +202,7 @@ export const SettingsPanel = ({
                 )}
 
                 <GeneralSettings
-                    settings={settings.general}
+                    settings={settings && settings.general}
                     isExpanded={expandedSections.general}
                     onToggle={() => onToggleSection('general')}
                     onUpdate={(updates) => onUpdateSettings({ general: { ...settings.general, ...updates } })}

@@ -8,7 +8,7 @@ export default defineConfig({
     manifest: {
         name: "Chat2Pdf",
         description: "A browser extension for converting AI chats to PDF",
-        version: "13.3.0",
+        version: "14.0.0",
         content_security_policy: {
             extension_pages: "script-src 'self'; object-src 'self'",
         },
@@ -20,6 +20,7 @@ export default defineConfig({
             "https://gemini.google.com/*",
             "https://lh3.google.com/*",
             "https://lh3.googleusercontent.com/*",
+            "https://chat.deepseek.com/*",
         ],
         web_accessible_resources: [
             {

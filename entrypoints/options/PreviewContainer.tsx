@@ -39,14 +39,28 @@ export const PreviewContainer = ({
 }: PreviewContainerProps) => {
 
     const [loading, setLoading] = useState(true);
+    const [prevMessageCount, setPrevMessageCount] = useState(0);
 
-    // First, handle the loading state
+    // Handle loading state - only show loading when message count changes significantly
+    // Don't show loading for reorders (same count) or small changes (like editing)
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 800);
+        const currentCount = messages?.length || 0;
 
-        return () => clearTimeout(timer);
+        // Only trigger loading if:
+        // 1. Going from no messages to messages, or
+        // 2. Message count changed by more than 1 (not just editing/reordering)
+        if (prevMessageCount === 0 && currentCount > 0) {
+            setLoading(true);
+            const timer = setTimeout(() => {
+                setLoading(false);
+                setPrevMessageCount(currentCount);
+            }, 800);
+            return () => clearTimeout(timer);
+        } else {
+            // For reorders, edits, or small changes, no loading state
+            setPrevMessageCount(currentCount);
+            setLoading(false);
+        }
     }, [messages]);
 
     // Then, replace artifacts AFTER loading is complete
@@ -129,7 +143,7 @@ export const PreviewContainer = ({
         const timer = setTimeout(replaceArtifacts, 200);
 
         return () => clearTimeout(timer);
-    }, [loading, messages, artifacts, settings.layout]);
+    }, [loading, messages, artifacts]);
 
     return (
         <div className='flex-1 h-full flex flex-col bg-background mt-1'>
@@ -155,7 +169,7 @@ export const PreviewContainer = ({
                         maxWidth: '800px',
                         minHeight: '1000px',
                         backgroundColor: 'var(--pdf-background)',
-                        color: settings.general.textColor,
+                        color: settings && settings.general.textColor,
                     }}
                 >
                     <div className='app-name absolute top-1 left-0 px-4 text-black/50 w-full flex justify-between'>
@@ -163,9 +177,9 @@ export const PreviewContainer = ({
                         <span>{new Date().toLocaleDateString()}</span>
                     </div>
                     {messages && messages.length > 0 ? (
-                        settings.layout === 'chat' ? (
+                        settings && settings.layout === 'chat' ? (
                             <ChatLayout source={source} messages={messages} settings={settings} />
-                        ) : settings.layout === 'qa' ? (
+                        ) : settings && settings.layout === 'qa' ? (
                             <QALayout messages={messages} settings={settings} />
                         ) : (
                             <DocumentLayout messages={messages} settings={settings} />
