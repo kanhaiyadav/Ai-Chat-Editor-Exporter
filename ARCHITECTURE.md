@@ -1,118 +1,379 @@
-# Component Structure
+# Chat2Pdf Extension Architecture
 
-## Message Management Feature Architecture
+## Overview
+
+Chat2Pdf is a browser extension that exports AI chat conversations from multiple platforms (ChatGPT, Claude, Gemini, DeepSeek) to beautifully formatted PDFs. Built with React, TypeScript, and the WXT framework.
+
+## Platform Support
+
+### Supported Platforms
+
+-   **ChatGPT** (chatgpt.com, chat.openai.com)
+-   **Claude** (claude.ai) - with Artifacts extraction
+-   **Gemini** (gemini.google.com) - with Monaco editor extraction
+-   **DeepSeek** (chat.deepseek.com) - with HTML rendering support
+
+### Platform Detection
+
+The content script automatically detects which platform the user is on and adapts extraction logic accordingly.
+
+---
+
+## Core Architecture
+
+### Component Hierarchy
 
 ```
 App.tsx (Main Component)
 ├── State Management
-│   ├── chatData: Message[] | null
-│   ├── selectedMessages: Set<number>
-│   └── expandedSections: { messages: true }
+│   ├── chatData: { title, messages, source, artifacts }
+│   ├── selectedMessages: Set<number> (hash-based tracking)
+│   ├── settings: PDFSettings
+│   ├── expandedSections: { [key: string]: boolean }
+│   └── Dialog states (save, merge, export, import, etc.)
 │
 ├── Handlers
-│   ├── handleUpdateMessage(index, content)
-│   ├── handleToggleMessage(index)
-│   └── Message filtering logic
+│   ├── handleReorderMessages() - drag-and-drop with flushSync
+│   ├── handleUpdateMessage() - edit message content
+│   ├── handleToggleMessage() - selection toggle
+│   ├── handleSaveChat() - save to IndexedDB
+│   ├── handleExportChat() - export as JSON
+│   ├── handleImportChat() - import from JSON
+│   └── handleMergeChats() - merge multiple chats
 │
 └── Child Components
-    ├── Header
-    ├── PreviewContainer (receives filtered messages)
+    ├── Header (Logo, Theme, Social Links, Review)
+    ├── AppSidebar
+    │   ├── SavedChatsManagement (with export/import/merge)
+    │   ├── PresetManagement
+    │   └── BuyMeCoffee / Social Actions
+    ├── PreviewContainer
+    │   ├── PreviewToolbar (Export PDF, Save Chat, Export JSON)
+    │   └── Layout Renderers
+    │       ├── ChatLayout (bubble style)
+    │       ├── QALayout (structured Q&A)
+    │       └── DocumentLayout (formal document)
     └── SettingsPanel
-        ├── LayoutSelector
+        ├── MessageManagement ⭐
+        │   ├── Drag-and-drop reordering (@dnd-kit)
+        │   ├── Selection system (Set<number>)
+        │   ├── Message cards with edit dialog
+        │   └── ChatEditor (rich text editor)
+        ├── LayoutSelection
         ├── ChatSettings
         ├── QASettings
         ├── DocumentSettings
-        ├── GeneralSettings
-        └── MessageManagement ⭐ NEW
-            ├── Message List (ScrollArea)
-            │   └── Message Card
-            │       ├── Checkbox
-            │       ├── Role Badge
-            │       ├── Message Preview
-            │       └── Edit Button
-            │
-            └── Edit Dialog (Modal)
-                ├── Dialog Header
-                ├── ChatEditor ⭐ ENHANCED
-                │   ├── Formatting Toolbar
-                │   │   ├── Bold, Italic, Strike, Code
-                │   │   ├── Lists (Bullet, Ordered)
-                │   │   ├── Code Block
-                │   │   └── Undo/Redo
-                │   └── Editor Content (TipTap)
-                └── Dialog Footer
-                    ├── Cancel Button
-                    └── Save Button
+        └── GeneralSettings
 ```
+
+---
 
 ## Data Flow
 
-```
-1. Load Messages
-   Chrome Storage → App.tsx → setChatData()
-   ↓
-   Initialize all as selected → setSelectedMessages(new Set([0,1,2,...]))
+### 1. Chat Extraction (content.ts)
 
-2. Message Selection
-   User clicks checkbox → onToggleMessage(index)
-   ↓
-   Update selectedMessages Set
-   ↓
-   Filter messages for preview → filteredMessages
-   ↓
-   Pass to PreviewContainer
-
-3. Message Editing
-   User clicks Edit → handleEditClick(index, content)
-   ↓
-   Open Dialog with ChatEditor
-   ↓
-   User edits content → onChange(html)
-   ↓
-   User clicks Save → handleSave()
-   ↓
-   onUpdateMessage(index, content)
-   ↓
-   Update chatData state
-   ↓
-   Save to Chrome Storage
 ```
+User on Chat Platform → Clicks "Export Chat" Button
+↓
+Content Script Detects Platform (ChatGPT/Claude/Gemini/DeepSeek)
+↓
+Platform-Specific Extraction:
+  - ChatGPT: Standard DOM extraction
+  - Claude: Includes Artifact detection and extraction
+  - Gemini: Monaco editor content extraction via injected script
+  - DeepSeek: HTML-aware code block extraction
+↓
+Extract: title, messages[], images, artifacts
+↓
+Save to Chrome Storage: chrome.storage.local.set({ chatData })
+↓
+Open Options Page: chrome.runtime.openOptionsPage()
+```
+
+### 2. Message Loading (App.tsx)
+
+```
+Options Page Loads → useEffect checks Chrome Storage
+↓
+chatData found → setChatData({ title, messages, source, artifacts })
+↓
+Auto-select all messages → setSelectedMessages(new Set([0,1,2,...]))
+↓
+Generate message hashes → hash = simpleHash(role + content)
+↓
+Initialize filteredMessages → messages.filter(selected)
+↓
+Pass to PreviewContainer for rendering
+```
+
+### 3. Message Selection
+
+```
+User clicks checkbox → handleToggleMessage(index)
+↓
+Get message hash → const hash = generateMessageHash(message)
+↓
+Update Set (add/remove) → new Set(selectedMessages)
+↓
+flushSync update → setChatData & setSelectedMessages
+↓
+Re-compute filteredMessages
+↓
+Update Preview immediately
+```
+
+### 4. Message Reordering (Drag & Drop)
+
+```
+User drags message → DndContext detects
+↓
+handleReorderMessages(oldIndex, newIndex)
+↓
+Generate message hashes for tracking
+↓
+Reorder messages array → arrayMove(messages, old, new)
+↓
+Update selection Set with new hashes
+↓
+flushSync(() => { setChatData(); setSelectedMessages(); })
+↓
+Synchronous state update → Preview updates instantly
+↓
+Save to Chrome Storage → chrome.storage.local.set()
+```
+
+### 5. Message Editing
+
+```
+User clicks Edit → handleEditClick(index, content)
+↓
+Open Dialog with ChatEditor component
+↓
+User edits content (formatting, code, lists)
+↓
+onChange(html) → update local state
+↓
+User clicks Save → handleSave()
+↓
+onUpdateMessage(index, newContent)
+↓
+Update chatData.messages[index].content
+↓
+flushSync update state
+↓
+Save to Chrome Storage
+↓
+Preview updates automatically
+```
+
+### 6. Backup & Restore
+
+**Export Chat (Backup):**
+
+```
+User clicks "Export Chat" → handleExportChat()
+↓
+Prepare chat data: { title, messages, source, artifacts, timestamp, version }
+↓
+Convert to JSON string
+↓
+Create Blob and download link
+↓
+Download as: {title}_backup_{timestamp}.json
+```
+
+**Import Chat (Restore):**
+
+```
+User selects JSON file → handleImportChat(file)
+↓
+Read file content → FileReader
+↓
+Parse JSON and validate structure
+↓
+Load into app → setChatData(importedData)
+↓
+Initialize selection → setSelectedMessages(all)
+↓
+Show success notification
+```
+
+**Bulk Export:**
+
+```
+User selects multiple chats → BulkExportChatsDialog
+↓
+Retrieve all selected chats from IndexedDB
+↓
+Convert each to JSON
+↓
+Create ZIP file with JSZip
+↓
+Download as: chats_backup_{timestamp}.zip
+```
+
+### 7. Save & Load Chats
+
+**Save:**
+
+```
+User clicks "Save Chat" → handleSaveChat()
+↓
+Open SaveChatDialog for name input
+↓
+Prepare SavedChat object: { name, chatData, settings, timestamp }
+↓
+settingsDB.saveChat(savedChat) → IndexedDB
+↓
+Update sidebar chat list
+↓
+Show success toast
+```
+
+**Load:**
+
+```
+User clicks chat in sidebar → handleLoadChat(id)
+↓
+settingsDB.getChat(id) → retrieve from IndexedDB
+↓
+setChatData(chat.chatData)
+↓
+setSettings(chat.settings)
+↓
+Initialize selectedMessages
+↓
+Show loaded notification
+```
+
+### 8. PDF Export
+
+```
+User clicks "Export PDF" → handleExportPDF()
+↓
+Gather: filteredMessages, settings, layout
+↓
+Generate HTML based on layout:
+  - ChatLayout: Bubble style with avatars
+  - QALayout: Q&A format with numbering
+  - DocumentLayout: Formal document style
+↓
+Apply settings: colors, fonts, spacing, margins
+↓
+Open new window with generated HTML
+↓
+Trigger browser print dialog: window.print()
+↓
+User saves as PDF via browser's print-to-PDF
+```
+
+---
 
 ## File Structure
 
 ```
-entrypoints/options/
-├── App.tsx                    ← Main component (updated)
-├── SettingsPanel.tsx          ← Settings panel (updated)
-├── MessageManagement.tsx      ← NEW: Message list & selection
-├── Editor.tsx                 ← ENHANCED: Rich text editor
-├── style.css                  ← ENHANCED: Editor styles
-├── Header.tsx
-├── PreviewContainer.tsx
-├── ChatLayout.tsx
-├── QALayout.tsx
-├── DocumentLayout.tsx
-├── LayoutSelection.tsx
-├── ChatSettings.tsx
-├── QASettings.tsx
-├── DocumentSettings.tsx
-├── GeneralSettings.tsx
-├── types.ts
-└── utils.tsx
+entrypoints/
+├── background.ts                  # Service worker (future use)
+├── content.ts                     # 🔥 Platform detection & extraction
+│   ├── ChatGPT extraction
+│   ├── Claude extraction (with Artifacts)
+│   ├── Gemini extraction (Monaco editor)
+│   └── DeepSeek extraction (HTML rendering)
+│
+└── options/                       # Main extension UI
+    ├── App.tsx                    # 🔥 Main component with state management
+    ├── Header.tsx                 # Navigation bar with review link
+    ├── app-sidebar.tsx            # 🔥 Sidebar with chats/presets management
+    │
+    ├── PreviewContainer.tsx       # PDF preview panel
+    ├── PreviewToolbar.tsx         # Export/Save/Backup buttons
+    ├── ChatLayout.tsx             # Bubble chat layout
+    ├── QALayout.tsx               # Q&A structured layout
+    ├── DocumentLayout.tsx         # Formal document layout
+    │
+    ├── SettingsPanel.tsx          # Settings container
+    ├── LayoutSelection.tsx        # Layout picker
+    ├── ChatSettings.tsx           # Chat-specific settings
+    ├── QASettings.tsx             # Q&A-specific settings
+    ├── DocumentSettings.tsx       # Document-specific settings
+    ├── GeneralSettings.tsx        # Global settings
+    │
+    ├── MessageManagement.tsx      # 🔥 Message selection/edit/reorder
+    ├── Editor.tsx                 # 🔥 Rich text editor (TipTap-based)
+    │
+    ├── SaveChatDialog.tsx         # Save chat modal
+    ├── SavePresetDialog.tsx       # Save preset modal
+    ├── ExportChatDialog.tsx       # 🔥 Export as JSON backup
+    ├── ImportChatDialog.tsx       # 🔥 Import from JSON backup
+    ├── BulkExportChatsDialog.tsx  # 🔥 Bulk export as ZIP
+    ├── MergeChatsDialog.tsx       # Merge multiple chats
+    ├── ConfirmationDialog.tsx     # Generic confirmation
+    ├── UnsavedChangesDialog.tsx   # Unsaved changes warning
+    │
+    ├── SavedChatsManagement.tsx   # Chat list in sidebar
+    ├── PresetManagement.tsx       # Preset list in sidebar
+    ├── nav-main.tsx               # Main navigation items
+    ├── nav-chats.tsx              # Chat navigation component
+    ├── nav-presets.tsx            # Preset navigation component
+    ├── team-switcher.tsx          # Sidebar toggle component
+    │
+    ├── types.ts                   # TypeScript types
+    ├── utils.tsx                  # Utility functions
+    ├── style.css                  # Custom styles
+    ├── index.html                 # Options page HTML
+    └── main.tsx                   # React entry point
 
-components/ui/
-├── dialog.tsx                 ← NEW: Shadcn dialog
-├── checkbox.tsx               ← NEW: Shadcn checkbox
-├── scroll-area.tsx            ← NEW: Shadcn scroll area
-├── button.tsx
-├── card.tsx
-├── collapsible.tsx
-├── input.tsx
-├── label.tsx
-├── select.tsx
-├── slider.tsx
-└── switch.tsx
+components/                        # Reusable components
+├── ThemeToggle.tsx               # Light/Dark theme switcher
+├── BuyMeCoffeeModal.tsx          # Support modal
+└── ui/                           # Shadcn/ui components
+    ├── button.tsx
+    ├── button-group.tsx
+    ├── card.tsx
+    ├── checkbox.tsx             # 🔥 Used in MessageManagement
+    ├── collapsible.tsx
+    ├── dialog.tsx               # 🔥 Used for all modals
+    ├── dropdown-menu.tsx
+    ├── input.tsx
+    ├── label.tsx
+    ├── scroll-area.tsx          # 🔥 Used in MessageManagement
+    ├── select.tsx
+    ├── separator.tsx
+    ├── sidebar.tsx              # 🔥 Sidebar primitive
+    ├── skeleton.tsx
+    ├── slider.tsx
+    ├── spinner.tsx
+    ├── switch.tsx
+    ├── textarea.tsx
+    └── tooltip.tsx
+
+lib/
+├── settingsDB.ts                # 🔥 IndexedDB operations (Dexie)
+├── themeStorage.ts              # Theme persistence
+├── useTheme.ts                  # Theme hook
+└── utils.ts                     # Utility functions
+
+hooks/
+└── use-mobile.ts                # Mobile detection hook
+
+public/                          # Static assets
+├── monaco-extractor.js          # 🔥 Gemini Monaco editor extractor
+├── icon/                        # Extension icons
+├── chat/                        # Platform logos
+└── side/                        # Sidebar images
+
+assets/
+├── tailwind.css                 # Global styles
+├── *.svg                        # Platform logos (light/dark)
+
+wxt.config.ts                    # WXT framework configuration
+tsconfig.json                    # TypeScript configuration
+package.json                     # Dependencies and scripts
 ```
+
+🔥 = New or significantly enhanced in v14.0.0
+
+---
 
 ## Key Features by Component
 

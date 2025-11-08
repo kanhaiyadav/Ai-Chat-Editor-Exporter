@@ -2,7 +2,7 @@
   "name": "chat2pdf",
   "description": "A powerful browser extension that transforms AI chat conversations into beautifully formatted PDFs.",
   "private": true,
-  "version": "14.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
