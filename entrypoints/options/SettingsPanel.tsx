@@ -305,8 +305,8 @@ export const SettingsPanel = ({
                 />
 
                 {/* Editor Toolbar - Always visible */}
-                <Card className="shadow-sm border border-gray-200">
-                    <CardHeader className="px-4 py-3">
+                <Card className="shadow-sm border border-gray-200 gap-1">
+                    <CardHeader className="px-4">
                         <CardTitle className="flex items-center justify-between font-semibold text-sm">
                             <span className="flex items-center gap-2">
                                 <Pencil size={16} />
@@ -319,7 +319,7 @@ export const SettingsPanel = ({
                             )}
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-4 pb-4">
+                    <CardContent className="px-4 pb-2">
                         <EditorToolbar
                             onFormat={(command, value) => {
                                 if (editingElementRef) {
@@ -352,12 +352,6 @@ export const SettingsPanel = ({
                                 setLinkDialogOpen(true);
                             }}
                         />
-                        {editingMessageIndex === null && (
-                            <div className='mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700'>
-                                <p className='font-medium'>💡 Tip:</p>
-                                <p>Click on any message in the preview to start editing.</p>
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
             </div>

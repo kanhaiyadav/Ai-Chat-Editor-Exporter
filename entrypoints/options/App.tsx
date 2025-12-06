@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useTheme } from '@/lib/useTheme';
 import { Message, PDFSettings, defaultSettings, ChatSource } from './types';
-import { cleanHTML } from './utils';
+import { cleanHTML, exportToWord, exportToMarkdown, exportToHTML, exportToPlainText } from './utils';
 import { Header } from './Header';
 import { PreviewContainer } from './PreviewContainer';
 import { SettingsPanel } from './SettingsPanel';
@@ -683,6 +683,22 @@ function App() {
         window.print();
     };
 
+    const handleOpenInWord = () => {
+        exportToWord();
+    };
+
+    const handleExportMarkdown = () => {
+        exportToMarkdown();
+    };
+
+    const handleExportHTML = () => {
+        exportToHTML();
+    };
+
+    const handleExportPlainText = () => {
+        exportToPlainText();
+    };
+
     const handleMergeChats = (mergedMessages: Message[]) => {
         if (!chatData) return;
 
@@ -742,6 +758,10 @@ function App() {
                             onSaveChat={handleSaveChat}
                             onSaveAsChat={handleSaveAsChat}
                             onExportPDF={handleGeneratePDF}
+                            onOpenInWord={handleOpenInWord}
+                            onExportMarkdown={handleExportMarkdown}
+                            onExportHTML={handleExportHTML}
+                            onExportPlainText={handleExportPlainText}
                             onMerge={() => setShowMergeDialog(true)}
                             onCloseChat={handleCloseChat}
                             onExportChat={() => {

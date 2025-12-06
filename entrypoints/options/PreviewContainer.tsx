@@ -17,6 +17,10 @@ interface PreviewContainerProps {
     onSaveChat: () => void;
     onSaveAsChat: () => void;
     onExportPDF: () => void;
+    onOpenInWord: () => void;
+    onExportMarkdown: () => void;
+    onExportHTML: () => void;
+    onExportPlainText: () => void;
     onMerge: () => void;
     onExportChat?: () => void;
     onCloseChat?: () => void;
@@ -37,6 +41,10 @@ export const PreviewContainer = ({
     onSaveChat,
     onSaveAsChat,
     onExportPDF,
+    onOpenInWord,
+    onExportMarkdown,
+    onExportHTML,
+    onExportPlainText,
     onMerge,
     onExportChat,
     onCloseChat,
@@ -162,6 +170,10 @@ export const PreviewContainer = ({
                 onSaveChat={onSaveChat}
                 onSaveAsChat={onSaveAsChat}
                 onExportPDF={onExportPDF}
+                onOpenInWord={onOpenInWord}
+                onExportMarkdown={onExportMarkdown}
+                onExportHTML={onExportHTML}
+                onExportPlainText={onExportPlainText}
                 onMerge={onMerge}
                 onExportChat={onExportChat}
                 onCloseChat={onCloseChat}

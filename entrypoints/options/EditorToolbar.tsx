@@ -45,7 +45,7 @@ export const EditorToolbar = ({
     };
 
     return (
-        <div className="bg-accent border border-border rounded-lg p-3 flex flex-wrap gap-1" onMouseDown={handleMouseDown}>
+        <div className="flex flex-wrap gap-1" onMouseDown={handleMouseDown}>
             {/* Undo/Redo */}
             <Button
                 size="sm"
