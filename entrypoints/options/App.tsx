@@ -122,6 +122,8 @@ function App() {
     const [exportingChat, setExportingChat] = useState<SavedChat | null>(null);
     const [showBulkExportDialog, setShowBulkExportDialog] = useState(false);
     const [showImportDialog, setShowImportDialog] = useState(false);
+    const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
+    const [editingElementRef, setEditingElementRef] = useState<HTMLDivElement | null>(null);
 
 
     useEffect(() => {
@@ -314,6 +316,22 @@ function App() {
         const updatedChatData = { ...chatData, messages: updatedMessages };
         setChatData(updatedChatData);
         chrome.storage.local.set({ chatData: updatedChatData });
+    };
+
+    const handleStartEditMessage = (index: number, element?: HTMLDivElement) => {
+        setEditingMessageIndex(index);
+        if (element) {
+            setEditingElementRef(element);
+        }
+    };
+
+    const handleContentChange = (index: number, content: string) => {
+        handleUpdateMessage(index, content);
+    };
+
+    const handleFinishEdit = () => {
+        setEditingMessageIndex(null);
+        setEditingElementRef(null);
     };
 
     const handleToggleMessage = (index: number) => {
@@ -739,6 +757,10 @@ function App() {
                                     })();
                                 }
                             }}
+                            editingIndex={editingMessageIndex}
+                            onStartEdit={handleStartEditMessage}
+                            onContentChange={handleContentChange}
+                            onFinishEdit={handleFinishEdit}
                         />
 
                         <SettingsPanel
@@ -757,6 +779,8 @@ function App() {
                             onReorderMessages={handleReorderMessages}
                             onSavePreset={handleSavePreset}
                             onSaveAsPreset={handleSaveAsPreset}
+                            editingMessageIndex={editingMessageIndex}
+                            editingElementRef={editingElementRef}
                         />
                     </div>
                 </SidebarInset>

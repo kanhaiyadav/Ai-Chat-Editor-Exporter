@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
-import { RotateCcw, Save, SaveAll, Pencil, Check, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { RotateCcw, Save, SaveAll, Pencil, Check, X, Upload, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 import { PDFSettings, Message } from './types';
 import { LayoutSelector } from './LayoutSelection';
 import { ChatSettings } from './ChatSettings';
@@ -11,6 +16,9 @@ import { GeneralSettings } from './GeneralSettings';
 import { MessageManagement } from './MessageManagement';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, presetOperations } from '@/lib/settingsDB';
+import { ChatEditor } from './Editor';
+import { EditorToolbar } from './EditorToolbar';
+import { ImageDialog, TableDialog, LinkDialog } from './EditorDialogs';
 
 interface SettingsPanelProps {
     settings: PDFSettings;
@@ -28,6 +36,8 @@ interface SettingsPanelProps {
     onReorderMessages: (newOrder: Message[]) => void;
     onSavePreset: () => void;
     onSaveAsPreset: () => void;
+    editingMessageIndex: number | null;
+    editingElementRef: HTMLDivElement | null;
 }
 
 export const SettingsPanel = ({
@@ -46,10 +56,86 @@ export const SettingsPanel = ({
     onReorderMessages,
     onSavePreset,
     onSaveAsPreset,
+    editingMessageIndex,
+    editingElementRef,
 }: SettingsPanelProps) => {
     const [isEditingPresetName, setIsEditingPresetName] = useState(false);
     const [editedPresetName, setEditedPresetName] = useState('');
     const [error, setError] = useState('');
+
+    // Dialog states for toolbar
+    const [imageDialogOpen, setImageDialogOpen] = useState(false);
+    const [tableDialogOpen, setTableDialogOpen] = useState(false);
+    const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+    const [savedRange, setSavedRange] = useState<Range | null>(null);
+
+    const saveSelection = () => {
+        if (!editingElementRef) return;
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            if (editingElementRef.contains(range.commonAncestorContainer)) {
+                setSavedRange(range.cloneRange());
+            }
+        }
+    };
+
+    // Helper function to insert HTML at cursor position
+    const insertHtmlAtCursor = (html: string) => {
+        if (!editingElementRef) return;
+
+        editingElementRef.focus();
+
+        const selection = window.getSelection();
+        if (!selection) return;
+
+        if (savedRange) {
+            selection.removeAllRanges();
+            selection.addRange(savedRange);
+            setSavedRange(null);
+        } else if (selection.rangeCount === 0) {
+            // If no selection, append at the end
+            const range = document.createRange();
+            range.selectNodeContents(editingElementRef);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        // Try document.execCommand first
+        const success = document.execCommand('insertHTML', false, html);
+
+        // If execCommand fails, manually insert
+        if (!success && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            const frag = document.createDocumentFragment();
+            let node;
+            while ((node = tempDiv.firstChild)) {
+                frag.appendChild(node);
+            }
+
+            range.insertNode(frag);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        // Trigger input event to save changes / React listeners
+        const inputEvent = typeof InputEvent !== 'undefined'
+            ? new InputEvent('input', { bubbles: true, cancelable: true, data: html })
+            : new Event('input', { bubbles: true });
+        editingElementRef.dispatchEvent(inputEvent);
+
+        // Ensure message state updates even if synthetic events don't fire
+        if (editingMessageIndex !== null) {
+            onUpdateMessage(editingMessageIndex, editingElementRef.innerHTML);
+        }
+    };
 
     // Get current preset details
     const currentPreset = useLiveQuery(
@@ -217,6 +303,63 @@ export const SettingsPanel = ({
                     onReorderMessages={onReorderMessages}
                     selectedMessages={selectedMessages}
                 />
+
+                {/* Editor Toolbar - Always visible */}
+                <Card className="shadow-sm border border-gray-200">
+                    <CardHeader className="px-4 py-3">
+                        <CardTitle className="flex items-center justify-between font-semibold text-sm">
+                            <span className="flex items-center gap-2">
+                                <Pencil size={16} />
+                                Editor Toolbar
+                            </span>
+                            {editingMessageIndex !== null && (
+                                <span className='text-xs font-normal text-muted-foreground'>
+                                    Editing Message #{editingMessageIndex + 1}
+                                </span>
+                            )}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-4">
+                        <EditorToolbar
+                            onFormat={(command, value) => {
+                                if (editingElementRef) {
+                                    editingElementRef.focus();
+                                    setTimeout(() => {
+                                        document.execCommand(command, false, value);
+                                    }, 0);
+                                }
+                            }}
+                            onInsertImage={() => {
+                                saveSelection();
+                                setImageDialogOpen(true);
+                            }}
+                            onInsertTable={() => {
+                                saveSelection();
+                                setTableDialogOpen(true);
+                            }}
+                            onInsertCodeBlock={() => {
+                                const code = prompt('Enter code:');
+                                if (code && editingElementRef) {
+                                    const codeHTML = `<pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto;"><code>${code}</code></pre>`;
+                                    editingElementRef.focus();
+                                    setTimeout(() => {
+                                        document.execCommand('insertHTML', false, codeHTML);
+                                    }, 0);
+                                }
+                            }}
+                            onInsertLink={() => {
+                                saveSelection();
+                                setLinkDialogOpen(true);
+                            }}
+                        />
+                        {editingMessageIndex === null && (
+                            <div className='mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700'>
+                                <p className='font-medium'>💡 Tip:</p>
+                                <p>Click on any message in the preview to start editing.</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
 
             {/* Fixed Button Bar */}
@@ -262,6 +405,29 @@ export const SettingsPanel = ({
                     Reset to Default
                 </Button>
             </div>
+
+            {/* Editor Dialogs */}
+            <ImageDialog
+                open={imageDialogOpen}
+                onOpenChange={setImageDialogOpen}
+                onInsert={(html) => {
+                    insertHtmlAtCursor(html);
+                }}
+            />
+            <TableDialog
+                open={tableDialogOpen}
+                onOpenChange={setTableDialogOpen}
+                onInsert={(html) => {
+                    insertHtmlAtCursor(html);
+                }}
+            />
+            <LinkDialog
+                open={linkDialogOpen}
+                onOpenChange={setLinkDialogOpen}
+                onInsert={(html) => {
+                    insertHtmlAtCursor(html);
+                }}
+            />
         </div>
     );
 };

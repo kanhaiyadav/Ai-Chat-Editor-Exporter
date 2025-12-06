@@ -8,9 +8,13 @@ interface ChatLayoutProps {
     source: 'chatgpt' | 'claude' | 'deepseek' | 'gemini';
     messages: Message[];
     settings: PDFSettings;
+    editingIndex: number | null;
+    onStartEdit: (index: number, element?: HTMLDivElement) => void;
+    onContentChange: (index: number, content: string) => void;
+    onFinishEdit: () => void;
 }
 
-export const ChatLayout = ({ messages, settings, source }: ChatLayoutProps) => {
+export const ChatLayout = ({ messages, settings, source, editingIndex, onStartEdit, onContentChange, onFinishEdit }: ChatLayoutProps) => {
 
     return (
         <>
@@ -95,11 +99,48 @@ export const ChatLayout = ({ messages, settings, source }: ChatLayoutProps) => {
                                 }
                             </div>
                         )}
-                        <div style={bubbleStyle} className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"}`}>
+                        <div
+                            style={bubbleStyle}
+                            className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"} ${editingIndex === index ? 'ring-2 ring-primary' : ''} message-bubble`}
+                            data-message-index={index}
+                        >
                             {
                                 message.content !== "" && (isUser ?
-                                    <div style={{ whiteSpace: 'pre-wrap' }}>{decodeHTMLEntities(message.content)}</div> :
-                                    <div dangerouslySetInnerHTML={{ __html: message.content }} />)
+                                    <div
+                                        style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: 'text' }}
+                                        contentEditable={true}
+                                        suppressContentEditableWarning
+                                        ref={(el) => {
+                                            if (el && typeof message.content === 'string' && el.innerHTML !== message.content) {
+                                                el.innerHTML = message.content || '';
+                                            }
+                                        }}
+                                        onClick={(e) => {
+                                            onStartEdit(index, e.currentTarget);
+                                            e.currentTarget.focus();
+                                        }}
+                                        onInput={(e) => {
+                                            onContentChange(index, e.currentTarget.innerHTML);
+                                        }}
+                                    >
+                                    </div> :
+                                    <div
+                                        contentEditable={true}
+                                        suppressContentEditableWarning
+                                        style={{ outline: 'none', cursor: 'text' }}
+                                        ref={(el) => {
+                                            if (el && !el.innerHTML && message.content) {
+                                                el.innerHTML = message.content;
+                                            }
+                                        }}
+                                        onClick={(e) => {
+                                            onStartEdit(index, e.currentTarget);
+                                            e.currentTarget.focus();
+                                        }}
+                                        onInput={(e) => {
+                                            onContentChange(index, e.currentTarget.innerHTML);
+                                        }}
+                                    />)
 
                             }
                             <div className="w-full grid grid-cols-2 gap-2">

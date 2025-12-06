@@ -35,6 +35,10 @@ export const cleanHTML = (html: string, source: string) => {
 
     if (source !== "chatgpt") {
         doc.querySelectorAll("table").forEach(table => {
+            // Check if table already has _tableWrapper
+            if (table.parentElement?.classList.contains("_tableWrapper")) {
+                return;
+            }
             const wrapper = doc.createElement("div");
             wrapper.className = "_tableWrapper";
 

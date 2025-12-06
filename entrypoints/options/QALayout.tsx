@@ -5,9 +5,13 @@ import { decodeHTMLEntities } from './utils';
 interface QALayoutProps {
     messages: Message[];
     settings: PDFSettings;
+    editingIndex: number | null;
+    onStartEdit: (index: number, element?: HTMLDivElement) => void;
+    onContentChange: (index: number, content: string) => void;
+    onFinishEdit: () => void;
 }
 
-export const QALayout = ({ messages, settings }: QALayoutProps) => {
+export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onContentChange, onFinishEdit }: QALayoutProps) => {
     let questionNumber = 0;
 
     return (
@@ -76,8 +80,43 @@ export const QALayout = ({ messages, settings }: QALayoutProps) => {
                                 {
                                     message.content !== '' &&
                                     (isQuestion ?
-                                        <div style={{ whiteSpace: 'pre-wrap' }}>{decodeHTMLEntities(message.content)}</div> :
-                                        <div dangerouslySetInnerHTML={{ __html: message.content }} />)
+                                        <div
+                                            style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: 'text' }}
+                                            contentEditable={true}
+                                            suppressContentEditableWarning
+                                            ref={(el) => {
+                                                if (el && typeof message.content === 'string' && el.innerHTML !== message.content) {
+                                                    el.innerHTML = message.content || '';
+                                                }
+                                            }}
+                                            onClick={(e) => {
+                                                onStartEdit(index, e.currentTarget);
+                                                e.currentTarget.focus();
+                                            }}
+                                            onInput={(e) => {
+                                                onContentChange(index, e.currentTarget.innerHTML);
+                                            }}
+                                            className={editingIndex === index ? 'ring-2 ring-primary rounded' : ''}
+                                        >
+                                        </div> :
+                                        <div
+                                            contentEditable={true}
+                                            suppressContentEditableWarning
+                                            style={{ outline: 'none', cursor: 'text' }}
+                                            ref={(el) => {
+                                                if (el && !el.innerHTML && message.content) {
+                                                    el.innerHTML = message.content;
+                                                }
+                                            }}
+                                            onClick={(e) => {
+                                                onStartEdit(index, e.currentTarget);
+                                                e.currentTarget.focus();
+                                            }}
+                                            onInput={(e) => {
+                                                onContentChange(index, e.currentTarget.innerHTML);
+                                            }}
+                                            className={editingIndex === index ? 'ring-2 ring-primary rounded' : ''}
+                                        />)
                                 }
                                 <div className="w-full grid grid-cols-2 gap-2">
                                     {

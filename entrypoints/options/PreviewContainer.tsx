@@ -20,6 +20,10 @@ interface PreviewContainerProps {
     onMerge: () => void;
     onExportChat?: () => void;
     onCloseChat?: () => void;
+    editingIndex: number | null;
+    onStartEdit: (index: number, element?: HTMLDivElement) => void;
+    onContentChange: (index: number, content: string) => void;
+    onFinishEdit: () => void;
 }
 
 export const PreviewContainer = ({
@@ -36,6 +40,10 @@ export const PreviewContainer = ({
     onMerge,
     onExportChat,
     onCloseChat,
+    editingIndex,
+    onStartEdit,
+    onContentChange,
+    onFinishEdit,
 }: PreviewContainerProps) => {
 
     const [loading, setLoading] = useState(true);
@@ -178,11 +186,33 @@ export const PreviewContainer = ({
                     </div>
                     {messages && messages.length > 0 ? (
                         settings && settings.layout === 'chat' ? (
-                            <ChatLayout source={source} messages={messages} settings={settings} />
+                            <ChatLayout
+                                source={source}
+                                messages={messages}
+                                settings={settings}
+                                editingIndex={editingIndex}
+                                onStartEdit={onStartEdit}
+                                onContentChange={onContentChange}
+                                onFinishEdit={onFinishEdit}
+                            />
                         ) : settings && settings.layout === 'qa' ? (
-                            <QALayout messages={messages} settings={settings} />
+                            <QALayout
+                                messages={messages}
+                                settings={settings}
+                                editingIndex={editingIndex}
+                                onStartEdit={onStartEdit}
+                                onContentChange={onContentChange}
+                                onFinishEdit={onFinishEdit}
+                            />
                         ) : (
-                            <DocumentLayout messages={messages} settings={settings} />
+                            <DocumentLayout
+                                messages={messages}
+                                settings={settings}
+                                editingIndex={editingIndex}
+                                onStartEdit={onStartEdit}
+                                onContentChange={onContentChange}
+                                onFinishEdit={onFinishEdit}
+                            />
                         )
                     ) : (
                         <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>

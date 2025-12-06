@@ -5,9 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Message } from './types';
-import { ChatEditor } from './Editor';
 import { RiChatSettingsLine } from "react-icons/ri";
 import { LuSettings } from "react-icons/lu";
 import {
@@ -45,7 +43,6 @@ interface SortableMessageItemProps {
     index: number;
     isSelected: boolean;
     onToggle: (index: number) => void;
-    onEdit: (index: number, content: string) => void;
     getRoleBadgeColor: (role: string) => string;
     truncateText: (text: string, maxLength?: number) => string;
 }
@@ -67,7 +64,6 @@ const SortableMessageItem = ({
     index,
     isSelected,
     onToggle,
-    onEdit,
     getRoleBadgeColor,
     truncateText,
 }: SortableMessageItemProps) => {
@@ -139,15 +135,6 @@ const SortableMessageItem = ({
                     </div>
                 </div>
                 <div className='flex flex-col justify-between items-center'>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 shrink-0"
-                        onClick={() => onEdit(index, message.content)}
-                        disabled={message.content === "" || isDragging}
-                    >
-                        <Edit size={14} />
-                    </Button>
                     <div
                         {...attributes}
                         {...listeners}
@@ -170,9 +157,6 @@ export const MessageManagement = ({
     onReorderMessages,
     selectedMessages
 }: MessageManagementProps) => {
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [editedContent, setEditedContent] = useState('');
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -203,26 +187,7 @@ export const MessageManagement = ({
         }
     };
 
-    const handleEditClick = (index: number, content: string) => {
-        setEditingIndex(index);
-        setEditedContent(content);
-        setIsDialogOpen(true);
-    };
 
-    const handleSave = () => {
-        if (editingIndex !== null) {
-            onUpdateMessage(editingIndex, editedContent);
-            setIsDialogOpen(false);
-            setEditingIndex(null);
-            setEditedContent('');
-        }
-    };
-
-    const handleCancel = () => {
-        setIsDialogOpen(false);
-        setEditingIndex(null);
-        setEditedContent('');
-    };
 
     const getRoleBadgeColor = (role: string) => {
         return role === 'user'
@@ -279,7 +244,6 @@ export const MessageManagement = ({
                                                     index={index}
                                                     isSelected={selectedMessages.has(index)}
                                                     onToggle={onToggleMessage}
-                                                    onEdit={handleEditClick}
                                                     getRoleBadgeColor={getRoleBadgeColor}
                                                     truncateText={truncateText}
                                                 />
@@ -298,43 +262,6 @@ export const MessageManagement = ({
                     </CollapsibleContent>
                 </Collapsible>
             </Card>
-
-            {/* Edit Dialog */}
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="!max-w-3xl max-h-[85vh] flex flex-col">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
-                            <Edit size={20} />
-                            Edit Message
-                        </DialogTitle>
-                        <DialogDescription>
-                            Make changes to your message content. Changes will be reflected in the preview and exported PDF.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="flex-1 overflow-hidden py-4">
-                        <ChatEditor
-                            initialHtml={editedContent}
-                            onChange={setEditedContent}
-                        />
-                    </div>
-
-                    <DialogFooter className="gap-2">
-                        <Button
-                            variant="secondary"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleSave}
-                            className="bg-primary"
-                        >
-                            Save Changes
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </>
     );
 };
