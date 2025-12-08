@@ -21,8 +21,8 @@ interface PreviewContainerProps {
     onExportMarkdown: () => void;
     onExportHTML: () => void;
     onExportPlainText: () => void;
+    onExportJSON: () => void;
     onMerge: () => void;
-    onExportChat?: () => void;
     onCloseChat?: () => void;
     editingIndex: number | null;
     onStartEdit: (index: number, element?: HTMLDivElement) => void;
@@ -45,8 +45,8 @@ export const PreviewContainer = ({
     onExportMarkdown,
     onExportHTML,
     onExportPlainText,
+    onExportJSON,
     onMerge,
-    onExportChat,
     onCloseChat,
     editingIndex,
     onStartEdit,
@@ -140,8 +140,8 @@ export const PreviewContainer = ({
                 onExportMarkdown={onExportMarkdown}
                 onExportHTML={onExportHTML}
                 onExportPlainText={onExportPlainText}
+                onExportJSON={onExportJSON}
                 onMerge={onMerge}
-                onExportChat={onExportChat}
                 onCloseChat={onCloseChat}
             />
 

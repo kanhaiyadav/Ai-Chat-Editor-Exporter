@@ -151,6 +151,13 @@ export const exportToWord = () => {
     // Clone the content to avoid modifying the original
     const clonedContent = previewContent.cloneNode(true) as HTMLElement;
 
+    // Remove loading/preview text elements
+    clonedContent.querySelectorAll('*').forEach(el => {
+        if (el.textContent?.trim() === 'Generating Preview...') {
+            el.remove();
+        }
+    });
+
     // Get computed styles from the original container
     const originalStyles = window.getComputedStyle(previewContent);
 
@@ -177,6 +184,7 @@ export const exportToWord = () => {
             background-color: ${originalStyles.backgroundColor};
             color: ${originalStyles.color};
             line-height: 1.6;
+            font-size: 13px;
         }
         
         /* Preserve code block styling */
@@ -187,7 +195,7 @@ export const exportToWord = () => {
             padding: 12px;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 15px;
             line-height: 1.4;
             margin: 12px 0;
         }
@@ -318,6 +326,13 @@ export const exportToMarkdown = () => {
     // Clone the content
     const clonedContent = previewContent.cloneNode(true) as HTMLElement;
 
+    // Remove loading/preview text elements
+    clonedContent.querySelectorAll('*').forEach(el => {
+        if (el.textContent?.trim() === 'Generating Preview...') {
+            el.remove();
+        }
+    });
+
     // Convert HTML to Markdown
     let markdown = htmlToMarkdown(clonedContent);
 
@@ -350,6 +365,13 @@ export const exportToPlainText = () => {
     // Clone and extract text content
     const clonedContent = previewContent.cloneNode(true) as HTMLElement;
 
+    // Remove loading/preview text elements
+    clonedContent.querySelectorAll('*').forEach(el => {
+        if (el.textContent?.trim() === 'Generating Preview...') {
+            el.remove();
+        }
+    });
+
     // Get text with some formatting preserved
     let text = htmlToPlainText(clonedContent);
 
@@ -381,6 +403,13 @@ export const exportToHTML = () => {
 
     // Clone the content
     const clonedContent = previewContent.cloneNode(true) as HTMLElement;
+
+    // Remove loading/preview text elements
+    clonedContent.querySelectorAll('*').forEach(el => {
+        if (el.textContent?.trim() === 'Generating Preview...') {
+            el.remove();
+        }
+    });
     const originalStyles = window.getComputedStyle(previewContent);
 
     // Create a standalone HTML document
@@ -408,7 +437,7 @@ export const exportToHTML = () => {
             padding: 12px;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 15px;
             line-height: 1.4;
             margin: 12px 0;
         }

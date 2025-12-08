@@ -2,7 +2,6 @@ import { Save, SaveAll, Check, Download, X, FileText, ChevronDown } from 'lucide
 import { Button } from '@/components/ui/button';
 import { FaRegFilePdf } from "react-icons/fa6";
 import { PiGitMerge } from "react-icons/pi";
-import { BsFiletypeJson, BsFiletypeHtml, BsFiletypeMd, BsFiletypeTxt, BsFiletypeDoc, BsFiletypePdf } from "react-icons/bs";
 import { useState, useEffect } from 'react';
 import {
     DropdownMenu,
@@ -15,6 +14,7 @@ import { IoLogoMarkdown } from "react-icons/io5";
 import { FaFileWord } from "react-icons/fa6";
 import { FaFilePdf } from "react-icons/fa6";
 import { LuFileText } from "react-icons/lu";
+import { VscJson } from "react-icons/vsc";
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -27,8 +27,8 @@ interface PreviewToolbarProps {
     onExportMarkdown: () => void;
     onExportHTML: () => void;
     onExportPlainText: () => void;
+    onExportJSON: () => void;
     onMerge: () => void;
-    onExportChat?: () => void;
     onCloseChat?: () => void;
 }
 
@@ -43,8 +43,8 @@ export const PreviewToolbar = ({
     onExportMarkdown,
     onExportHTML,
     onExportPlainText,
+    onExportJSON,
     onMerge,
-    onExportChat,
     onCloseChat,
 }: PreviewToolbarProps) => {
 
@@ -101,12 +101,16 @@ export const PreviewToolbar = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-48">
                         <DropdownMenuItem onClick={onExportPDF} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
-                            <FaFilePdf className='text-red-500'/>
+                            <FaFilePdf className='text-red-500' />
                             <span>Export as PDF</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onOpenInWord} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <FaFileWord className="h-4 w-4 text-blue-500" />
                             <span>Export as Word (.doc)</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={onExportJSON} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-6 -ml-0.5">
+                            <VscJson className="h-4 w-4 text-purple-500" />
+                            <span className='-ml-0.5'>Export as JSON</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onExportMarkdown} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <IoLogoMarkdown className="h-4 w-4 text-yellow-600" />
@@ -132,18 +136,6 @@ export const PreviewToolbar = ({
                     <PiGitMerge size={16} />
                     Merge Chats
                 </Button>
-
-                {onExportChat && currentChatId !== null && (
-                    <Button
-                        onClick={onExportChat}
-                        size="sm"
-                        className="gap-2 [&_svg:not([class*='size-'])]:size-5"
-                        variant="ghost"
-                    >
-                        <BsFiletypeJson />
-                        Export Chat
-                    </Button>
-                )}
 
                 {currentChatId !== null ? (
                     <>

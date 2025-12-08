@@ -699,6 +699,36 @@ function App() {
         exportToPlainText();
     };
 
+    const handleExportJSON = () => {
+        if (!chatData) return;
+
+        // If it's a saved chat, export the full saved chat data
+        if (currentChatId) {
+            (async () => {
+                const { chatOperations } = await import('@/lib/settingsDB');
+                const chat = await chatOperations.getChat(currentChatId);
+                if (chat) {
+                    setExportingChat(chat);
+                    setShowExportChatDialog(true);
+                }
+            })();
+        } else {
+            // For unsaved chats, create a temporary chat object to export
+            const tempChat = {
+                id: Date.now(),
+                name: chatData.title || 'Untitled Chat',
+                title: chatData.title || 'Untitled Chat',
+                messages: chatData.messages,
+                source: chatData.source,
+                settings: settings,
+                createdAt: new Date(Date.now()),
+                updatedAt: new Date(Date.now())
+            };
+            setExportingChat(tempChat);
+            setShowExportChatDialog(true);
+        }
+    };
+
     const handleMergeChats = (mergedMessages: Message[]) => {
         if (!chatData) return;
 
@@ -762,21 +792,9 @@ function App() {
                             onExportMarkdown={handleExportMarkdown}
                             onExportHTML={handleExportHTML}
                             onExportPlainText={handleExportPlainText}
+                            onExportJSON={handleExportJSON}
                             onMerge={() => setShowMergeDialog(true)}
                             onCloseChat={handleCloseChat}
-                            onExportChat={() => {
-                                if (currentChatId) {
-                                    // Load the current chat and set it for export
-                                    (async () => {
-                                        const { chatOperations } = await import('@/lib/settingsDB');
-                                        const chat = await chatOperations.getChat(currentChatId);
-                                        if (chat) {
-                                            setExportingChat(chat);
-                                            setShowExportChatDialog(true);
-                                        }
-                                    })();
-                                }
-                            }}
                             editingIndex={editingMessageIndex}
                             onStartEdit={handleStartEditMessage}
                             onContentChange={handleContentChange}
