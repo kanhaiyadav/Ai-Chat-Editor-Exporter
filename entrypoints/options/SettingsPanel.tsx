@@ -319,7 +319,7 @@ export const SettingsPanel = ({
                             )}
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-4 pb-2">
+                    <CardContent className="px-4 pb-2~">
                         <EditorToolbar
                             onFormat={(command, value) => {
                                 if (editingElementRef) {

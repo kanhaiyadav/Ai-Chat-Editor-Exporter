@@ -17,59 +17,125 @@ export const cleanHTML = (html: string, source: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    // 1. Remove all buttons
+    // Convert code-block__code divs to pre elements
+    doc.querySelectorAll("div.code-block__code").forEach(div => {
+        const pre = doc.createElement("pre");
+        pre.innerHTML = div.innerHTML;
+        div.parentNode?.replaceChild(pre, div);
+    });
+
+    // Convert pre elements containing tables to div elements
+    doc.querySelectorAll("pre").forEach(pre => {
+        if (pre.querySelector("table")) {
+            const div = doc.createElement("div");
+            div.innerHTML = pre.innerHTML;
+            pre.parentNode?.replaceChild(div, pre);
+        }
+    });
+
+    // Helper function to check if an element should be preserved
+    const isPreservedElement = (tagName: string) => {
+        const preserved = [
+            'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li',
+            'table', 'thead', 'tbody', 'tr', 'th', 'td',
+            'pre', 'code',
+            'strong', 'em', 'b', 'i', 'u',
+            'a', 'img',
+            'br', 'hr',
+            'blockquote',
+            'span'
+        ];
+        return preserved.includes(tagName.toLowerCase());
+    };
+
+    // Helper function to unwrap an element (keep content, remove wrapper)
+    const unwrapElement = (element: Element) => {
+        const parent = element.parentNode;
+        if (!parent) return;
+
+        while (element.firstChild) {
+            parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+    };
+
+    // Remove all buttons
     doc.querySelectorAll("button").forEach(el => el.remove());
 
-    if (source === "claude") {
-        // 2. Handle Claude-specific code blocks
-        doc.querySelectorAll("div.relative.group\\/copy").forEach(wrapper => {
-            const header = wrapper.querySelector("div.text-text-500");
-            const hasCodeBlock = wrapper.querySelector("pre");
+    // Remove script and style tags
+    doc.querySelectorAll("script, style").forEach(el => el.remove());
 
-            if (header && hasCodeBlock) {
-                wrapper.classList.add("claude-code");
-                header.classList.add("claude-code-header");
+    // Remove all class attributes from all elements
+    doc.querySelectorAll("*").forEach(el => {
+        el.removeAttribute("class");
+        el.removeAttribute("style");
+        el.removeAttribute("id");
+
+        // Keep only essential attributes
+        const tag = el.tagName.toLowerCase();
+        if (tag !== 'a' && tag !== 'img' && tag !== 'table' && tag !== 'td' && tag !== 'th') {
+            Array.from(el.attributes).forEach(attr => {
+                if (!['href', 'src', 'alt', 'colspan', 'rowspan'].includes(attr.name)) {
+                    el.removeAttribute(attr.name);
+                }
+            });
+        }
+    });
+
+    // Process all elements and unwrap non-essential divs and spans
+    const processElements = (parent: Element) => {
+        const children = Array.from(parent.children);
+
+        children.forEach(child => {
+            const tagName = child.tagName.toLowerCase();
+
+            // Recursively process children first
+            if (child.children.length > 0) {
+                processElements(child);
+            }
+
+            // Unwrap divs and spans that aren't needed for structure
+            if (tagName === 'div' || tagName === 'span') {
+                // Check if this div/span contains preserved block elements
+                const hasBlockElements = Array.from(child.children).some(c =>
+                    ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'table', 'pre', 'blockquote', 'hr'].includes(c.tagName.toLowerCase())
+                );
+
+                // If it only contains inline content or text, unwrap it
+                if (!hasBlockElements || (tagName === 'span')) {
+                    unwrapElement(child);
+                }
+            }
+            // Remove elements that aren't in our preserved list and aren't div (we handle div separately)
+            else if (!isPreservedElement(tagName) && tagName !== 'div') {
+                unwrapElement(child);
             }
         });
-    }
+    };
 
-    if (source !== "chatgpt") {
-        doc.querySelectorAll("table").forEach(table => {
-            // Check if table already has _tableWrapper
-            if (table.parentElement?.classList.contains("_tableWrapper")) {
-                return;
+    processElements(doc.body);
+
+    // Remove empty elements
+    doc.querySelectorAll("p, div, span").forEach(el => {
+        if (!el.textContent?.trim() && !el.querySelector("img, br, hr")) {
+            el.remove();
+        }
+    });
+
+    // Clean up multiple consecutive br tags
+    doc.querySelectorAll("br").forEach(br => {
+        let next = br.nextSibling;
+        let consecutiveBrs = 0;
+        while (next && next.nodeName === "BR") {
+            consecutiveBrs++;
+            const toRemove = next;
+            next = next.nextSibling;
+            if (consecutiveBrs > 1) {
+                toRemove.parentNode?.removeChild(toRemove);
             }
-            const wrapper = doc.createElement("div");
-            wrapper.className = "_tableWrapper";
-
-            // Insert wrapper before the table and move the table inside it
-            table.parentNode?.insertBefore(wrapper, table);
-            wrapper.appendChild(table);
-        });
-    }
-
-
-    if (source === "gemini") {
-        // Remove empty attachment containers
-        const attachments = doc.querySelectorAll("div.attachment-container");
-        attachments.forEach(attachment => {
-            // Check if the element has any meaningful text content
-            // or any visible child elements (img, video, etc.)
-            const hasText = attachment.textContent?.trim().length > 0;
-            const hasMedia = attachment.querySelector('img, video, audio, iframe, canvas');
-
-            if (!hasText && !hasMedia) {
-                attachment.remove();
-            }
-        });
-    }
-
-    if (source === "deepseek") {
-        // Handle DeepSeek-specific code blocks
-        doc.querySelectorAll("pre").forEach(pre => {
-            pre.querySelectorAll("style").forEach(style => style.remove());
-        });
-    }
+        }
+    });
 
     return doc.body.innerHTML;
 };
@@ -110,7 +176,6 @@ export const exportToWord = () => {
             font-family: ${originalStyles.fontFamily};
             background-color: ${originalStyles.backgroundColor};
             color: ${originalStyles.color};
-            padding: 20px;
             line-height: 1.6;
         }
         

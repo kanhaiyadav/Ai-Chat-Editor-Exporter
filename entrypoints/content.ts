@@ -9,16 +9,6 @@ export default defineContentScript({
     main() {
         let currentUrl = location.href;
         let buttonCheckInterval: number | null = null;
-        let artifactExportData: {
-            [key: string]: {
-                content: string;
-                type: string;
-                title: string;
-                subtitle: string;
-                artifactIndex: number;
-            };
-        } = {};
-        let lastActiveArtifactIndex: number = -1;
         let monacoExtractorReady = false;
         let monacoExtractorLoading = false;
 
@@ -36,6 +26,13 @@ export default defineContentScript({
         // Load Monaco extractor script once for Gemini
         if (isGemini) {
             loadMonacoExtractor();
+        }
+
+        // Helper function to escape HTML special characters
+        function escapeHtml(text: string): string {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Function to load Monaco extractor script once
@@ -140,32 +137,6 @@ export default defineContentScript({
             };
         }
 
-        // Function to update artifact button state
-        function updateArtifactButtonState() {
-            const exportButton = document.querySelector(
-                "#artifact-export-button"
-            ) as HTMLButtonElement;
-
-            if (!exportButton) return;
-
-            const activeArtifact = getActiveArtifact();
-
-            // Update button state based on whether current artifact is included
-            const isIncluded = artifactExportData.hasOwnProperty(
-                `${activeArtifact.index}`
-            );
-
-            if (isIncluded) {
-                exportButton.dataset.included = "true";
-                exportButton.dataset.artifactId = `${activeArtifact.index}`;
-                exportButton.innerHTML = `<span class="text-sm">Exclude from Export</span>`;
-            } else {
-                exportButton.dataset.included = "false";
-                delete exportButton.dataset.artifactId;
-                exportButton.innerHTML = `<span class="text-sm">Include in Export</span>`;
-            }
-        }
-
         // Function to insert the button for ChatGPT
         function insertChatGPTButton() {
             const headerDiv = document.querySelector(
@@ -236,7 +207,7 @@ export default defineContentScript({
           overflow-hidden
           transition
           duration-100
-          backface-hidden h-8 rounded-md px-3 min-w-[4rem] active:scale-[0.985] whitespace-nowrap !text-xs Button_secondary__x7x_y `;
+          backface-hidden h-8 rounded-md px-3 min-w-[4rem] active:scale-[0.985] whitespace-nowrap !text-xs Button_secondary__Teecd `;
             exportButton.setAttribute("aria-label", "Export Chat");
             exportButton.style.cssText = "margin-left: -5px;";
 
@@ -273,7 +244,9 @@ export default defineContentScript({
 
             const exportButton = document.createElement("button");
             exportButton.id = "export-chat-button";
-            exportButton.className = `mdc-button mat-mdc-button-base mat-mdc-menu-trigger mat-mdc-tooltip-trigger icon-button mat-mdc-button mat-unthemed`;
+            exportButton.className = `mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed`;
+            exportButton.setAttribute("mat-button", "");
+            exportButton.setAttribute("color", "primary");
             exportButton.setAttribute("aria-label", "Export Chat");
             exportButton.setAttribute("mat-ripple-loader-uninitialized", "");
             exportButton.setAttribute(
@@ -284,7 +257,7 @@ export default defineContentScript({
 
             exportButton.innerHTML = `
                 <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
-                <mat-icon role="img" fonticon="file_upload" class="mat-icon notranslate google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font" data-mat-icon-name="share"></mat-icon>
+                <mat-icon role="img" class="mat-icon notranslate google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">file_download</mat-icon>
                 <span class="mdc-button__label">Export Chat</span>
                 <span class="mat-focus-indicator"></span>
                 <span class="mat-mdc-button-touch-target"></span>
@@ -358,7 +331,7 @@ export default defineContentScript({
                 return;
             }
 
-            // Create the export toggle button
+            // Create the export button
             const exportButton = document.createElement("button");
             exportButton.id = "artifact-export-button";
             exportButton.className = `inline-flex
@@ -377,11 +350,11 @@ export default defineContentScript({
           overflow-hidden
           transition
           duration-100
-          backface-hidden h-8 rounded-md px-3 min-w-[4rem] active:scale-[0.985] whitespace-nowrap !text-xs Button_secondary__x7x_y`;
+          backface-hidden h-8 rounded-md px-3 min-w-[4rem] active:scale-[0.985] whitespace-nowrap !text-xs Button_secondary__Teecd`;
             exportButton.style.cssText = "margin-left: 8px;";
 
             exportButton.innerHTML = `
-                <span class="text-sm">Include in Export</span>
+                <span class="text-sm">Export to Chat2PDF</span>
             `;
 
             // Insert before the Publish button
@@ -398,55 +371,102 @@ export default defineContentScript({
 
             // Add click handler
             exportButton.addEventListener("click", () => {
-                handleArtifactExport(exportButton);
+                handleClaudeArtifactExport();
             });
-
-            // Set initial button state based on current artifact
-            updateArtifactButtonState();
 
             console.log("✅ Artifact export button inserted");
         }
 
-        // Function to handle artifact export toggle
-        function handleArtifactExport(button: HTMLButtonElement) {
-            const activeArtifact = getActiveArtifact();
+        // Function to handle Claude artifact export to Chat2PDF
+        function handleClaudeArtifactExport() {
+            const exportButton = document.querySelector(
+                "#artifact-export-button"
+            ) as HTMLButtonElement;
+            const originalButtonHTML = exportButton?.innerHTML;
 
-            if (activeArtifact.index === -1) {
-                console.warn("No active artifact found");
-                return;
+            // Set loading state
+            if (exportButton) {
+                exportButton.disabled = true;
+                exportButton.style.opacity = "0.6";
+                exportButton.innerHTML = `<span class="text-sm">Exporting...</span>`;
             }
 
-            const isIncluded = artifactExportData.hasOwnProperty(
-                `${activeArtifact.index}`
-            );
+            try {
+                const activeArtifact = getActiveArtifact();
 
-            if (isIncluded) {
-                // Remove from export
-                delete artifactExportData[activeArtifact.index];
-                button.dataset.included = "false";
-                delete button.dataset.artifactId;
-                button.innerHTML = `<span class="text-sm">Include in Export</span>`;
-                console.log(
-                    `Artifact ${activeArtifact.index} removed from export`
-                );
-            } else {
-                // Add to export
+                if (activeArtifact.index === -1) {
+                    console.warn("No active artifact found");
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        exportButton.innerHTML =
+                            originalButtonHTML ||
+                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                    }
+                    return;
+                }
+
                 const artifactData = extractCurrentArtifactData(
                     activeArtifact.index
                 );
-                if (artifactData) {
-                    artifactExportData[activeArtifact.index] = {
-                        ...artifactData,
-                        title: activeArtifact.title,
-                        subtitle: activeArtifact.subtitle,
-                    };
-                    button.dataset.included = "true";
-                    button.dataset.artifactId = `${activeArtifact.index}`;
-                    button.innerHTML = `<span class="text-sm">Exclude from Export</span>`;
-                    console.log(
-                        `Artifact ${activeArtifact.index} added to export:`,
-                        artifactExportData[activeArtifact.index]
-                    );
+
+                if (!artifactData) {
+                    console.error("Failed to extract artifact data");
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        exportButton.innerHTML =
+                            originalButtonHTML ||
+                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                    }
+                    return;
+                }
+
+                // Create a single message containing the artifact
+                const artifactMessage = {
+                    role: "assistant",
+                    content: artifactData.content,
+                };
+
+                const chatData = {
+                    title: activeArtifact.title || "Claude Artifact",
+                    source: "claude" as const,
+                    messages: [artifactMessage],
+                    artifacts: [
+                        {
+                            content: artifactData.content,
+                            type: artifactData.type,
+                            title: activeArtifact.title,
+                            subtitle: activeArtifact.subtitle,
+                            artifactIndex: 0,
+                        },
+                    ],
+                };
+
+                // Send to storage
+                chrome.storage.local.set({ chatData }, () => {
+                    console.log("✅ Artifact exported to Chat2PDF");
+
+                    // Reset button
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        exportButton.innerHTML =
+                            originalButtonHTML ||
+                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                    }
+
+                    // Open options page
+                    chrome.runtime.sendMessage({ action: "openOptions" });
+                });
+            } catch (error) {
+                console.error("Error exporting artifact:", error);
+                if (exportButton) {
+                    exportButton.disabled = false;
+                    exportButton.style.opacity = "1";
+                    exportButton.innerHTML =
+                        originalButtonHTML ||
+                        `<span class="text-sm">Export to Chat2PDF</span>`;
                 }
             }
         }
@@ -540,7 +560,7 @@ export default defineContentScript({
                 return;
             }
 
-            // Create the export toggle button
+            // Create the export button
             const exportButton = document.createElement("button");
             exportButton.id = "gemini-artifact-export-button";
             exportButton.className = `mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed`;
@@ -556,7 +576,7 @@ export default defineContentScript({
 
             exportButton.innerHTML = `
                 <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
-                <span class="mdc-button__label">Include in Export</span>
+                <span class="mdc-button__label">Export to Chat2PDF</span>
                 <span class="mat-focus-indicator"></span>
                 <span class="mat-mdc-button-touch-target"></span>
             `;
@@ -571,87 +591,108 @@ export default defineContentScript({
 
             // Add click handler
             exportButton.addEventListener("click", () => {
-                handleGeminiArtifactExport(exportButton);
+                handleGeminiArtifactExport();
             });
-
-            // Set initial button state based on current artifact
-            updateGeminiArtifactButtonState();
 
             console.log("✅ Gemini artifact export button inserted");
         }
 
-        // Function to update Gemini artifact button state
-        function updateGeminiArtifactButtonState() {
+        // Function to handle Gemini artifact export to Chat2PDF
+        async function handleGeminiArtifactExport() {
             const exportButton = document.querySelector(
                 "#gemini-artifact-export-button"
             ) as HTMLButtonElement;
+            const labelSpan = exportButton?.querySelector(".mdc-button__label");
+            const originalLabelText = labelSpan?.textContent;
 
-            if (!exportButton) return;
-
-            const activeArtifact = getActiveGeminiArtifact();
-
-            // Update button state based on whether current artifact is included
-            const isIncluded = artifactExportData.hasOwnProperty(
-                `${activeArtifact.index}`
-            );
-
-            const labelSpan = exportButton.querySelector(".mdc-button__label");
-            if (!labelSpan) return;
-
-            if (isIncluded) {
-                exportButton.dataset.included = "true";
-                exportButton.dataset.artifactId = `${activeArtifact.index}`;
-                labelSpan.textContent = "Exclude from Export";
-            } else {
-                exportButton.dataset.included = "false";
-                delete exportButton.dataset.artifactId;
-                labelSpan.textContent = "Include in Export";
-            }
-        }
-
-        // Function to handle Gemini artifact export toggle
-        function handleGeminiArtifactExport(button: HTMLButtonElement) {
-            const activeArtifact = getActiveGeminiArtifact();
-
-            if (activeArtifact.index === -1) {
-                console.warn("No active Gemini artifact found");
-                return;
+            // Set loading state
+            if (exportButton) {
+                exportButton.disabled = true;
+                exportButton.style.opacity = "0.6";
+                if (labelSpan) {
+                    labelSpan.textContent = "Exporting...";
+                }
             }
 
-            const isIncluded = artifactExportData.hasOwnProperty(
-                `${activeArtifact.index}`
-            );
+            try {
+                const activeArtifact = getActiveGeminiArtifact();
 
-            const labelSpan = button.querySelector(".mdc-button__label");
-            if (!labelSpan) return;
+                if (activeArtifact.index === -1) {
+                    console.warn("No active Gemini artifact found");
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        if (labelSpan) {
+                            labelSpan.textContent =
+                                originalLabelText || "Export to Chat2PDF";
+                        }
+                    }
+                    return;
+                }
 
-            if (isIncluded) {
-                // Remove from export
-                delete artifactExportData[activeArtifact.index];
-                button.dataset.included = "false";
-                delete button.dataset.artifactId;
-                labelSpan.textContent = "Include in Export";
-                console.log(
-                    `Gemini artifact ${activeArtifact.index} removed from export`
-                );
-            } else {
-                // Add to export
                 const artifactData = extractCurrentGeminiArtifactData(
                     activeArtifact.index
                 );
-                if (artifactData) {
-                    artifactExportData[activeArtifact.index] = {
-                        ...artifactData,
-                        title: activeArtifact.title,
-                        subtitle: "",
-                    };
-                    button.dataset.included = "true";
-                    button.dataset.artifactId = `${activeArtifact.index}`;
-                    labelSpan.textContent = "Exclude from Export";
-                    console.log(
-                        `Gemini artifact ${activeArtifact.index} added to export:`,
-                        artifactExportData[activeArtifact.index]
-                    );
+
+                if (!artifactData) {
+                    console.error("Failed to extract Gemini artifact data");
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        if (labelSpan) {
+                            labelSpan.textContent =
+                                originalLabelText || "Export to Chat2PDF";
+                        }
+                    }
+                    return;
+                }
+
+                // Wrap code content in proper HTML structure for display
+                const codeContent = `<div class="attachment-container">
+    <pre><code class="language-${artifactData.type}">${escapeHtml(
+                    artifactData.content
+                )}</code></pre>
+</div>`;
+
+                // Create a single message containing the artifact
+                const artifactMessage = {
+                    role: "model",
+                    content: codeContent,
+                };
+
+                const chatData = {
+                    title: activeArtifact.title || "Gemini Code",
+                    source: "gemini" as const,
+                    messages: [artifactMessage],
+                    artifacts: [],
+                };
+
+                // Send to storage
+                chrome.storage.local.set({ chatData }, () => {
+                    console.log("✅ Gemini artifact exported to Chat2PDF");
+
+                    // Reset button
+                    if (exportButton) {
+                        exportButton.disabled = false;
+                        exportButton.style.opacity = "1";
+                        if (labelSpan) {
+                            labelSpan.textContent =
+                                originalLabelText || "Export to Chat2PDF";
+                        }
+                    }
+
+                    // Open options page
+                    chrome.runtime.sendMessage({ action: "openOptions" });
+                });
+            } catch (error) {
+                console.error("Error exporting Gemini artifact:", error);
+                if (exportButton) {
+                    exportButton.disabled = false;
+                    exportButton.style.opacity = "1";
+                    if (labelSpan) {
+                        labelSpan.textContent =
+                            originalLabelText || "Export to Chat2PDF";
+                    }
                 }
             }
         }
@@ -1275,32 +1316,9 @@ export default defineContentScript({
                                 role: string;
                                 content: string;
                                 images?: string[];
-                                artifacts?: {
-                                    content: string;
-                                    type: string;
-                                    title: string;
-                                    subtitle: string;
-                                    artifactIndex: number;
-                                }[];
                             } = { role, content };
 
                             if (images.length > 0) message.images = images;
-
-                            // Check if this message has associated artifacts
-                            const messageArtifacts =
-                                Object.values(artifactExportData);
-
-                            if (messageArtifacts.length > 0) {
-                                message.artifacts = messageArtifacts.map(
-                                    (artifact) => ({
-                                        content: artifact.content,
-                                        type: artifact.type,
-                                        title: artifact.title,
-                                        subtitle: artifact.subtitle,
-                                        artifactIndex: artifact.artifactIndex,
-                                    })
-                                );
-                            }
 
                             messages.push(message);
                         }
@@ -1313,7 +1331,7 @@ export default defineContentScript({
                             title,
                             messages,
                             source: "claude",
-                            artifacts: Object.values(artifactExportData),
+                            artifacts: [],
                         },
                         savedChatId: null,
                         pdfSettings: null,
@@ -1321,7 +1339,6 @@ export default defineContentScript({
                     () => {
                         chrome.runtime.sendMessage({ action: "openOptions" });
                         console.log("Claude chat data saved:", messages);
-                        console.log("Artifacts included:", artifactExportData);
 
                         // Restore button state
                         if (exportButton && originalButtonHTML) {
@@ -1686,7 +1703,7 @@ export default defineContentScript({
                             title,
                             messages,
                             source: "gemini",
-                            artifacts: Object.values(artifactExportData),
+                            artifacts: [],
                         },
                         savedChatId: null,
                         pdfSettings: null,
@@ -1694,7 +1711,6 @@ export default defineContentScript({
                     () => {
                         chrome.runtime.sendMessage({ action: "openOptions" });
                         console.log("Gemini chat data saved:", messages);
-                        console.log("Artifacts included:", artifactExportData);
 
                         // Restore button state after successful export
                         if (exportButton && originalButtonHTML) {
@@ -1850,7 +1866,8 @@ export default defineContentScript({
                                             const language =
                                                 languageEl?.textContent?.trim() ||
                                                 "";
-                                            const header = document.createElement("div");
+                                            const header =
+                                                document.createElement("div");
                                             header.className = "code-header";
                                             header.textContent = language;
 
@@ -1964,11 +1981,8 @@ export default defineContentScript({
                 // Check if we've switched to a different chat
                 if (newChatId !== currentChatId) {
                     console.log(
-                        `Chat changed from ${currentChatId} to ${newChatId} - clearing artifact data`
+                        `Chat changed from ${currentChatId} to ${newChatId}`
                     );
-                    // Clear artifact export data when switching chats
-                    artifactExportData = {};
-                    lastActiveArtifactIndex = -1;
                     currentChatId = newChatId;
                 }
 
@@ -2045,15 +2059,6 @@ export default defineContentScript({
 
             // For Claude: also check for artifact panel
             if (isClaude && isOnChatPage()) {
-                const currentActiveArtifact = getActiveArtifact();
-
-                // Check if artifact has changed
-                if (currentActiveArtifact.index !== lastActiveArtifactIndex) {
-                    lastActiveArtifactIndex = currentActiveArtifact.index;
-                    // Update button state when switching artifacts
-                    updateArtifactButtonState();
-                }
-
                 if (!document.querySelector("#artifact-export-button")) {
                     insertArtifactExportButton();
                 }
@@ -2061,18 +2066,6 @@ export default defineContentScript({
 
             // For Gemini: also check for artifact (code) panel
             if (isGemini && isOnChatPage()) {
-                const currentActiveGeminiArtifact = getActiveGeminiArtifact();
-
-                // Check if artifact has changed
-                if (
-                    currentActiveGeminiArtifact.index !==
-                    lastActiveArtifactIndex
-                ) {
-                    lastActiveArtifactIndex = currentActiveGeminiArtifact.index;
-                    // Update button state when switching artifacts
-                    updateGeminiArtifactButtonState();
-                }
-
                 if (!document.querySelector("#gemini-artifact-export-button")) {
                     insertGeminiArtifactExportButton();
                 }

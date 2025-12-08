@@ -79,68 +79,38 @@ export const PreviewContainer = ({
         }
     }, [messages]);
 
-    // Then, replace artifacts AFTER loading is complete
+    // Replace artifacts AFTER loading is complete (only for single artifact exports)
     useEffect(() => {
-        // Only run after loading is complete
+        // Only run if there are actually artifacts to replace (single artifact exports)
         if (loading || !artifacts || artifacts.length === 0) return;
 
         const doc = document.getElementById('chat-container');
         if (!doc) return;
 
-        // Use a longer delay and retry mechanism to ensure DOM is ready
-        let attempts = 0;
-        const maxAttempts = 5;
-
         const replaceArtifacts = () => {
-            const artifactsHTML = source === 'claude' ? Array.from(
-                doc.querySelectorAll("div.artifact-block-cell.group\\/artifact-block")
-            ).map((el) => el.closest("div.flex.text-left.font-ui.rounded-lg"))
-                .filter(Boolean) : Array.from(
-                    doc.querySelectorAll("div.attachment-container")
-                )
+            // For Claude: find artifact placeholders
+            // For Gemini: artifacts are already rendered in the message content
+            const artifactsHTML = source === 'claude'
+                ? Array.from(doc.querySelectorAll("div.artifact-block-cell.group\\/artifact-block"))
+                    .map((el) => el.closest("div.flex.text-left.font-ui.rounded-lg"))
+                    .filter(Boolean)
+                : [];
 
-            console.log("✅ artifactsHTML:", artifactsHTML, "attempts:", attempts);
-
-            // If we found artifacts or exceeded attempts, proceed
-            if (artifactsHTML.length > 0 || attempts >= maxAttempts) {
+            // Only Claude artifacts need replacement since Gemini artifacts are in message content
+            if (source === 'claude' && artifactsHTML.length > 0) {
                 artifacts.forEach((artifact) => {
                     const index = artifact['artifactIndex'];
                     const artifactHTML = artifactsHTML[index];
 
-                    // Create header
-                    const header = document.createElement("div");
-                    header.innerHTML = `<div class="flex flex-col gap-1 py-4 min-w-0 flex-1"><div class="leading-tight text-sm line-clamp-1">${artifact.title}</div><div class="text-xs line-clamp-1 text-text-400 opacity-100 transition-opacity duration-200">${artifact.subtitle || ''}</div></div>`;
-                    if (header instanceof Element) {
-                        header.classList.add("px-4", "bg-accent", "bg-gray-100", "border-b", "border-[#ddd]");
-                    }
-
                     if (artifactHTML) {
+                        // Create header
+                        const header = document.createElement("div");
+                        header.innerHTML = `<div class="flex flex-col gap-1 py-4 min-w-0 flex-1"><div class="leading-tight text-sm line-clamp-1">${artifact.title}</div><div class="text-xs line-clamp-1 text-text-400 opacity-100 transition-opacity duration-200">${artifact.subtitle || ''}</div></div>`;
+                        header.classList.add("px-4", "bg-accent", "bg-gray-100", "border-b", "border-[#ddd]");
+
                         const artifactDiv = document.createElement("div");
                         artifactDiv.className = "artifact claude-code";
-
-                        // Check if this is code content (from Monaco) or HTML content (from Claude)
-                        const isCodeContent = source === 'gemini' || (artifact.type && artifact.type !== 'html' && artifact.type !== 'text');
-
-                        if (isCodeContent) {
-                            // Render as code block with syntax highlighting
-                            const codeContainer = document.createElement("div");
-                            codeContainer.className = "code-artifact-container";
-                            codeContainer.style.cssText = "color: #424242; border-radius: 0; overflow-x: auto;";
-
-                            const pre = document.createElement("pre");
-                            pre.style.cssText = "margin: 0; padding: 16px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;";
-
-                            const code = document.createElement("code");
-                            code.className = `language-${artifact.type || 'typescript'}`;
-                            code.textContent = artifact.content; // Use textContent to prevent HTML rendering
-
-                            pre.appendChild(code);
-                            codeContainer.appendChild(pre);
-                            artifactDiv.appendChild(codeContainer);
-                        } else {
-                            // Render as HTML (for Claude artifacts that are HTML/React)
-                            artifactDiv.innerHTML = artifact.content;
-                        }
+                        artifactDiv.innerHTML = artifact.content;
 
                         if (header) {
                             artifactDiv.prepend(header);
@@ -148,18 +118,14 @@ export const PreviewContainer = ({
                         artifactHTML.replaceWith(artifactDiv);
                     }
                 });
-            } else {
-                // Retry after a short delay
-                attempts++;
-                setTimeout(replaceArtifacts, 150);
             }
         };
 
-        // Initial delay to let React commit DOM
-        const timer = setTimeout(replaceArtifacts, 200);
+        // Small delay to let React commit DOM
+        const timer = setTimeout(replaceArtifacts, 100);
 
         return () => clearTimeout(timer);
-    }, [loading, messages, artifacts]);
+    }, [loading, messages, artifacts, source]);
 
     return (
         <div className='flex-1 h-full flex flex-col bg-background mt-1'>
