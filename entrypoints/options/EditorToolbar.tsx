@@ -33,7 +33,7 @@ export const EditorToolbar = ({
     onInsertLink
 }: EditorToolbarProps) => {
     const insertSeparator = () => {
-        onFormat('insertHTML', '<hr style="margin: 16px 0; border: none; border-top: 1px solid #e5e7eb;" />');
+        onFormat('insertHTML', '<hr />');
     };
 
     // Prevent blur when clicking toolbar buttons

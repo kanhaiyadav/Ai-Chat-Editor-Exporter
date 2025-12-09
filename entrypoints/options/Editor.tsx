@@ -496,6 +496,7 @@ function CodeBlockDialog({
     onInsert: (html: string) => void;
 }) {
     const [language, setLanguage] = useState('javascript');
+    const [codeContent, setCodeContent] = useState('');
     const [fontSize, setFontSize] = useState('14');
     const [headerBgColor, setHeaderBgColor] = useState('#f5f5f5');
     const [headerTextColor, setHeaderTextColor] = useState('#555555');
@@ -505,10 +506,19 @@ function CodeBlockDialog({
 
     const insertCodeBlock = () => {
         console.log('insertCodeBlock called');
+
+        // Escape HTML entities in code content
+        const escapeHtml = (text: string) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+
+        const escapedCode = escapeHtml(codeContent || '// your code here');
         const languageLabel = showLanguageLabel ? `<div style="background-color: ${headerBgColor}; color: ${headerTextColor}; padding: 4px 8px; font-size: 12px; border-radius: 4px 4px 0 0; font-weight: bold;">${language}</div>` : '';
 
         const codeHtml = `<div style="margin: 8px 0; border-radius: 4px; overflow: hidden;">
-            <pre class="prose" style="background-color: ${bgColor}; color: ${textColor}; padding: 12px; margin: 0; font-size: ${fontSize}px; overflow-x: auto;"> ${languageLabel} <code class="language-${language}">// ${language} code here</code></pre>
+            <pre class="prose" style="background-color: ${bgColor}; color: ${textColor}; padding: 12px; margin: 0; font-size: ${fontSize}px; overflow-x: auto;"> ${languageLabel} <code class="language-${language}">${escapedCode}</code></pre>
         </div>`;
 
         console.log('codeHtml:', codeHtml);
@@ -520,6 +530,7 @@ function CodeBlockDialog({
 
     const resetForm = () => {
         setLanguage('javascript');
+        setCodeContent('');
         setFontSize('14');
         setHeaderBgColor('#f5f5f5');
         setHeaderTextColor('#555555');
@@ -536,6 +547,26 @@ function CodeBlockDialog({
                 </DialogHeader>
 
                 <div className="space-y-4">
+                    {/* Code Content Textarea */}
+                    <div>
+                        <Label htmlFor="code-content" className="text-sm font-medium">
+                            Code Content
+                        </Label>
+                        <textarea
+                            id="code-content"
+                            placeholder="Paste or type your code here..."
+                            value={codeContent}
+                            onChange={(e) => setCodeContent(e.target.value)}
+                            className="w-full mt-1 min-h-[200px] p-3 border rounded-md font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+                            style={{ backgroundColor: 'var(--color-card)', color: 'var(--foreground)' }}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Your code will be properly formatted and HTML-escaped
+                        </p>
+                    </div>
+
+                    <Separator />
+
                     <div className="flex gap-4">
                         {/* Language */}
                         <div>
@@ -692,8 +723,8 @@ function CodeBlockDialog({
                                     {language}
                                 </div>
                             )}
-                            <pre style={{ backgroundColor: bgColor, color: textColor, padding: '8px', margin: 0, fontSize: fontSize + 'px', overflow: 'auto' }}>
-                                <code>// code preview</code>
+                            <pre style={{ backgroundColor: bgColor, color: textColor, padding: '8px', margin: 0, fontSize: fontSize + 'px', overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                <code>{codeContent || '// your code here'}</code>
                             </pre>
                         </div>
                     </div>

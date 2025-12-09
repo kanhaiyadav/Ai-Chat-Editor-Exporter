@@ -85,7 +85,7 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                                             contentEditable={true}
                                             suppressContentEditableWarning
                                             ref={(el) => {
-                                                if (el && typeof message.content === 'string' && el.innerHTML !== message.content) {
+                                                if (el && !el.innerHTML && message.content) {
                                                     el.innerHTML = message.content || '';
                                                 }
                                             }}
@@ -96,7 +96,6 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                                             onInput={(e) => {
                                                 onContentChange(index, e.currentTarget.innerHTML);
                                             }}
-                                            className={editingIndex === index ? 'ring-2 ring-primary rounded' : ''}
                                         >
                                         </div> :
                                         <div
@@ -115,7 +114,6 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                                             onInput={(e) => {
                                                 onContentChange(index, e.currentTarget.innerHTML);
                                             }}
-                                            className={editingIndex === index ? 'ring-2 ring-primary rounded' : ''}
                                         />)
                                 }
                                 <div className="w-full grid grid-cols-2 gap-2">

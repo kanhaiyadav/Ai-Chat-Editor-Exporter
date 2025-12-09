@@ -101,7 +101,7 @@ export const ChatLayout = ({ messages, settings, source, editingIndex, onStartEd
                         )}
                         <div
                             style={bubbleStyle}
-                            className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"} ${editingIndex === index ? 'ring-2 ring-primary' : ''} message-bubble`}
+                            className={`${isUser ? "!rounded-tr-none" : "!rounded-tl-none"} message-bubble`}
                             data-message-index={index}
                         >
                             {
@@ -111,7 +111,7 @@ export const ChatLayout = ({ messages, settings, source, editingIndex, onStartEd
                                         contentEditable={true}
                                         suppressContentEditableWarning
                                         ref={(el) => {
-                                            if (el && typeof message.content === 'string' && el.innerHTML !== message.content) {
+                                            if (el && !el.innerHTML && message.content) {
                                                 el.innerHTML = message.content || '';
                                             }
                                         }}

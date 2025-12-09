@@ -149,6 +149,40 @@ export const SettingsPanel = ({
         }
     }, [currentPreset]);
 
+    // Add paste event listener to strip formatting when pasting in code blocks
+    useEffect(() => {
+        if (!editingElementRef) return;
+
+        const handlePaste = (e: ClipboardEvent) => {
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) return;
+
+            // Check if cursor is inside a code element
+            let node = selection.anchorNode;
+            let isInCode = false;
+            while (node && node !== editingElementRef) {
+                if (node.nodeName === 'CODE' || (node as Element).tagName === 'CODE') {
+                    isInCode = true;
+                    break;
+                }
+                node = node.parentNode;
+            }
+
+            if (isInCode) {
+                e.preventDefault();
+                e.stopPropagation();
+                const text = e.clipboardData?.getData('text/plain') || '';
+                document.execCommand('insertText', false, text);
+            }
+        };
+
+        editingElementRef.addEventListener('paste', handlePaste as EventListener);
+
+        return () => {
+            editingElementRef.removeEventListener('paste', handlePaste as EventListener);
+        };
+    }, [editingElementRef]);
+
     const handleStartEditPresetName = () => {
         if (currentPreset) {
             setIsEditingPresetName(true);
@@ -338,13 +372,24 @@ export const SettingsPanel = ({
                                 setTableDialogOpen(true);
                             }}
                             onInsertCodeBlock={() => {
-                                const code = prompt('Enter code:');
-                                if (code && editingElementRef) {
-                                    const codeHTML = `<pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto;"><code>${code}</code></pre>`;
-                                    editingElementRef.focus();
+                                if (editingElementRef) {
+                                    const codeHTML = `<pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto; font-family: monospace;"><code><br></code></pre>`;
+                                    insertHtmlAtCursor(codeHTML);
+
+                                    // Focus and place cursor inside the code element
                                     setTimeout(() => {
-                                        document.execCommand('insertHTML', false, codeHTML);
-                                    }, 0);
+                                        const pre = editingElementRef.querySelector('pre:last-of-type');
+                                        const code = pre?.querySelector('code');
+                                        if (code) {
+                                            const range = document.createRange();
+                                            const selection = window.getSelection();
+                                            range.setStart(code, 0);
+                                            range.collapse(true);
+                                            selection?.removeAllRanges();
+                                            selection?.addRange(range);
+                                            editingElementRef.focus();
+                                        }
+                                    }, 10);
                                 }
                             }}
                             onInsertLink={() => {

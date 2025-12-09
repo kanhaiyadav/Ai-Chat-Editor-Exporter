@@ -354,7 +354,7 @@ export default defineContentScript({
             exportButton.style.cssText = "margin-left: 8px;";
 
             exportButton.innerHTML = `
-                <span class="text-sm">Export to Chat2PDF</span>
+                <span class="text-sm">Export Artifact</span>
             `;
 
             // Insert before the Publish button
@@ -377,7 +377,7 @@ export default defineContentScript({
             console.log("✅ Artifact export button inserted");
         }
 
-        // Function to handle Claude artifact export to Chat2PDF
+        // Function to handle Claude artifact export Artifact
         function handleClaudeArtifactExport() {
             const exportButton = document.querySelector(
                 "#artifact-export-button"
@@ -401,7 +401,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         exportButton.innerHTML =
                             originalButtonHTML ||
-                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                            `<span class="text-sm">Export Artifact</span>`;
                     }
                     return;
                 }
@@ -417,7 +417,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         exportButton.innerHTML =
                             originalButtonHTML ||
-                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                            `<span class="text-sm">Export Artifact</span>`;
                     }
                     return;
                 }
@@ -453,7 +453,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         exportButton.innerHTML =
                             originalButtonHTML ||
-                            `<span class="text-sm">Export to Chat2PDF</span>`;
+                            `<span class="text-sm">Export Artifact</span>`;
                     }
 
                     // Open options page
@@ -466,7 +466,7 @@ export default defineContentScript({
                     exportButton.style.opacity = "1";
                     exportButton.innerHTML =
                         originalButtonHTML ||
-                        `<span class="text-sm">Export to Chat2PDF</span>`;
+                        `<span class="text-sm">Export Artifact</span>`;
                 }
             }
         }
@@ -576,7 +576,7 @@ export default defineContentScript({
 
             exportButton.innerHTML = `
                 <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
-                <span class="mdc-button__label">Export to Chat2PDF</span>
+                <span class="mdc-button__label">Export Artifact</span>
                 <span class="mat-focus-indicator"></span>
                 <span class="mat-mdc-button-touch-target"></span>
             `;
@@ -597,7 +597,7 @@ export default defineContentScript({
             console.log("✅ Gemini artifact export button inserted");
         }
 
-        // Function to handle Gemini artifact export to Chat2PDF
+        // Function to handle Gemini artifact export Artifact
         async function handleGeminiArtifactExport() {
             const exportButton = document.querySelector(
                 "#gemini-artifact-export-button"
@@ -624,7 +624,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         if (labelSpan) {
                             labelSpan.textContent =
-                                originalLabelText || "Export to Chat2PDF";
+                                originalLabelText || "Export Artifact";
                         }
                     }
                     return;
@@ -641,7 +641,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         if (labelSpan) {
                             labelSpan.textContent =
-                                originalLabelText || "Export to Chat2PDF";
+                                originalLabelText || "Export Artifact";
                         }
                     }
                     return;
@@ -677,7 +677,7 @@ export default defineContentScript({
                         exportButton.style.opacity = "1";
                         if (labelSpan) {
                             labelSpan.textContent =
-                                originalLabelText || "Export to Chat2PDF";
+                                originalLabelText || "Export Artifact";
                         }
                     }
 
@@ -691,7 +691,7 @@ export default defineContentScript({
                     exportButton.style.opacity = "1";
                     if (labelSpan) {
                         labelSpan.textContent =
-                            originalLabelText || "Export to Chat2PDF";
+                            originalLabelText || "Export Artifact";
                     }
                 }
             }
