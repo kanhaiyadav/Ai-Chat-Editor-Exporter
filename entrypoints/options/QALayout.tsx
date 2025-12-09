@@ -55,7 +55,7 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                             <div style={{
                                 fontWeight: 'bold',
                                 color: isQuestion ? settings.qa.questionColor : settings.qa.answerColor,
-                                fontSize: `${settings.qa.fontSize + 2}px`,
+                                fontSize: `${settings.general.fontSize + 2}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
                                 marginBottom: '8px',
                                 whiteSpace: 'nowrap',
@@ -66,9 +66,9 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                             </div>
                             <div style={{
                                 color: isQuestion ? settings.qa.questionColor : settings.qa.answerColor,
-                                fontSize: `${settings.qa.fontSize}px`,
+                                fontSize: `${settings.general.fontSize}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.qa.fontFamily,
-                                lineHeight: '1.6',
+                                lineHeight: settings.general.lineHeight,
                                 fontWeight: isQuestion ? "600" : "400",
                                 marginTop: !isQuestion ? "-15px" : "0",
                                 flex: 1,

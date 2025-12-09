@@ -67,20 +67,6 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                             />
 
                             <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Font Size</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings.fontSize}</span>
-                                </div>
-                                <Slider
-                                    value={[settings.fontSize]}
-                                    onValueChange={(values) => onUpdate({ fontSize: values[0] })}
-                                    min={10}
-                                    max={24}
-                                    step={1}
-                                />
-                            </div>
-
-                            <div>
                                 <Label className='block text-sm font-medium text-foreground/70 mb-2'>Question Prefix</Label>
                                 <Input
                                     type="text"

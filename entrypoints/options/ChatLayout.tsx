@@ -40,8 +40,9 @@ export const ChatLayout = ({ messages, settings, source, editingIndex, onStartEd
                 let bubbleStyle: React.CSSProperties = {
                     padding: '12px 16px',
                     borderRadius: `${settings.chat.bubbleRadius}px`,
-                    fontSize: `${settings.chat.fontSize}px`,
+                    fontSize: `${settings.general.fontSize}px`,
                     fontFamily: settings.general.fontFamily?.value || settings.chat.fontFamily,
+                    lineHeight: settings.general.lineHeight,
                     marginBottom: `${settings.chat.spacing}px`,
                     maxWidth: '80%',
                     wordWrap: 'break-word',

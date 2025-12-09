@@ -14,7 +14,13 @@ import {
     Image as ImageIcon,
     Minus,
     RotateCcw,
-    RotateCw
+    RotateCw,
+    Subscript,
+    Superscript,
+    AlignLeft,
+    AlignCenter,
+    AlignRight,
+    AlignJustify
 } from "lucide-react";
 
 interface EditorToolbarProps {
@@ -95,6 +101,64 @@ export const EditorToolbar = ({
                 className="w-9 h-9 p-0"
             >
                 <Underline size={16} />
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('subscript')}
+                title="Subscript"
+                className="w-9 h-9 p-0"
+            >
+                <Subscript size={16} />
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('superscript')}
+                title="Superscript"
+                className="w-9 h-9 p-0"
+            >
+                <Superscript size={16} />
+            </Button>
+
+            <div className="w-px bg-border mx-1"></div>
+
+            {/* Text Alignment */}
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('justifyLeft')}
+                title="Align Left"
+                className="w-9 h-9 p-0"
+            >
+                <AlignLeft size={16} />
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('justifyCenter')}
+                title="Align Center"
+                className="w-9 h-9 p-0"
+            >
+                <AlignCenter size={16} />
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('justifyRight')}
+                title="Align Right"
+                className="w-9 h-9 p-0"
+            >
+                <AlignRight size={16} />
+            </Button>
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onFormat('justifyFull')}
+                title="Justify"
+                className="w-9 h-9 p-0"
+            >
+                <AlignJustify size={16} />
             </Button>
 
             <div className="w-px bg-border mx-1"></div>

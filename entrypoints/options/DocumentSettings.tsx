@@ -63,48 +63,6 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
                                 value={settings.bodyColor}
                                 onChange={(value) => onUpdate({ bodyColor: value })}
                             />
-
-                            <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Font Size</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings.fontSize}</span>
-                                </div>
-                                <Slider
-                                    value={[settings.fontSize]}
-                                    onValueChange={(values) => onUpdate({ fontSize: values[0] })}
-                                    min={10}
-                                    max={24}
-                                    step={1}
-                                />
-                            </div>
-
-                            <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Line Height</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings.lineHeight}</span>
-                                </div>
-                                <Slider
-                                    value={[settings.lineHeight]}
-                                    onValueChange={(values) => onUpdate({ lineHeight: values[0] })}
-                                    min={1.2}
-                                    max={2.5}
-                                    step={0.1}
-                                />
-                            </div>
-
-                            <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Paragraph Spacing</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings.paragraphSpacing}</span>
-                                </div>
-                                <Slider
-                                    value={[settings.paragraphSpacing]}
-                                    onValueChange={(values) => onUpdate({ paragraphSpacing: values[0] })}
-                                    min={8}
-                                    max={40}
-                                    step={1}
-                                />
-                            </div>
                         </div>
                     </CardContent>
                 </CollapsibleContent>

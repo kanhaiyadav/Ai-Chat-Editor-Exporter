@@ -39,15 +39,15 @@ export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, 
                 const includeImage = isTopic ? settings.general.includeUserImages : settings.general.includeAIImages;
                 return (
                     <div key={index} style={{
-                        marginBottom: `${settings.document.paragraphSpacing}px`,
+                        marginBottom: '16px',
                     }}>
                         {
                             message.content !== '' &&
                             <div style={{
                                 color: settings.document.bodyColor,
-                                fontSize: isTopic ? `${settings.document.fontSize + 3}px` : `${settings.document.fontSize}px`,
+                                fontSize: isTopic ? `${settings.general.fontSize + 3}px` : `${settings.general.fontSize}px`,
                                 fontFamily: settings.general.fontFamily?.value || settings.document.fontFamily,
-                                lineHeight: settings.document.lineHeight,
+                                lineHeight: settings.general.lineHeight,
                                 margin: 0,
                                 textAlign: 'justify',
                                 fontWeight: isTopic ? '600' : '400',

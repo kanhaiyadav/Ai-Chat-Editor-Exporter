@@ -19,7 +19,6 @@ export interface PDFSettings {
         userTextColor: string;
         aiBubbleColor: string;
         aiTextColor: string;
-        fontSize: number;
         fontFamily: string;
         bubbleRadius: number;
         spacing: number;
@@ -29,7 +28,6 @@ export interface PDFSettings {
     qa: {
         questionColor: string;
         answerColor: string;
-        fontSize: number;
         fontFamily: string;
         showSeparator: boolean;
         separatorStyle: "line" | "dots" | "none";
@@ -41,10 +39,7 @@ export interface PDFSettings {
     document: {
         titleColor: string;
         bodyColor: string;
-        fontSize: number;
         fontFamily: string;
-        lineHeight: number;
-        paragraphSpacing: number;
     };
     general: {
         backgroundColor: string;
@@ -61,6 +56,8 @@ export interface PDFSettings {
             type: string;
             value: string;
         } | null;
+        fontSize: number;
+        lineHeight: number;
     };
 }
 
@@ -71,7 +68,6 @@ export const defaultSettings: PDFSettings = {
         userTextColor: "#000000",
         aiBubbleColor: "#f3f2f2",
         aiTextColor: "#3c3c3c",
-        fontSize: 14,
         fontFamily: "Commissioner, sans-serif",
         bubbleRadius: 16,
         spacing: 12,
@@ -81,7 +77,6 @@ export const defaultSettings: PDFSettings = {
     qa: {
         questionColor: "#1e293b",
         answerColor: "#475569",
-        fontSize: 18,
         fontFamily: "Patrick Hand, cursive",
         showSeparator: true,
         separatorStyle: "line",
@@ -93,10 +88,7 @@ export const defaultSettings: PDFSettings = {
     document: {
         titleColor: "#1e293b",
         bodyColor: "#334155",
-        fontSize: 18,
         fontFamily: "Handlee, cursive",
-        lineHeight: 1.6,
-        paragraphSpacing: 16,
     },
     general: {
         backgroundColor: "#ffffff",
@@ -110,6 +102,8 @@ export const defaultSettings: PDFSettings = {
         headerText: "",
         includeFooter: true,
         fontFamily: null,
+        fontSize: 16,
+        lineHeight: 1.6,
     },
 };
 
@@ -132,7 +126,6 @@ export const fontFamilies: fontFamilies = [
     {
         type: "Handwriting",
         values: [
-            "Handlee, cursive",
             "Patrick Hand, cursive",
             "Merienda, cursive",
             "Caveat, cursive",
@@ -146,5 +139,9 @@ export const fontFamilies: fontFamilies = [
             "Montez, cursive",
             "Redressed, cursive",
         ],
+    },
+    {
+        type: "Custom",
+        values: [], // Will be populated dynamically with system fonts
     },
 ];
