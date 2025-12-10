@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { BsFiletypeJson } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 export function NavChats({
     chats,
@@ -61,10 +62,11 @@ export function NavChats({
     onExportChat?: (chat: SavedChat) => void
 }) {
     const { isMobile } = useSidebar()
+    const { t } = useTranslation();
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('sidebar.chats')}</SidebarGroupLabel>
             <SidebarMenu>
                 {Object.entries(chatsBySource).map(([source, sourceChats]) => (
                     <Collapsible
@@ -92,7 +94,7 @@ export function NavChats({
                                         <SidebarMenuSubItem>
                                             <SidebarMenuSubButton>
                                                 <span className="text-muted-foreground text-sm">
-                                                    No chats yet
+                                                    {t('sidebar.noChatsFound')}
                                                 </span>
                                             </SidebarMenuSubButton>
                                         </SidebarMenuSubItem>
@@ -175,34 +177,34 @@ export function NavChats({
                                                                         e.stopPropagation();
                                                                         onExportChat?.(chat);
                                                                     }}
-                                                                        className="flex gap-1 w-full px-2 py-1 items-center hover:bg-accent hover:shadow-sm cursor-pointer"
+                                                                    className="flex gap-1 w-full px-2 py-1 items-center hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                 >
                                                                     <BsFiletypeJson size={20} />
-                                                                    <span className="ml-2">Export Chat</span>
+                                                                    <span className="ml-2">{t('sidebar.exportChat')}</span>
                                                                 </div>
                                                                 <div
                                                                     className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                     onClick={(e) => handleStartEditChat(chat, e)}
-                                                                    title='Rename'
+                                                                    title={t('sidebar.rename')}
                                                                 >
                                                                     <Pencil size={16} />
-                                                                    <span className='ml-2'>Rename</span>
+                                                                    <span className='ml-2'>{t('sidebar.rename')}</span>
                                                                 </div>
                                                                 <div
                                                                     className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                     onClick={(e) => handleDuplicateChat(chat, e)}
-                                                                    title='Duplicate'
+                                                                    title={t('sidebar.duplicate')}
                                                                 >
                                                                     <Copy size={16} />
-                                                                    <span className='ml-2'>Duplicate</span>
+                                                                    <span className='ml-2'>{t('sidebar.duplicate')}</span>
                                                                 </div>
                                                                 <div
                                                                     className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-red-500/20 hover:shadow-sm cursor-pointer text-destructive hover:text-destructive"
                                                                     onClick={(e) => handleDeleteChat(chat.id!, e)}
-                                                                    title='Delete'
+                                                                    title={t('sidebar.delete')}
                                                                 >
                                                                     <Trash2 size={18} />
-                                                                    <span className='ml-2'>Delete</span>
+                                                                    <span className='ml-2'>{t('sidebar.delete')}</span>
                                                                 </div>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>

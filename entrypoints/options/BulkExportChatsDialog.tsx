@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,6 +38,7 @@ export const BulkExportChatsDialog = ({
     isOpen,
     onClose,
 }: BulkExportChatsDialogProps) => {
+    const { t } = useTranslation();
     const [selectedChats, setSelectedChats] = useState<Set<number>>(new Set());
     const [searchTerm, setSearchTerm] = useState('');
     const [isExporting, setIsExporting] = useState(false);
@@ -131,7 +133,7 @@ export const BulkExportChatsDialog = ({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <BsFiletypeJson size={22} />
-                        Bulk Export Chats
+                        {t('bulkExport.title')}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -139,7 +141,7 @@ export const BulkExportChatsDialog = ({
                     {/* Search */}
                     <div className="p-1">
                         <Input
-                            placeholder="Search chats by title or name..."
+                            placeholder={t('bulkExport.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="h-9 border-black/20 dark:border-input"
@@ -154,7 +156,7 @@ export const BulkExportChatsDialog = ({
                             className="border-black/40 dark:border-input"
                         />
                         <label className="text-sm font-medium cursor-pointer flex-1">
-                            Select All ({filteredChats.length})
+                            {t('bulkExport.selectAll')} ({filteredChats.length})
                         </label>
                     </div>
 
@@ -183,7 +185,7 @@ export const BulkExportChatsDialog = ({
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-medium truncate">{chat.title}</p>
                                                 <p className="text-xs text-muted-foreground truncate">
-                                                    {chat.name} • {chat.messages.length} messages
+                                                    {chat.name} • {chat.messages.length} {t('importChats.messages')}
                                                 </p>
                                             </div>
                                             <span className="text-xs font-semibold bg-primary/5 ring-1 ring-primary text-primary px-2 py-1 rounded">
@@ -194,8 +196,8 @@ export const BulkExportChatsDialog = ({
                                 ) : (
                                     <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                                         <MessageSquare size={32} className="opacity-30 mb-2" />
-                                        <p className="text-sm font-medium">No chats found</p>
-                                        <p className="text-xs mt-1">Save some chats first to export them</p>
+                                        <p className="text-sm font-medium">{t('bulkExport.noChats')}</p>
+                                        <p className="text-xs mt-1">{t('bulkExport.noChatsMessage')}</p>
                                     </div>
                                 )}
                             </div>
@@ -207,7 +209,7 @@ export const BulkExportChatsDialog = ({
                         <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex gap-2">
                             <AlertCircle size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-blue-700 dark:text-blue-300">
-                                {selectedChats.size} chat{selectedChats.size !== 1 ? 's' : ''} selected. This will create a single backup file containing all selected chats.
+                                {selectedChats.size} {selectedChats.size === 1 ? t('bulkExport.chatSelected') : t('bulkExport.chatsSelected')}
                             </p>
                         </div>
                     )}
@@ -215,7 +217,7 @@ export const BulkExportChatsDialog = ({
 
                 <div className="flex gap-2 justify-end pt-4 border-t border-border">
                     <Button variant="outline" onClick={handleClose}>
-                        Cancel
+                        {t('bulkExport.cancel')}
                     </Button>
                     <Button
                         onClick={handleExport}
@@ -223,7 +225,7 @@ export const BulkExportChatsDialog = ({
                         className="gap-2"
                     >
                         <Download size={16} />
-                        {isExporting ? 'Exporting...' : `Export ${selectedChats.size} Chat${selectedChats.size !== 1 ? 's' : ''}`}
+                        {isExporting ? t('bulkExport.exporting') : `${t('bulkExport.export')} ${selectedChats.size} ${selectedChats.size === 1 ? t('importChats.chat') : t('importChats.chats')}`}
                     </Button>
                 </div>
             </DialogContent>

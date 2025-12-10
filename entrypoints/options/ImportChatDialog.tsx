@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,7 @@ export const ImportChatDialog = ({
     onClose,
     onImportSuccess,
 }: ImportChatDialogProps) => {
+    const { t } = useTranslation();
     const [step, setStep] = useState<ImportStep>('initial');
     const [dragActive, setDragActive] = useState(false);
     const [importedData, setImportedData] = useState<ImportedChat[] | null>(null);
@@ -211,14 +213,14 @@ export const ImportChatDialog = ({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Upload size={20} />
-                        Import Chat
+                        {t('importChats.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        {step === 'initial' && 'Import previously exported chat backups'}
-                        {step === 'preview' && `Review ${importedData?.length || 0} chat${importedData?.length !== 1 ? 's' : ''}`}
-                        {step === 'importing' && 'Importing chats...'}
-                        {step === 'success' && 'Import successful!'}
-                        {step === 'error' && 'Import failed'}
+                        {step === 'initial' && t('importChats.description')}
+                        {step === 'preview' && `${t('importChats.review')} ${importedData?.length || 0} ${importedData?.length !== 1 ? t('importChats.chats') : t('importChats.chat')}`}
+                        {step === 'importing' && t('importChats.importing')}
+                        {step === 'success' && t('importChats.success')}
+                        {step === 'error' && t('importChats.error')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -236,8 +238,8 @@ export const ImportChatDialog = ({
                                 }`}
                         >
                             <Upload size={32} className="mx-auto mb-3 text-muted-foreground" />
-                            <p className="font-medium text-sm mb-1">Drag and drop your file here</p>
-                            <p className="text-xs text-muted-foreground mb-3">or</p>
+                            <p className="font-medium text-sm mb-1">{t('importChats.dragDrop')}</p>
+                            <p className="text-xs text-muted-foreground mb-3">{t('importChats.or')}</p>
                             <label>
                                 <Input
                                     type="file"
@@ -251,11 +253,11 @@ export const ImportChatDialog = ({
                                     asChild
                                     className="cursor-pointer"
                                 >
-                                    <span>Choose File</span>
+                                    <span>{t('importChats.chooseFiles')}</span>
                                 </Button>
                             </label>
                             <p className="text-xs text-muted-foreground mt-3">
-                                Accepted formats: .json, .jsonld
+                                {t('importChats.acceptedFormats')}
                             </p>
                         </div>
 
@@ -263,7 +265,7 @@ export const ImportChatDialog = ({
                         <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex gap-2">
                             <AlertCircle size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-blue-700 dark:text-blue-300">
-                                Import chat backups that you previously exported from Chat2Pdf.
+                                {t('importChats.description')}
                             </p>
                         </div>
                     </div>
@@ -276,7 +278,7 @@ export const ImportChatDialog = ({
                                 <div key={idx} className="border-b border-border/50 last:border-b-0 pb-2 last:pb-0">
                                     <p className="text-sm font-medium line-clamp-1">{chat.chatName}</p>
                                     <p className="text-xs text-muted-foreground line-clamp-1">{chat.chatTitle}</p>
-                                    <p className="text-xs text-muted-foreground">{chat.messages.length} messages</p>
+                                    <p className="text-xs text-muted-foreground">{chat.messages.length} {t('importChats.messages')}</p>
                                 </div>
                             ))}
                         </div>
@@ -284,7 +286,7 @@ export const ImportChatDialog = ({
                         <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 flex gap-2">
                             <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-amber-700 dark:text-amber-300">
-                                {importedData.length} chat{importedData.length !== 1 ? 's' : ''} will be imported with respective settings.
+                                {importedData.length} {importedData.length !== 1 ? t('importChats.chats') : t('importChats.chat')} {t('importChats.willBeImported')}
                             </p>
                         </div>
                     </div>
@@ -297,7 +299,7 @@ export const ImportChatDialog = ({
                                 <Upload size={32} className="text-primary" />
                             </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">Importing chats...</p>
+                        <p className="text-sm text-muted-foreground">{t('importChats.importing')}</p>
                     </div>
                 )}
 
@@ -307,9 +309,9 @@ export const ImportChatDialog = ({
                             <CheckCircle2 size={48} className="text-green-500" />
                         </div>
                         <div>
-                            <p className="font-medium text-sm mb-1">Import Successful!</p>
+                            <p className="font-medium text-sm mb-1">{t('importChats.success')}</p>
                             <p className="text-xs text-muted-foreground">
-                                {importedCount} chat{importedCount !== 1 ? 's' : ''} imported successfully
+                                {importedCount} {importedCount !== 1 ? t('importChats.chats') : t('importChats.chat')} {t('notifications.importSuccess')}
                             </p>
                         </div>
                     </div>
@@ -321,7 +323,7 @@ export const ImportChatDialog = ({
                             <AlertTriangle size={48} className="text-destructive" />
                         </div>
                         <div>
-                            <p className="font-medium text-sm mb-1 text-center">Import Failed</p>
+                            <p className="font-medium text-sm mb-1 text-center">{t('importChats.error')}</p>
                             <p className="text-xs text-destructive bg-destructive/10 rounded-lg p-3 border border-destructive/20">
                                 {error}
                             </p>
@@ -332,23 +334,23 @@ export const ImportChatDialog = ({
                 <div className="flex gap-2 justify-end">
                     {step === 'initial' && (
                         <Button variant="outline" onClick={handleClose}>
-                            Cancel
+                            {t('importChats.cancel')}
                         </Button>
                     )}
                     {step === 'preview' && (
                         <>
                             <Button variant="outline" onClick={handleClose}>
-                                Cancel
+                                {t('importChats.cancel')}
                             </Button>
                             <Button onClick={handleImport} className="gap-2">
                                 <Upload size={16} />
-                                Import Chats
+                                {t('importChats.import')}
                             </Button>
                         </>
                     )}
                     {(step === 'success' || step === 'error') && (
                         <Button onClick={handleClose}>
-                            {step === 'success' ? 'Done' : 'Close'}
+                            {step === 'success' ? t('dialog.close') : t('dialog.close')}
                         </Button>
                     )}
                 </div>

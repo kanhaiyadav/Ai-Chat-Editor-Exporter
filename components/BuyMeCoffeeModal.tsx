@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from 'react-i18next';
 import {
     Dialog,
     DialogContent,
@@ -18,6 +19,7 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
     open,
     onOpenChange,
 }) => {
+    const { t } = useTranslation();
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -28,9 +30,9 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
                             <SiBuymeacoffee className="" size={25} />
                         </div>
                         <div>
-                            <DialogTitle className="text-xl">Support Me</DialogTitle>
+                            <DialogTitle className="text-xl">{t('coffee.title')}</DialogTitle>
                             <DialogDescription className="mt-[-2px]">
-                                Support the development of Chat2Pdf
+                                {t('coffee.message')}
                             </DialogDescription>
                         </div>
                     </div>
@@ -72,9 +74,9 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
                     {/* Support Info */}
                     <div className="p-4 rounded-lg bg-muted/50 border border-border">
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            <strong className="text-foreground">💝 Thank you for your support!</strong>
+                            <strong className="text-foreground">💝 {t('coffee.thankYou')}</strong>
                             <br />
-                            Your contribution helps maintain and improve this extension. Every coffee counts!
+                            {t('coffee.contribution')}
                         </p>
                     </div>
 
@@ -83,7 +85,7 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
                             variant="outline"
                             onClick={() => onOpenChange(false)}
                         >
-                            Close
+                            {t('dialog.close')}
                         </Button>
                     </div>
                 </div>

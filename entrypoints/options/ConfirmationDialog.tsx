@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Dialog,
     DialogContent,
@@ -30,6 +31,8 @@ export const ConfirmationDialog = ({
     onConfirm,
     onCancel,
 }: ConfirmationDialogProps) => {
+    const { t } = useTranslation();
+
     const handleOpenChange = (nextOpen: boolean) => {
         if (!nextOpen) {
             onCancel();

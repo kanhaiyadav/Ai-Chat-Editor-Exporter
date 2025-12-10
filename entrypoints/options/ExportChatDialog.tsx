@@ -78,7 +78,7 @@ export const ExportChatDialog = ({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <BsFiletypeJson size={24} />
-                        Export Chat
+                        JSON Export
                     </DialogTitle>
                     <DialogDescription>
                         Choose export format for your chat

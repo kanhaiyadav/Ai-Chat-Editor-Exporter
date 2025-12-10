@@ -1,4 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -22,16 +23,18 @@ export const UnsavedChangesDialog = ({
     onDiscard,
     onCancel,
 }: UnsavedChangesDialogProps) => {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
             <DialogContent className='sm:max-w-[450px] bg-accent'>
                 <DialogHeader>
                     <div className='flex items-center gap-2'>
                         <AlertTriangle className='h-5 w-5 text-yellow-500' />
-                        <DialogTitle>Unsaved Changes</DialogTitle>
+                        <DialogTitle>{t('unsavedChatWarning.title')}</DialogTitle>
                     </div>
                     <DialogDescription>
-                        You have unsaved changes to the current chat. Would you like to save them before closing?
+                        {t('unsavedChatWarning.message')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -40,19 +43,19 @@ export const UnsavedChangesDialog = ({
                         variant='outline'
                         onClick={onCancel}
                     >
-                        Cancel
+                        {t('unsavedChatWarning.cancel')}
                     </Button>
                     <Button
                         variant='destructive'
                         onClick={onDiscard}
                     >
-                        Discard Changes
+                        {t('unsavedChatWarning.discard')}
                     </Button>
                     <Button
                         variant='default'
                         onClick={onSave}
                     >
-                        Save Changes
+                        {t('unsavedChatWarning.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

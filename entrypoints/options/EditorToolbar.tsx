@@ -22,6 +22,7 @@ import {
     AlignRight,
     AlignJustify
 } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 interface EditorToolbarProps {
     onFormat: (command: string, value?: string) => void;
@@ -38,6 +39,8 @@ export const EditorToolbar = ({
     onInsertCodeBlock,
     onInsertLink
 }: EditorToolbarProps) => {
+    const { t } = useTranslation();
+
     const insertSeparator = () => {
         onFormat('insertHTML', '<hr />');
     };
@@ -51,13 +54,13 @@ export const EditorToolbar = ({
     };
 
     return (
-        <div className="flex flex-wrap gap-1" onMouseDown={handleMouseDown}>
+        <div className="flex flex-wrap gap-1 justify-center" onMouseDown={handleMouseDown}>
             {/* Undo/Redo */}
             <Button
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('undo')}
-                title="Undo (Ctrl+Z)"
+                title={t('editor.undo')}
                 className="w-9 h-9 p-0"
             >
                 <RotateCcw size={16} />
@@ -66,7 +69,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('redo')}
-                title="Redo (Ctrl+Y)"
+                title={t('editor.redo')}
                 className="w-9 h-9 p-0"
             >
                 <RotateCw size={16} />
@@ -79,7 +82,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('bold')}
-                title="Bold (Ctrl+B)"
+                title={t('editor.bold')}
                 className="w-9 h-9 p-0"
             >
                 <Bold size={16} />
@@ -88,7 +91,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('italic')}
-                title="Italic (Ctrl+I)"
+                title={t('editor.italic')}
                 className="w-9 h-9 p-0"
             >
                 <Italic size={16} />
@@ -97,7 +100,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('underline')}
-                title="Underline (Ctrl+U)"
+                title={t('editor.underline')}
                 className="w-9 h-9 p-0"
             >
                 <Underline size={16} />
@@ -106,7 +109,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('subscript')}
-                title="Subscript"
+                title={t('editor.subscript')}
                 className="w-9 h-9 p-0"
             >
                 <Subscript size={16} />
@@ -115,7 +118,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('superscript')}
-                title="Superscript"
+                title={t('editor.superscript')}
                 className="w-9 h-9 p-0"
             >
                 <Superscript size={16} />
@@ -128,7 +131,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('justifyLeft')}
-                title="Align Left"
+                title={t('editor.alignLeft')}
                 className="w-9 h-9 p-0"
             >
                 <AlignLeft size={16} />
@@ -137,7 +140,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('justifyCenter')}
-                title="Align Center"
+                title={t('editor.alignCenter')}
                 className="w-9 h-9 p-0"
             >
                 <AlignCenter size={16} />
@@ -146,7 +149,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('justifyRight')}
-                title="Align Right"
+                title={t('editor.alignRight')}
                 className="w-9 h-9 p-0"
             >
                 <AlignRight size={16} />
@@ -155,7 +158,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('justifyFull')}
-                title="Justify"
+                title={t('editor.justify')}
                 className="w-9 h-9 p-0"
             >
                 <AlignJustify size={16} />
@@ -168,7 +171,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('formatBlock', '<h1>')}
-                title="Heading 1"
+                title={t('editor.heading1')}
                 className="w-9 h-9 p-0"
             >
                 <Heading1 size={16} />
@@ -177,7 +180,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('formatBlock', '<h2>')}
-                title="Heading 2"
+                title={t('editor.heading2')}
                 className="w-9 h-9 p-0"
             >
                 <Heading2 size={16} />
@@ -186,7 +189,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('formatBlock', '<h3>')}
-                title="Heading 3"
+                title={t('editor.heading3')}
                 className="w-9 h-9 p-0"
             >
                 <Heading3 size={16} />
@@ -199,7 +202,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('insertUnorderedList')}
-                title="Bullet List"
+                title={t('editor.bulletList')}
                 className="w-9 h-9 p-0"
             >
                 <List size={16} />
@@ -208,7 +211,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={() => onFormat('insertOrderedList')}
-                title="Numbered List"
+                title={t('editor.numberedList')}
                 className="w-9 h-9 p-0"
             >
                 <ListOrdered size={16} />
@@ -221,7 +224,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={onInsertCodeBlock}
-                title="Code Block"
+                title={t('editor.codeBlock')}
                 className="w-9 h-9 p-0"
             >
                 <Code size={16} />
@@ -230,7 +233,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={onInsertLink}
-                title="Insert Link"
+                title={t('editor.insertLink')}
                 className="w-9 h-9 p-0 text-xs"
             >
                 <LinkIcon size={16} />
@@ -243,7 +246,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={onInsertTable}
-                title="Insert Table"
+                title={t('editor.insertTable')}
                 className="w-9 h-9 p-0"
             >
                 <LucideTable size={16} />
@@ -252,7 +255,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={onInsertImage}
-                title="Insert Image"
+                title={t('editor.insertImage')}
                 className="w-9 h-9 p-0"
             >
                 <ImageIcon size={16} />
@@ -261,7 +264,7 @@ export const EditorToolbar = ({
                 size="sm"
                 variant="outline"
                 onClick={insertSeparator}
-                title="Insert Separator"
+                title={t('editor.insertSeparator')}
                 className="w-9 h-9 p-0"
             >
                 <Minus size={16} />

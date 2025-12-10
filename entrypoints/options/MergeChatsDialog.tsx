@@ -43,6 +43,7 @@ import geminiLight from "@/assets/gemini-fill-light.svg";
 import deepseekLight from "@/assets/deepseek-fill-light.svg";
 import { PiGitMerge } from 'react-icons/pi';
 import { DialogDescription } from '@radix-ui/react-dialog';
+import { useTranslation } from 'react-i18next';
 
 interface MergeChatsDialogProps {
     isOpen: boolean;
@@ -125,7 +126,7 @@ const SortableChatCard = ({
                             </p>
                         </div>
                     </div>
-                    
+
                 </div>
                 {onRemove ? (
                     <Button
@@ -154,6 +155,7 @@ export const MergeChatsDialog = ({
     currentMessages,
     onMerge,
 }: MergeChatsDialogProps) => {
+    const { t } = useTranslation();
     const [selectedSource, setSelectedSource] = useState<ChatSource>('chatgpt');
     const [selectedChats, setSelectedChats] = useState<Set<number>>(new Set());
     const [mergedChats, setMergedChats] = useState<ChatForMerge[]>([]);
@@ -197,8 +199,8 @@ export const MergeChatsDialog = ({
             setMergedChats([
                 {
                     id: -1,
-                    name: 'Current Chat',
-                    title: 'Current Chat',
+                    name: t('mergeChatsDialog.currentChat'),
+                    title: t('mergeChatsDialog.currentChat'),
                     messages: currentMessages,
                     source: 'chatgpt',
                     settings: {} as any,
@@ -278,10 +280,10 @@ export const MergeChatsDialog = ({
                     <PiGitMerge size={27} />
                     <div>
                         <DialogTitle className="flex items-center gap-2">
-                            Merge Chats
+                            {t('mergeChatsDialog.title')}
                         </DialogTitle>
                         <DialogDescription className=" text-xs text-muted-foreground">
-                            Select and merge multiple chats into one consolidated chat.
+                            {t('mergeChatsDialog.description')}
                         </DialogDescription>
                     </div>
                 </DialogHeader>
@@ -291,7 +293,7 @@ export const MergeChatsDialog = ({
                     <div className="w-1/2 flex flex-col gap-3 border-r border-border pr-4">
                         <div className='px-1'>
                             <label className="text-sm font-medium mb-2 block">
-                                Select Source
+                                {t('mergeChatsDialog.selectSource')}
                             </label>
                             <Select value={selectedSource} onValueChange={(value) => {
                                 setSelectedSource(value as ChatSource);
@@ -317,10 +319,10 @@ export const MergeChatsDialog = ({
 
                         <div className='px-1'>
                             <label className="text-sm font-medium mb-2 block">
-                                Search Chats
+                                {t('mergeChatsDialog.searchChats')}
                             </label>
                             <Input
-                                placeholder="Search by title or name..."
+                                placeholder={t('mergeChatsDialog.searchPlaceholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -328,7 +330,7 @@ export const MergeChatsDialog = ({
 
                         <div className="flex-1 flex flex-col overflow-hidden px-1">
                             <p className="text-xs font-medium text-muted-foreground mb-2">
-                                Available Chats
+                                {t('mergeChatsDialog.availableChats')}
                             </p>
                             <div className="overflow-y-auto flex-1 min-h-0">
                                 <div className="space-y-2 pr-4">
@@ -375,7 +377,7 @@ export const MergeChatsDialog = ({
                                                                 {chat.title}
                                                             </p>
                                                             <p className="text-xs text-muted-foreground truncate">
-                                                                {chat.messages.length} messages
+                                                                {chat.messages.length} {t('importChats.messages')}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -384,7 +386,7 @@ export const MergeChatsDialog = ({
                                         ))
                                     ) : (
                                         <div className="text-center py-8 text-muted-foreground">
-                                            <p className="text-sm">No chats found</p>
+                                            <p className="text-sm">{t('mergeChatsDialog.noChatsFound')}</p>
                                         </div>
                                     )}
                                 </div>
@@ -406,7 +408,7 @@ export const MergeChatsDialog = ({
                             disabled={selectedChats.size === 0}
                             className="w-full"
                         >
-                            Add Selected ({selectedChats.size})
+                            {t('mergeChatsDialog.addSelected')} ({selectedChats.size})
                         </Button>
                     </div>
 
@@ -414,7 +416,7 @@ export const MergeChatsDialog = ({
                     <div className="w-1/2 flex flex-col gap-3">
                         <div>
                             <p className="text-sm font-medium text-muted-foreground mb-2">
-                                Chats to Merge ({mergedChats.length})
+                                {t('mergeChatsDialog.chatsToMerge')} ({mergedChats.length})
                             </p>
                         </div>
 
@@ -466,7 +468,7 @@ export const MergeChatsDialog = ({
 
                 <div className="flex gap-2 justify-end pt-4 border-t border-border">
                     <Button variant="outline" onClick={handleClose}>
-                        Cancel
+                        {t('mergeChatsDialog.cancel')}
                     </Button>
                     <Button
                         onClick={handleMerge}
@@ -474,7 +476,7 @@ export const MergeChatsDialog = ({
                         className="gap-2"
                     >
                         <PiGitMerge size={16} />
-                        Merge Chats
+                        {t('mergeChatsDialog.merge')}
                     </Button>
                 </div>
             </DialogContent>

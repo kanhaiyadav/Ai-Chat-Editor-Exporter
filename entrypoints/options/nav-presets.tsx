@@ -35,6 +35,7 @@ import {
 import { SavedPreset } from "@/lib/settingsDB"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 export function NavPresets({
     presets,
@@ -67,10 +68,11 @@ export function NavPresets({
 }) {
     const { isMobile } = useSidebar()
     const [more, setMore] = useState(5);
+    const { t } = useTranslation();
 
     return (
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Setting presets</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('sidebar.settingPresets')}</SidebarGroupLabel>
             <SidebarMenu>
                 {presets && presets.length > 0 ? (
                     <>
@@ -152,26 +154,26 @@ export function NavPresets({
                                                 <div
                                                     className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                     onClick={(e) => handleStartEditPreset(preset, e)}
-                                                    title='Rename'
+                                                    title={t('sidebar.rename')}
                                                 >
                                                     <Pencil size={15} />
-                                                    <span className='ml-2'>Rename</span>
+                                                    <span className='ml-2'>{t('sidebar.rename')}</span>
                                                 </div>
                                                 <div
                                                     className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                     onClick={(e) => handleDuplicatePreset(preset, e)}
-                                                    title='Duplicate'
+                                                    title={t('sidebar.duplicate')}
                                                 >
                                                     <Copy size={15} />
-                                                    <span className='ml-2'>Duplicate</span>
+                                                    <span className='ml-2'>{t('sidebar.duplicate')}</span>
                                                 </div>
                                                 <div
                                                     className="flex items-center gap-1 w-full px-2 pt-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                     onClick={(e) => handleDeletePreset(preset.id!, e)}
-                                                    title='Delete'
+                                                    title={t('sidebar.delete')}
                                                 >
                                                     <Trash2 size={15} />
-                                                    <span className='ml-2'>Delete</span>
+                                                    <span className='ml-2'>{t('sidebar.delete')}</span>
                                                 </div>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -183,9 +185,9 @@ export function NavPresets({
                 ) : (
                     <div className='text-center py-4 px-4 text-sm text-muted-foreground'>
                         <Settings2 className='h-12 w-12 mx-auto mb-2 opacity-30' />
-                        <p className='font-medium'>No saved presets yet</p>
+                        <p className='font-medium'>{t('sidebar.noPresetsYet')}</p>
                         <p className='text-xs mt-1'>
-                            Save your PDF settings for quick access
+                            {t('sidebar.savePresetsDesc')}
                         </p>
                     </div>
                 )}

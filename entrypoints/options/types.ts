@@ -101,9 +101,12 @@ export const defaultSettings: PDFSettings = {
         includeUserAttachments: true,
         headerText: "",
         includeFooter: true,
-        fontFamily: null,
-        fontSize: 16,
-        lineHeight: 1.6,
+        fontFamily: {
+            type: "Custom",
+            value: "Tahoma",
+        },
+        fontSize: 15,
+        lineHeight: 1.4,
     },
 };
 

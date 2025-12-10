@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -18,6 +19,7 @@ interface GeneralSettingsProps {
 }
 
 export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: GeneralSettingsProps) => {
+    const { t } = useTranslation();
     const [systemFonts, setSystemFonts] = useState<string[]>([]);
 
     // Detect system fonts
@@ -75,7 +77,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                         <CardTitle className="flex items-center justify-between font-semibold">
                             <span className="flex items-center gap-2">
                                 <LuSettings size={20} />
-                                General Settings
+                                {t('settings.general.title')}
                             </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
@@ -86,7 +88,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                         <div className='space-y-4'>
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Background Color</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.general.backgroundColor')}</Label>
                                 <div className='flex items-center gap-3'>
                                     <input
                                         type="color"
@@ -105,7 +107,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Include Header</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.includeHeader')}</Label>
                                 <Switch
                                     checked={settings?.includeHeader}
                                     onCheckedChange={(checked) => onUpdate({ includeHeader: checked })}
@@ -114,7 +116,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
 
                             {settings?.includeHeader && (
                                 <div>
-                                    <Label className='block text-sm font-medium text-foreground/70 mb-2'>Header Text</Label>
+                                    <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.general.headerText')}</Label>
                                     <Input
                                         type="text"
                                         value={settings?.headerText}
@@ -124,7 +126,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                             )}
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Font Family</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.general.fontFamily')}</Label>
                                 <div className='flex'>
                                     <Select value={settings?.fontFamily?.type} onValueChange={(value) => onUpdate({ fontFamily: { type: value, value: settings.fontFamily?.value || '' } })}>
                                         <SelectTrigger className="w-[130px]">
@@ -141,10 +143,10 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
 
                                     <Select value={settings?.fontFamily?.value} onValueChange={(value) => onUpdate({ fontFamily: { type: settings.fontFamily?.type || '', value } })}>
                                         <SelectTrigger className="flex-1 ml-2">
-                                            <SelectValue placeholder="Variant" />
+                                            <SelectValue placeholder={t('settings.general.variant')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {settings?.fontFamily?.type === 'Custom' ? (
+                                            {settings?.fontFamily?.type === t('settings.general.custom') ? (
                                                 systemFonts.map((font) => (
                                                     <SelectItem key={font} value={font} style={{ fontFamily: font }}>
                                                         {font}
@@ -164,7 +166,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
 
                             <div>
                                 <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Font Size</Label>
+                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.fontSize')}</Label>
                                     <span className='text-sm font-semibold text-amber-600'>{settings?.fontSize}</span>
                                 </div>
                                 <Slider
@@ -178,7 +180,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
 
                             <div>
                                 <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Line Height</Label>
+                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.lineHeight')}</Label>
                                     <span className='text-sm font-semibold text-amber-600'>{settings?.lineHeight}</span>
                                 </div>
                                 <Slider
@@ -191,7 +193,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Include AI Generated Images</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.includeAIImages')}</Label>
                                 <Switch
                                     checked={settings?.includeAIImages}
                                     onCheckedChange={(checked) => onUpdate({ includeAIImages: checked })}
@@ -199,7 +201,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Images</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.includeUserImages')}</Label>
                                 <Switch
                                     checked={settings?.includeUserImages}
                                     onCheckedChange={(checked) => onUpdate({ includeUserImages: checked })}
@@ -207,7 +209,7 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Include User Uploaded Docs</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.includeUserDocs')}</Label>
                                 <Switch
                                     checked={settings?.includeUserAttachments}
                                     onCheckedChange={(checked) => onUpdate({ includeUserAttachments: checked })}

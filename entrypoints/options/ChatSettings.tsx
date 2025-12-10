@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -17,6 +18,7 @@ interface ChatSettingsProps {
 }
 
 export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatSettingsProps) => {
+    const { t } = useTranslation();
     const ColorInput = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
         <div>
             <Label className='block text-sm font-medium text-foreground/70 mb-2'>{label}</Label>
@@ -46,7 +48,7 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                         <CardTitle className="flex items-center justify-between font-semibold">
                             <span className="flex items-center gap-2">
                                 <RiBrushAiLine size={20} />
-                                Chat Style
+                                {t('settings.chatStyle.title')}
                             </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
@@ -56,29 +58,29 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                     <CardContent className="p-4">
                         <div className='space-y-4'>
                             <ColorInput
-                                label="User Bubble"
+                                label={t('settings.chatStyle.userBubble')}
                                 value={settings.userBubbleColor}
                                 onChange={(value) => onUpdate({ userBubbleColor: value })}
                             />
                             <ColorInput
-                                label="User Text"
+                                label={t('settings.chatStyle.textColor')}
                                 value={settings.userTextColor}
                                 onChange={(value) => onUpdate({ userTextColor: value })}
                             />
                             <ColorInput
-                                label="AI Bubble"
+                                label={t('settings.chatStyle.aiBubble')}
                                 value={settings.aiBubbleColor}
                                 onChange={(value) => onUpdate({ aiBubbleColor: value })}
                             />
                             <ColorInput
-                                label="AI Text"
+                                label={t('settings.chatStyle.textColor')}
                                 value={settings.aiTextColor}
                                 onChange={(value) => onUpdate({ aiTextColor: value })}
                             />
 
                             <div>
                                 <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Border Radius</Label>
+                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.chatStyle.borderRadius')}</Label>
                                     <span className='text-sm font-semibold text-amber-600'>{settings.bubbleRadius}</span>
                                 </div>
                                 <Slider
@@ -92,7 +94,7 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
 
                             <div>
                                 <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>Message Spacing</Label>
+                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.chatStyle.messageSpacing')}</Label>
                                     <span className='text-sm font-semibold text-amber-600'>{settings.spacing}</span>
                                 </div>
                                 <Slider
@@ -105,7 +107,7 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                             </div>
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Bubble Style</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.chatStyle.bubbleStyle')}</Label>
                                 <Select
                                     value={settings.bubbleStyle}
                                     onValueChange={(value) => onUpdate({ bubbleStyle: value as any })}
@@ -114,15 +116,15 @@ export const ChatSettings = ({ settings, isExpanded, onToggle, onUpdate }: ChatS
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="filled">Filled</SelectItem>
-                                        <SelectItem value="outlined">Outlined</SelectItem>
-                                        <SelectItem value="minimal">Minimal</SelectItem>
+                                        <SelectItem value="filled">{t('settings.chatStyle.filled')}</SelectItem>
+                                        <SelectItem value="outlined">{t('settings.chatStyle.outlined')}</SelectItem>
+                                        <SelectItem value="minimal">{t('settings.chatStyle.minimal')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Show Avatars</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.chatStyle.showAvatars')}</Label>
                                 <Switch
                                     checked={settings.showAvatars}
                                     onCheckedChange={(checked) => onUpdate({ showAvatars: checked })}

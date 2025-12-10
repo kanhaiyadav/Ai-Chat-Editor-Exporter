@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { PDFSettings } from './types';
 import { SavedPreset, presetOperations, db } from '@/lib/settingsDB';
+import { useTranslation } from 'react-i18next';
 
 interface SavePresetDialogProps {
     open: boolean;
@@ -30,6 +31,7 @@ export const SavePresetDialog = ({
     currentPresetId,
     onPresetCreated,
 }: SavePresetDialogProps) => {
+    const { t } = useTranslation();
     const presets = useLiveQuery(
         () => db.presets.orderBy('updatedAt').reverse().toArray(),
         []
@@ -55,7 +57,7 @@ export const SavePresetDialog = ({
 
     const handleSavePreset = async () => {
         if (!presetName.trim()) {
-            setError('Please enter a preset name');
+            setError(t('settings.presets.errorName'));
             return;
         }
 
@@ -69,7 +71,7 @@ export const SavePresetDialog = ({
                 currentPresetId || undefined
             );
             if (exists) {
-                setError('A preset with this name already exists');
+                setError(t('settings.presets.errorExists'));
                 setSaving(false);
                 return;
             }
@@ -86,7 +88,7 @@ export const SavePresetDialog = ({
             setError('');
             onOpenChange(false);
         } catch (err) {
-            setError('Failed to save preset');
+            setError(t('settings.presets.errorSave'));
             console.error(err);
         } finally {
             setSaving(false);
@@ -97,18 +99,18 @@ export const SavePresetDialog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='sm:max-w-[450px]'>
                 <DialogHeader>
-                    <DialogTitle>Save Preset As</DialogTitle>
+                    <DialogTitle>{t('settings.presets.saveTitle')}</DialogTitle>
                     <DialogDescription>
-                        Save current PDF settings as a new preset.
+                        {t('settings.presets.saveDescription')}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className='space-y-4 py-4'>
                     <div className='space-y-2'>
-                        <Label htmlFor='preset-name'>Preset Name</Label>
+                        <Label htmlFor='preset-name'>{t('settings.presets.presetName')}</Label>
                         <Input
                             id='preset-name'
-                            placeholder='Enter preset name...'
+                            placeholder={t('settings.presets.placeholder')}
                             value={presetName}
                             onChange={(e) => {
                                 setPresetName(e.target.value);
@@ -132,18 +134,18 @@ export const SavePresetDialog = ({
                         onClick={() => onOpenChange(false)}
                         disabled={saving}
                     >
-                        Cancel
+                        {t('dialog.cancel')}
                     </Button>
                     <Button onClick={handleSavePreset} disabled={saving}>
                         {saving ? (
                             <>
                                 <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                                Saving...
+                                {t('settings.presets.saving')}
                             </>
                         ) : (
                             <>
                                 <Save className='mr-2 h-4 w-4' />
-                                Save Preset
+                                {t('settings.presets.saveButton')}
                             </>
                         )}
                     </Button>

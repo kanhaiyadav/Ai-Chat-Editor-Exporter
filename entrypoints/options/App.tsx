@@ -17,6 +17,7 @@ import { SavedChat, SavedPreset } from '@/lib/settingsDB';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import { useTranslation } from 'react-i18next';
 
 interface StorageChange {
     newValue?: any;
@@ -85,8 +86,8 @@ const deepEqual = (a: unknown, b: unknown): boolean => {
 
     return false;
 };
-
 function App() {
+    const { t } = useTranslation();
     const [chatData, setChatData] = useState<ChatData | null>(null);
     const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
         presets: false,
@@ -873,9 +874,10 @@ function App() {
 
             <ConfirmationDialog
                 open={showResetWarning}
-                title='Reset settings to default?'
-                description='Resetting will restore all styling and layout settings to their defaults. Your current configuration cannot be undone.'
-                confirmLabel='Reset'
+                title={t('resetConfirm.title')}
+                description={t('resetConfirm.message')}
+                confirmLabel={t('resetConfirm.reset')}
+                cancelLabel={t('resetConfirm.cancel')}
                 destructive
                 onConfirm={resetSettings}
                 onCancel={() => setShowResetWarning(false)}

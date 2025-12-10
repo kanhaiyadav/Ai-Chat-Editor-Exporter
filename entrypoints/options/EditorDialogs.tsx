@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Upload, Palette } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function ImageDialog({
     open,
@@ -16,6 +17,7 @@ export function ImageDialog({
     onOpenChange: (open: boolean) => void;
     onInsert: (html: string) => void;
 }) {
+    const { t } = useTranslation();
     const [imageSource, setImageSource] = useState<'upload' | 'url'>('upload');
     const [imageUrl, setImageUrl] = useState('');
     const [width, setWidth] = useState('');
@@ -65,7 +67,7 @@ export function ImageDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-md bg-card">
                 <DialogHeader>
-                    <DialogTitle>Insert Image</DialogTitle>
+                    <DialogTitle>{t('insertImage.title')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
@@ -79,7 +81,7 @@ export function ImageDialog({
                                 onChange={(e) => setImageSource(e.target.value as 'upload' | 'url')}
                                 className="w-4 h-4"
                             />
-                            <span className="text-sm font-medium">Upload from Device</span>
+                            <span className="text-sm font-medium">{t('insertImage.uploadDevice')}</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -89,7 +91,7 @@ export function ImageDialog({
                                 onChange={(e) => setImageSource(e.target.value as 'upload' | 'url')}
                                 className="w-4 h-4"
                             />
-                            <span className="text-sm font-medium">From URL</span>
+                            <span className="text-sm font-medium">{t('insertImage.fromUrl')}</span>
                         </label>
                     </div>
 
@@ -111,11 +113,11 @@ export function ImageDialog({
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 <Upload size={16} className="mr-2" />
-                                {uploadedImageSrc ? 'Change Image' : 'Choose Image'}
+                                {uploadedImageSrc ? t('insertImage.changeImage') : t('insertImage.chooseImage')}
                             </Button>
                             {uploadedImageSrc && (
                                 <div className="mt-3 p-2 bg-gray-100 rounded">
-                                    <p className="text-xs text-gray-600 mb-2">Preview:</p>
+                                    <p className="text-xs text-gray-600 mb-2">{t('insertImage.preview')}:</p>
                                     <img src={uploadedImageSrc} alt="preview" style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '4px' }} />
                                 </div>
                             )}
@@ -126,11 +128,11 @@ export function ImageDialog({
                     {imageSource === 'url' && (
                         <div>
                             <Label htmlFor="image-url" className="text-sm">
-                                Image URL
+                                {t('insertImage.imageUrl')}
                             </Label>
                             <Input
                                 id="image-url"
-                                placeholder="https://example.com/image.jpg"
+                                placeholder={t('insertImage.urlPlaceholder')}
                                 value={imageUrl}
                                 onChange={(e) => setImageUrl(e.target.value)}
                                 className="mt-1 !h-10"
@@ -144,12 +146,12 @@ export function ImageDialog({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <Label htmlFor="img-width" className="text-sm">
-                                Width (px)
+                                {t('insertImage.width')}
                             </Label>
                             <Input
                                 id="img-width"
                                 type="number"
-                                placeholder="Auto"
+                                placeholder={t('insertImage.auto')}
                                 value={width}
                                 onChange={(e) => setWidth(e.target.value)}
                                 className="mt-1 h-10"
@@ -157,12 +159,12 @@ export function ImageDialog({
                         </div>
                         <div>
                             <Label htmlFor="img-height" className="text-sm">
-                                Height (px)
+                                {t('insertImage.height')}
                             </Label>
                             <Input
                                 id="img-height"
                                 type="number"
-                                placeholder="Auto"
+                                placeholder={t('insertImage.auto')}
                                 value={height === 'auto' ? '' : height}
                                 onChange={(e) => setHeight(e.target.value || 'auto')}
                                 className="mt-1 h-10"
@@ -173,7 +175,7 @@ export function ImageDialog({
 
                 <DialogFooter>
                     <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-                        Cancel
+                        {t('insertImage.cancel')}
                     </Button>
                     <Button
                         type="button"
@@ -189,7 +191,7 @@ export function ImageDialog({
                             }
                         }}
                     >
-                        Insert Image
+                        {t('insertImage.insert')}
                     </Button>
                 </DialogFooter>
             </DialogContent>
@@ -206,6 +208,7 @@ export function TableDialog({
     onOpenChange: (open: boolean) => void;
     onInsert: (html: string) => void;
 }) {
+    const { t } = useTranslation();
     const [rows, setRows] = useState('3');
     const [cols, setCols] = useState('3');
     const [hasHeader, setHasHeader] = useState(true);
@@ -265,7 +268,7 @@ export function TableDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="!max-w-xl bg-card max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Insert Table</DialogTitle>
+                    <DialogTitle>{t('insertTable.title')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
@@ -273,7 +276,7 @@ export function TableDialog({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <Label htmlFor="table-rows" className="text-sm">
-                                Rows
+                                {t('insertTable.rows')}
                             </Label>
                             <Input
                                 id="table-rows"
@@ -286,7 +289,7 @@ export function TableDialog({
                         </div>
                         <div>
                             <Label htmlFor="table-cols" className="text-sm">
-                                Columns
+                                {t('insertTable.columns')}
                             </Label>
                             <Input
                                 id="table-cols"
@@ -308,7 +311,7 @@ export function TableDialog({
                                 checked={hasHeader}
                                 onCheckedChange={(checked) => setHasHeader(checked as boolean)}
                             />
-                            <span className="text-sm font-medium">Include Table Header</span>
+                            <span className="text-sm font-medium">{t('insertTable.includeHeader')}</span>
                         </label>
                         <div className="flex items-center justify-between">
                             <label className="flex items-center gap-2 cursor-pointer">
@@ -316,7 +319,7 @@ export function TableDialog({
                                     checked={alternateRows}
                                     onCheckedChange={(checked) => setAlternateRows(checked as boolean)}
                                 />
-                                <span className="text-sm font-medium">Alternate Row Colors</span>
+                                <span className="text-sm font-medium">{t('insertTable.alternateRowColors')}</span>
                             </label>
                         </div>
                     </div>
@@ -325,7 +328,7 @@ export function TableDialog({
                         <div>
                             <Label htmlFor="header-color" className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
-                                Header Background Color
+                                {t('insertTable.headerBgColor')}
                             </Label>
                             <div className="flex gap-2 mt-1">
                                 <Input
@@ -353,7 +356,7 @@ export function TableDialog({
                         <div>
                             <Label htmlFor="body-color" className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
-                                Body Background Color
+                                {t('insertTable.bodyBgColor')}
                             </Label>
                             <div className="flex gap-2 mt-1">
                                 <Input
@@ -377,7 +380,7 @@ export function TableDialog({
                             <div>
                                 <Label htmlFor="alternate-color" className="text-sm flex items-center gap-2">
                                     <Palette size={16} />
-                                    Alternate Row Color
+                                    {t('insertTable.alternateRowColor')}
                                 </Label>
                                 <div className="flex gap-2 mt-1">
                                     <Input
@@ -404,7 +407,7 @@ export function TableDialog({
                     {/* Table Preview */}
                     <div>
                         <Label className="text-sm mb-2">
-                            Preview ({parseInt(rows)} rows × {parseInt(cols)} cols):
+                            {t('insertTable.preview')} ({parseInt(rows)} {t('insertTable.rowsX')} {parseInt(cols)} {t('insertTable.cols')}):
                         </Label>
                         <div className="overflow-x-auto text-xs mt-2 border rounded">
                             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
@@ -442,9 +445,9 @@ export function TableDialog({
 
                 <DialogFooter>
                     <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-                        Cancel
+                        {t('insertTable.cancel')}
                     </Button>
-                    <Button type="button" onClick={insertTable}>Insert Table</Button>
+                    <Button type="button" onClick={insertTable}>{t('insertTable.insert')}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -460,8 +463,9 @@ export function LinkDialog({
     onOpenChange: (open: boolean) => void;
     onInsert: (html: string) => void;
 }) {
-    const [url, setUrl] = useState('');
+    const { t } = useTranslation();
     const [displayText, setDisplayText] = useState('');
+    const [url, setUrl] = useState('');
     const [linkColor, setLinkColor] = useState('#0066cc');
     const [activeLinkColor, setActiveLinkColor] = useState('#003399');
     const [underline, setUnderline] = useState(true);
@@ -494,14 +498,14 @@ export function LinkDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="bg-card">
                 <DialogHeader>
-                    <DialogTitle>Insert Link</DialogTitle>
+                    <DialogTitle>{t('insertLink.title')}</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-4">
                     {/* URL */}
                     <div>
                         <Label htmlFor="link-url" className="text-sm">
-                            URL <span className="text-red-500">*</span>
+                            {t('insertLink.url')} <span className="text-red-500">*</span>
                         </Label>
                         <Input
                             id="link-url"
@@ -515,11 +519,11 @@ export function LinkDialog({
                     {/* Display Text */}
                     <div>
                         <Label htmlFor="link-text" className="text-sm">
-                            Display Text
+                            {t('insertLink.displayText')}
                         </Label>
                         <Input
                             id="link-text"
-                            placeholder="Leave empty to use URL"
+                            placeholder={t('insertLink.emptyUseURL')}
                             value={displayText}
                             onChange={(e) => setDisplayText(e.target.value)}
                             className="mt-1"
@@ -533,7 +537,7 @@ export function LinkDialog({
                         <div>
                             <Label className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
-                                Link Color
+                                {t('insertLink.linkColor')}
                             </Label>
                             <div className="flex gap-2 mt-1">
                                 <Input
@@ -555,7 +559,7 @@ export function LinkDialog({
                         <div>
                             <Label className="text-sm flex items-center gap-2">
                                 <Palette size={16} />
-                                Active/Hover Color
+                                {t('insertLink.hoverColor')}
                             </Label>
                             <div className="flex gap-2 mt-1">
                                 <Input
@@ -584,13 +588,13 @@ export function LinkDialog({
                                 checked={underline}
                                 onCheckedChange={(checked) => setUnderline(checked as boolean)}
                             />
-                            <span className="text-sm font-medium">Underline Text</span>
+                            <span className="text-sm font-medium">{t('insertLink.underlineText')}</span>
                         </label>
                     </div>
 
                     {/* Preview */}
                     <div className="p-3 rounded-lg bg-accent">
-                        <p className="text-xs mb-2">Preview:</p>
+                        <p className="text-xs mb-2">{t('insertLink.preview')}:</p>
                         <a
                             href={url || '#'}
                             style={{
@@ -605,9 +609,9 @@ export function LinkDialog({
 
                 <DialogFooter>
                     <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
-                        Cancel
+                        {t('insertLink.cancel')}
                     </Button>
-                    <Button type="button" onClick={insertLink}>Insert Link</Button>
+                    <Button type="button" onClick={insertLink}>{t('insertLink.insert')}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

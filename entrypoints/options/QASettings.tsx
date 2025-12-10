@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -17,6 +18,7 @@ interface QASettingsProps {
 }
 
 export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASettingsProps) => {
+    const { t } = useTranslation();
     const ColorInput = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
         <div>
             <Label className='block text-sm font-medium text-foreground/70 mb-2'>{label}</Label>
@@ -46,7 +48,7 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                         <CardTitle className="flex items-center justify-between font-semibold">
                             <span className="flex items-center gap-2">
                                 <RiBrushAiLine size={20} />
-                                Q&A Style
+                                {t('settings.qaStyle.title')}
                             </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
@@ -56,18 +58,18 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                     <CardContent className="p-4">
                         <div className='space-y-4'>
                             <ColorInput
-                                label="Question Color"
+                                label={t('settings.qaStyle.question')}
                                 value={settings.questionColor}
                                 onChange={(value) => onUpdate({ questionColor: value })}
                             />
                             <ColorInput
-                                label="Answer Color"
+                                label={t('settings.qaStyle.answer')}
                                 value={settings.answerColor}
                                 onChange={(value) => onUpdate({ answerColor: value })}
                             />
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Question Prefix</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.questionPrefix')}</Label>
                                 <Input
                                     type="text"
                                     value={settings.questionPrefix}
@@ -76,7 +78,7 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                             </div>
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Answer Prefix</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.answerPrefix')}</Label>
                                 <Input
                                     type="text"
                                     value={settings.answerPrefix}
@@ -85,7 +87,7 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                             </div>
 
                             <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>Separator Style</Label>
+                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.separatorStyle')}</Label>
                                 <Select
                                     value={settings.separatorStyle}
                                     onValueChange={(value) => onUpdate({ separatorStyle: value as any })}
@@ -94,15 +96,15 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="line">Line</SelectItem>
-                                        <SelectItem value="dots">Dots</SelectItem>
-                                        <SelectItem value="none">None</SelectItem>
+                                        <SelectItem value="line">{t('settings.qaStyle.line')}</SelectItem>
+                                        <SelectItem value="dots">{t('settings.qaStyle.dots')}</SelectItem>
+                                        <SelectItem value="none">{t('settings.qaStyle.none')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Number Questions</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.qaStyle.numberQuestions')}</Label>
                                 <Switch
                                     checked={settings.numbering}
                                     onCheckedChange={(checked) => onUpdate({ numbering: checked })}
@@ -110,7 +112,7 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                             </div>
 
                             <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>Indent Answers</Label>
+                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.qaStyle.indentAnswers')}</Label>
                                 <Switch
                                     checked={settings.indentAnswer}
                                     onCheckedChange={(checked) => onUpdate({ indentAnswer: checked })}

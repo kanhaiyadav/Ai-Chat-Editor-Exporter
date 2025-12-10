@@ -15,6 +15,7 @@ import { FaFileWord } from "react-icons/fa6";
 import { FaFilePdf } from "react-icons/fa6";
 import { LuFileText } from "react-icons/lu";
 import { VscJson } from "react-icons/vsc";
+import { useTranslation } from 'react-i18next';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -47,6 +48,7 @@ export const PreviewToolbar = ({
     onMerge,
     onCloseChat,
 }: PreviewToolbarProps) => {
+    const { t } = useTranslation();
 
     const [chatDataExists, setChatDataExists] = useState(false);
 
@@ -95,34 +97,34 @@ export const PreviewToolbar = ({
                             className="gap-2 [&_svg:not([class*='size-'])]:size-4"
                         >
                             <Download />
-                            Export
+                            {t('preview.export')}
                             <ChevronDown />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-48">
                         <DropdownMenuItem onClick={onExportPDF} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <FaFilePdf className='text-red-500' />
-                            <span>Export as PDF</span>
+                            <span>{t('preview.exportPDF')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onOpenInWord} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <FaFileWord className="h-4 w-4 text-blue-500" />
-                            <span>Export as Word (.doc)</span>
+                            <span>{t('preview.exportWord')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onExportJSON} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-6 -ml-0.5">
                             <VscJson className="h-4 w-4 text-purple-500" />
-                            <span className='-ml-0.5'>Export as JSON</span>
+                            <span className='-ml-0.5'>{t('preview.exportJSON')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onExportMarkdown} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <IoLogoMarkdown className="h-4 w-4 text-yellow-600" />
-                            <span>Export as Markdown</span>
+                            <span>{t('preview.exportMarkdown')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onExportHTML} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <ImHtmlFive2 className="h-4 w-4 text-[#e86025]" />
-                            <span>Export as HTML</span>
+                            <span>{t('preview.exportHTML')}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={onExportPlainText} className="gap-2 cursor-pointer [&_svg:not([class*='size-'])]:size-5">
                             <LuFileText className="h-4 w-4 text-foreground" />
-                            <span>Export as Plain Text</span>
+                            <span>{t('preview.exportText')}</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -134,7 +136,7 @@ export const PreviewToolbar = ({
                     variant="ghost"
                 >
                     <PiGitMerge size={16} />
-                    Merge Chats
+                    {t('preview.mergeChats')}
                 </Button>
 
                 {currentChatId !== null ? (
@@ -149,12 +151,12 @@ export const PreviewToolbar = ({
                             {chatSaved ? (
                                 <>
                                     <Check size={16} className='text-green-500' />
-                                    Saved
+                                    {t('preview.saved')}
                                 </>
                             ) : (
                                 <>
                                     <Save size={16} />
-                                    Save
+                                    {t('preview.save')}
                                 </>
                             )}
                         </Button>
@@ -165,7 +167,7 @@ export const PreviewToolbar = ({
                             className='gap-2'
                         >
                             <SaveAll size={16} />
-                            Save As
+                            {t('preview.saveAs')}
                         </Button>
                     </>
                 ) : (
@@ -176,7 +178,7 @@ export const PreviewToolbar = ({
                         className='gap-2'
                     >
                         <SaveAll size={16} />
-                        Save As
+                        {t('preview.saveAs')}
                     </Button>
                 )}
                 {
@@ -188,7 +190,7 @@ export const PreviewToolbar = ({
                             onClick={handleCloseChat}
                         >
                             <X className='text-red-600 group-hover:text-red-500' />
-                            <span className='text-red-600 group-hover:text-red-500'>Close chat</span>
+                            <span className='text-red-600 group-hover:text-red-500'>{t('preview.closeChat')}</span>
                         </Button>
                     )}
             </div>

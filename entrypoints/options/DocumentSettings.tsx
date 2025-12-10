@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -15,6 +16,7 @@ interface DocumentSettingsProps {
 }
 
 export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: DocumentSettingsProps) => {
+    const { t } = useTranslation();
     const ColorInput = ({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) => (
         <div>
             <Label className='block text-sm font-medium text-foreground/70 mb-2'>{label}</Label>
@@ -44,7 +46,7 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
                         <CardTitle className="flex items-center justify-between font-semibold">
                             <span className="flex items-center gap-2">
                                 <RiBrushAiLine size={20} />
-                                Document Style
+                                {t('settings.documentStyle.title')}
                             </span>
                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         </CardTitle>
@@ -54,12 +56,12 @@ export const DocumentSettings = ({ settings, isExpanded, onToggle, onUpdate }: D
                     <CardContent className="p-4">
                         <div className='space-y-4'>
                             <ColorInput
-                                label="Title Color"
+                                label={t('settings.documentStyle.titleColor')}
                                 value={settings.titleColor}
                                 onChange={(value) => onUpdate({ titleColor: value })}
                             />
                             <ColorInput
-                                label="Body Color"
+                                label={t('settings.documentStyle.bodyColor')}
                                 value={settings.bodyColor}
                                 onChange={(value) => onUpdate({ bodyColor: value })}
                             />

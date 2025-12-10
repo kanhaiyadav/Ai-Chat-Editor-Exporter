@@ -19,6 +19,7 @@ import { db, presetOperations } from '@/lib/settingsDB';
 import { ChatEditor } from './Editor';
 import { EditorToolbar } from './EditorToolbar';
 import { ImageDialog, TableDialog, LinkDialog } from './EditorDialogs';
+import { useTranslation } from 'react-i18next';
 
 interface SettingsPanelProps {
     settings: PDFSettings;
@@ -59,6 +60,7 @@ export const SettingsPanel = ({
     editingMessageIndex,
     editingElementRef,
 }: SettingsPanelProps) => {
+    const { t } = useTranslation();
     const [isEditingPresetName, setIsEditingPresetName] = useState(false);
     const [editedPresetName, setEditedPresetName] = useState('');
     const [error, setError] = useState('');
@@ -223,7 +225,7 @@ export const SettingsPanel = ({
         }
     };
 
-    const presetDisplayName = currentPreset?.name || 'Untitled Settings Preset';
+    const presetDisplayName = currentPreset?.name || t('settingsPanel.untitledPreset');
 
     return (
         <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border border-border'>
@@ -344,7 +346,7 @@ export const SettingsPanel = ({
                         <CardTitle className="flex items-center justify-between font-semibold text-sm">
                             <span className="flex items-center gap-2">
                                 <Pencil size={16} />
-                                Editor Toolbar
+                                {t('settingsPanel.editorToolbar')}
                             </span>
                             {editingMessageIndex !== null && (
                                 <span className='text-xs font-normal text-muted-foreground'>
@@ -419,7 +421,7 @@ export const SettingsPanel = ({
                         ) : (
                             <>
                                 <Save size={16} className='mr-1' />
-                                Save
+                                {t('settingsPanel.save')}
                             </>
                         )}
                     </Button>
@@ -430,7 +432,7 @@ export const SettingsPanel = ({
                         size="lg"
                     >
                         <SaveAll size={16} className='mr-1' />
-                        Save As
+                        {t('settingsPanel.saveAs')}
                     </Button>
                 </div>
 
@@ -441,7 +443,7 @@ export const SettingsPanel = ({
                     size="lg"
                 >
                     <RotateCcw size={14} className='mr-1' />
-                    Reset to Default
+                    {t('settingsPanel.resetToDefault')}
                 </Button>
             </div>
 

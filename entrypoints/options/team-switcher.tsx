@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 import { RiMenuUnfold4Line } from "react-icons/ri";
 import { RiMenuUnfold3Line } from "react-icons/ri";
+import { useTranslation } from "react-i18next";
 
 export function ToggleSidebar({
     teams,
@@ -31,6 +32,7 @@ export function ToggleSidebar({
     }[]
 }) {
     const { open, setOpen } = useSidebar();
+    const { t } = useTranslation();
 
     return (
         <SidebarMenu>
@@ -51,7 +53,7 @@ export function ToggleSidebar({
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-medium">{
-                            open ? 'Close Sidebar' : 'Open Sidebar'
+                            open ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')
                         }</span>
                         {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                     </div>

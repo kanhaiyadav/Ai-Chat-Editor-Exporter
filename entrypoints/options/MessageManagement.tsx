@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp, Edit, MessageSquare, GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -67,6 +68,7 @@ const SortableMessageItem = ({
     getRoleBadgeColor,
     truncateText,
 }: SortableMessageItemProps) => {
+    const { t } = useTranslation();
     const messageId = generateMessageHash(message);
     const {
         attributes,
@@ -99,7 +101,7 @@ const SortableMessageItem = ({
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getRoleBadgeColor(message.role)}`}>
-                            {message.role === 'user' ? 'User' : 'AI'}
+                            {message.role === 'user' ? t('settings.messages.user') : t('settings.messages.ai')}
                         </span>
                         <span className="text-xs text-muted-foreground">
                             #{index + 1}
@@ -117,7 +119,7 @@ const SortableMessageItem = ({
                                 <div className='flex items-center'>
                                     <Image size={16} className="inline-block mr-1" />
                                     <span className="text-sm text-foreground/80">
-                                        {message.images.length} image{message.images.length > 1 ? 's' : ''}
+                                        {message.images.length} {t('settings.messages.image', { count: message.images.length })}
                                     </span>
                                 </div>
                             )
@@ -127,7 +129,7 @@ const SortableMessageItem = ({
                                 <div className='flex items-center'>
                                     <HiOutlineDocumentText size={16} className="inline-block mr-1" />
                                     <span className="text-sm text-foreground/80">
-                                        {message.attachments.length} attachment{message.attachments.length > 1 ? 's' : ''}
+                                        {message.attachments.length} {t('settings.messages.attachment', { count: message.attachments.length })}
                                     </span>
                                 </div>
                             )
@@ -157,6 +159,7 @@ export const MessageManagement = ({
     onReorderMessages,
     selectedMessages
 }: MessageManagementProps) => {
+    const { t } = useTranslation();
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -212,7 +215,7 @@ export const MessageManagement = ({
                             <CardTitle className="flex items-center justify-between font-semibold">
                                 <span className="flex items-center gap-2">
                                     <MessageSquare size={18} />
-                                    Messages
+                                    {t('settings.messages.title')}
                                 </span>
                                 {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                             </CardTitle>
@@ -224,7 +227,7 @@ export const MessageManagement = ({
                             {!messages || messages.length === 0 ? (
                                 <div className="text-center py-8 text-muted-foreground">
                                     <MessageSquare size={32} className="mx-auto mb-2 opacity-30" />
-                                    <p className="text-sm">No messages available</p>
+                                    <p className="text-sm">{t('settings.messages.noMessages')}</p>
                                 </div>
                             ) : (
                                 <DndContext
@@ -255,7 +258,7 @@ export const MessageManagement = ({
 
                             {messages && messages.length > 0 && (
                                 <div className="pt-2 border-t text-xs text-muted-foreground">
-                                    {selectedMessages.size} of {messages.length} messages selected
+                                    {t('settings.messages.selectedCount', { selected: selectedMessages.size, total: messages.length })}
                                 </div>
                             )}
                         </CardContent>

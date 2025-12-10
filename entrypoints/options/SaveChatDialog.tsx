@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Message, PDFSettings, ChatSource } from './types';
 import { chatOperations } from '@/lib/settingsDB';
+import { useTranslation } from 'react-i18next';
 
 interface SaveChatDialogProps {
     open: boolean;
@@ -35,6 +36,7 @@ export const SaveChatDialog = ({
     currentChatId,
     onChatCreated,
 }: SaveChatDialogProps) => {
+    const { t } = useTranslation();
     const [chatName, setChatName] = useState('');
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -54,7 +56,7 @@ export const SaveChatDialog = ({
 
     const handleSaveChat = async () => {
         if (!chatName.trim()) {
-            setError('Please enter a chat name');
+            setError(t('dialog.save.errorName'));
             return;
         }
 
@@ -65,7 +67,7 @@ export const SaveChatDialog = ({
             // Check if name already exists
             const exists = await chatOperations.chatNameExists(chatName.trim(), currentChatId || undefined);
             if (exists) {
-                setError('A chat with this name already exists');
+                setError(t('dialog.save.errorExists'));
                 setSaving(false);
                 return;
             }
@@ -89,7 +91,7 @@ export const SaveChatDialog = ({
             setError('');
             onOpenChange(false);
         } catch (err) {
-            setError('Failed to save chat');
+            setError(t('dialog.save.errorSave'));
             console.error(err);
         } finally {
             setSaving(false);
@@ -100,18 +102,18 @@ export const SaveChatDialog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='sm:max-w-[500px]'>
                 <DialogHeader>
-                    <DialogTitle>Save Chat As</DialogTitle>
+                    <DialogTitle>{t('dialog.save.title')}</DialogTitle>
                     <DialogDescription>
-                        Save this chat with the current settings. The chat will include all messages and PDF export settings.
+                        {t('dialog.save.description')}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className='space-y-4 py-4'>
                     <div className='space-y-2'>
-                        <Label htmlFor='chat-name'>Chat Name</Label>
+                        <Label htmlFor='chat-name'>{t('dialog.save.chatName')}</Label>
                         <Input
                             id='chat-name'
-                            placeholder='Enter a name for this chat...'
+                            placeholder={t('dialog.save.placeholder')}
                             value={chatName}
                             onChange={(e) => {
                                 setChatName(e.target.value);
@@ -137,18 +139,18 @@ export const SaveChatDialog = ({
                         onClick={() => onOpenChange(false)}
                         disabled={saving}
                     >
-                        Cancel
+                        {t('dialog.cancel')}
                     </Button>
                     <Button onClick={handleSaveChat} disabled={saving}>
                         {saving ? (
                             <>
                                 <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                                Saving...
+                                {t('dialog.save.saving')}
                             </>
                         ) : (
                             <>
                                 <Save className='mr-2 h-4 w-4' />
-                                Save Chat
+                                {t('dialog.save.saveButton')}
                             </>
                         )}
                     </Button>

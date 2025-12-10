@@ -1,0 +1,16 @@
+1. In the left sidebar these static texts
+    "Close Sidebar", "Chats" (the heading text of the 4 dropdowns), "Setting presets", "No saved presets yet", "Save your PDF settings for quick access", "Backup & Import", Backup Chats button text, Import Chats button text, "Contribute"
+    Menu for each saved chat - "Export Chat", "Rename", "Duplicate", "Delete"
+    Hover texts for Buy me a coffee, write me a review, Star Github Repository
+2. In Backup Chats modal
+    - there is message count for each of the chat tile like 9 messages, translate the text "messages".
+    - in Export 1 chats buttons, you have translated text "Export" and but left the text "Chats", the number is dynamic so it is fine to be not translated.
+3. Import Chats modal
+    - there is message count for each of the chat tile like 9 messages, translate the text "messages".
+    Cancel button text, "2 chats will be imported with respective settings.", "Review 2 chats", "Import Chats"
+4. In Merge Chats modal
+    "Merge Chats", "Select and merge multiple chats into one consolidated chat.", "Select Source", "Search Chats", "Search by title or name...", "Available Chats", "No chats found", "Add Selected (0)", "Current Chat", "Chats to Merge (1)", "Current Chat", "4 messages", "Cancel", "Merge Chats"
+5. Warning modal for reseting style settings
+    "Reset settings to default?", "Resetting will restore all styling and layout settings to their defaults. Your current configuration cannot be undone.", "Cancel", "Reset", 
+6. Buy me a coffee modal
+    "Thank you for your support!", "Your contribution helps maintain and improve this extension. Every coffee counts!", 

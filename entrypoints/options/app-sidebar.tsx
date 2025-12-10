@@ -46,6 +46,7 @@ import {
 import { BsFiletypeJson } from "react-icons/bs";
 import { BsFileEarmarkArrowDown } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;
@@ -57,6 +58,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, closeChat, ...props }: AppSidebarProps) {
+    const { t } = useTranslation();
     const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
 
     const chats = useLiveQuery(
@@ -359,7 +361,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                 </SidebarContent>
                 <SidebarFooter>
                     <SidebarGroup className="group-data-[collapsible=icon]:hidden mb-[-10px]">
-                        <SidebarGroupLabel>Backup & Import</SidebarGroupLabel>
+                        <SidebarGroupLabel>{t('sidebar.backupImport')}</SidebarGroupLabel>
                         <SidebarMenu>
                             <Button
                                 variant={'outline'}
@@ -367,7 +369,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                                 className="flex-1 [&_svg:not([class*='size-'])]:size-5"
                             >
                                 <BsFiletypeJson />
-                                <span className="font-semibold">Backup Chats</span>
+                                <span className="font-semibold">{t('sidebar.backupChats')}</span>
                             </Button>
                             <Button
                                 onClick={onOpenImport}
@@ -375,27 +377,27 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                                 className="flex-1 [&_svg:not([class*='size-'])]:size-5"
                             >
                                 <BsFileEarmarkArrowDown />
-                                <span className="font-semibold">Import Chats</span>
+                                <span className="font-semibold">{t('sidebar.importChats')}</span>
                             </Button>
                         </SidebarMenu>
                     </SidebarGroup>
 
                     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                        <SidebarGroupLabel>Contribute</SidebarGroupLabel>
+                        <SidebarGroupLabel>{t('sidebar.contribute')}</SidebarGroupLabel>
                         <ButtonGroup className="w-full">
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
                                 size={'lg'}
-                                title="Buy me a coffee"
+                                title={t('header.coffeeTooltip')}
                                 onClick={() => setBuyMeCoffeeOpen(true)}><SiBuymeacoffee /></Button>
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
                                 size={'lg'}
-                                title="Write us a review"
+                                title={t('header.reviewTooltip')}
                                 onClick={handleReview}>
-                                <FaStar size={16} className="text-primary"/>
+                                <FaStar size={16} className="text-primary" />
                             </Button>
                             <Button variant="outline" className="[&_svg:not([class*='size-'])]:size-5 flex-1"
                                 size={'lg'}
-                                title="Star github repositor"
+                                title={t('header.githubTooltip')}
                                 onClick={handleStarRepo}><FaGithub size={16} />
                             </Button>
                         </ButtonGroup>

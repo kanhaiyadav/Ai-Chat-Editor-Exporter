@@ -1,14 +1,16 @@
 import { Sun, Moon, Monitor } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../lib/useTheme';
 import type { Theme } from '../lib/themeStorage';
 
 export function ThemeToggle() {
+    const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
 
     const themes: Array<{ value: Theme; icon: any; label: string }> = [
-        { value: 'light', icon: Sun, label: 'Light' },
-        { value: 'dark', icon: Moon, label: 'Dark' },
-        { value: 'system', icon: Monitor, label: 'System' },
+        { value: 'light', icon: Sun, label: t('theme.light') },
+        { value: 'dark', icon: Moon, label: t('theme.dark') },
+        { value: 'system', icon: Monitor, label: t('theme.system') },
     ];
 
     return (
