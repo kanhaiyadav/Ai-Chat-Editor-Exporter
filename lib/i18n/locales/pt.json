@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "Editar e exportar chats de IA",
         "reviewTooltip": "Escreva uma avaliação",
         "coffeeTooltip": "Pague-me um café",
@@ -274,8 +274,8 @@
         "copySuccess": "Copiado para a área de transferência"
     },
     "coffee": {
-        "title": "Apoiar Chat2Pdf",
-        "message": "Se você achar o Chat2Pdf útil, considere me pagar um café!",
+        "title": "Apoiar ExportMyChat",
+        "message": "Se você achar o ExportMyChat útil, considere me pagar um café!",
         "visitPage": "Visitar página Buy Me a Coffee",
         "thankYou": "Muito obrigado!",
         "contribution": "Sua contribuição ajuda a manter e melhorar esta extensão. Cada café conta!"
@@ -394,7 +394,7 @@
         "importError": "Erro ao importar chats",
         "or": "ou",
         "chooseFiles": "Escolher arquivos",
-        "description": "Importe backups de chats que você exportou anteriormente do Chat2Pdf.",
+        "description": "Importe backups de chats que você exportou anteriormente do ExportMyChat.",
         "review": "Revisar",
         "importing": "Importando chats...",
         "success": "Importação bem-sucedida!",

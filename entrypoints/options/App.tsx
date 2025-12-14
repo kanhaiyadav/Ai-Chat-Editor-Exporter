@@ -10,7 +10,7 @@ import { SaveChatDialog } from './SaveChatDialog';
 import { SavePresetDialog } from './SavePresetDialog';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { MergeChatsDialog } from './MergeChatsDialog';
-import { ExportChatDialog } from './ExportChatDialog';
+
 import { BulkExportChatsDialog } from './BulkExportChatsDialog';
 import { ImportChatDialog } from './ImportChatDialog';
 import { SavedChat, SavedPreset } from '@/lib/settingsDB';
@@ -119,8 +119,7 @@ function App() {
     const [pendingPreset, setPendingPreset] = useState<SavedPreset | null>(null);
     const [showPresetWarning, setShowPresetWarning] = useState(false);
     const [showResetWarning, setShowResetWarning] = useState(false);
-    const [showExportChatDialog, setShowExportChatDialog] = useState(false);
-    const [exportingChat, setExportingChat] = useState<SavedChat | null>(null);
+
     const [showBulkExportDialog, setShowBulkExportDialog] = useState(false);
     const [showImportDialog, setShowImportDialog] = useState(false);
     const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
@@ -700,34 +699,55 @@ function App() {
         exportToPlainText();
     };
 
-    const handleExportJSON = () => {
+    const handleExportJSON = async () => {
         if (!chatData) return;
+
+        let chatName: string;
+        let chatTitle: string;
+        let messages: Message[];
+        let source: string;
 
         // If it's a saved chat, export the full saved chat data
         if (currentChatId) {
-            (async () => {
-                const { chatOperations } = await import('@/lib/settingsDB');
-                const chat = await chatOperations.getChat(currentChatId);
-                if (chat) {
-                    setExportingChat(chat);
-                    setShowExportChatDialog(true);
-                }
-            })();
+            const { chatOperations } = await import('@/lib/settingsDB');
+            const chat = await chatOperations.getChat(currentChatId);
+            if (chat) {
+                chatName = chat.name;
+                chatTitle = chat.title;
+                messages = chat.messages;
+                source = chat.source;
+            } else {
+                return;
+            }
         } else {
-            // For unsaved chats, create a temporary chat object to export
-            const tempChat = {
-                id: Date.now(),
-                name: chatData.title || 'Untitled Chat',
-                title: chatData.title || 'Untitled Chat',
-                messages: chatData.messages,
-                source: chatData.source,
-                settings: settings,
-                createdAt: new Date(Date.now()),
-                updatedAt: new Date(Date.now())
-            };
-            setExportingChat(tempChat);
-            setShowExportChatDialog(true);
+            // For unsaved chats, use current chat data
+            chatName = chatData.title || 'Untitled Chat';
+            chatTitle = chatData.title || 'Untitled Chat';
+            messages = chatData.messages;
+            source = chatData.source;
         }
+
+        // Export directly as JSON
+        const exportData = {
+            version: 1,
+            exportDate: new Date().toISOString(),
+            source,
+            chatName,
+            chatTitle,
+            messageCount: messages.length,
+            messages,
+        };
+
+        const jsonString = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${chatName || 'chat'}-${Date.now()}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     };
 
     const handleMergeChats = (mergedMessages: Message[]) => {
@@ -768,10 +788,6 @@ function App() {
                     className='h-full'
                     onLoadChat={handleLoadChat}
                     onLoadPreset={handleLoadPreset}
-                    onExportChat={(chat) => {
-                        setExportingChat(chat);
-                        setShowExportChatDialog(true);
-                    }}
                     onOpenBulkExport={() => setShowBulkExportDialog(true)}
                     onOpenImport={() => setShowImportDialog(true)}
                     closeChat={handleCloseChat}
@@ -883,17 +899,7 @@ function App() {
                 onCancel={() => setShowResetWarning(false)}
             />
 
-            <ExportChatDialog
-                isOpen={showExportChatDialog}
-                onClose={() => {
-                    setShowExportChatDialog(false);
-                    setExportingChat(null);
-                }}
-                chatName={exportingChat?.name || ''}
-                chatTitle={exportingChat?.title || ''}
-                messages={exportingChat?.messages || []}
-                source={exportingChat?.source || 'chatgpt'}
-            />
+
 
             <BulkExportChatsDialog
                 isOpen={showBulkExportDialog}

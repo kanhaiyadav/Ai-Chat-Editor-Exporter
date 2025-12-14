@@ -1,11 +1,12 @@
-# Chat2Pdf - AI Chat Editor & Exporter
+# ExportMyChat - AI Chat Editor & Exporter
 
 <div align="center">
-  <img src="public/icon/128.png" alt="Chat2Pdf Logo" width="200" style="border-radius: 12px; margin: 20px 0;">
+  <img src="public/icon/128.png" alt="ExportMyChat Logo" width="200" style="border-radius: 12px; margin: 20px 0;">
 </div>
 
-A powerful browser extension that transforms AI chat conversations into beautifully formatted PDFs. Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, and extensive customization capabilities.
+A powerful browser extension that transforms AI chat conversations into beautifully formatted Documents(**pdf**, **docx**, **html**, **md**, **json**, **txt**). Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, and extensive customization capabilities. 
 
+![alt text](Gemini_Generated_Image_fyvge3fyvge3fyvg.png)
 ## Table of Contents
 
 -   [Features](#features)
@@ -28,37 +29,25 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 
 -   **Multi-Platform Support**: ChatGPT, Claude, Gemini, and DeepSeek - all in one extension
 -   **One-Click Export**: Export conversations with a single click from any supported platform
--   **Rich Text Editor**: Powerful inline editor with formatting, code blocks, lists, undo/redo
+-   Supports exporting individual response, artifact and Even Entire chat.
+-   **Content Editing**: Powerful inline editor that lets insert various elements apart from editing existing one.
 -   **Advanced Message Management**:
-    -   Select/deselect individual messages
+    -   Select/deselect individual messages to include/exclude from the export
     -   Drag-and-drop reordering with real-time preview
-    -   Edit message content with rich text formatting
     -   Hash-based message tracking for reliable state management
 -   **Backup & Restore**:
-    -   Export chats as JSON for backup
-    -   Import previously exported chats
-    -   Bulk export multiple chats at once
+    -   Export All of your chats as a bulk in JSON for backup, which can be later imported in any device with the extension to get the chats back.
 -   **Chat Management**:
     -   Save unlimited chats locally
     -   Merge multiple conversations
     -   Load and re-export with different settings
 -   **Multiple Layout Options**: Chat (bubble), Q&A (structured), Document (formal)
--   **Extensive Customization**: Colors, fonts, spacing, bubble styles, margins, headers/footers
+-   **Extensive Customization**: Colors, fonts, spacing, bubble styles, margins, headers/footers, background
 -   **Preset System**: Save and reuse styling configurations
 -   **Theme Support**: Light/Dark mode with system detection
--   **Media Handling**: Include/exclude images and attachments
--   **Artifact Support**: Export Claude Artifacts and Gemini code blocks (optional)
-
-### UI/UX Features
-
--   Intuitive sidebar navigation
--   Collapsible settings sections
--   Real-time preview of changes
--   Responsive design
--   Accessibility-focused components
--   Keyboard shortcuts support
-
----
+-   **Multi-language support**: We support 16 diffent languages including (Hindi, French, Spanish, Chinese, Japnese, Arabic etc.)
+-   **Media Handling**: Include/exclude generated images by the chat models.
+-   **Artifact Support**: Export Claude Artifacts and Gemini code blocks.
 
 ## Installation
 
@@ -67,7 +56,7 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/kanhaiyadav/Chat2Pdf.git
+git clone https://github.com/kanhaiyadav/ExportMyChat.git
 cd Ai-Chat-Editor-Exporter
 ```
 
@@ -115,7 +104,7 @@ npm run build:firefox
 ### Step 1: Export a Chat
 
 1. Navigate to any chat on **ChatGPT**, **Claude**, **Gemini**, or **DeepSeek**
-2. Click the **"Export Chat"** button that appears in the conversation header
+2. Click the **"ExportMyChat"** button that appears in the conversation header, or to export individual response (message) click on the ExportToChat logo in the action bar below each response.
 3. The extension automatically opens with your chat data pre-loaded and ready to customize
 
 ### Step 2: Review & Edit (Optional)
@@ -124,33 +113,23 @@ npm run build:firefox
 -   Use the **"Message Management"** panel to:
     -   Select/deselect specific messages
     -   Drag and drop to reorder messages
-    -   Edit message content with the rich text editor
-    -   View real-time preview of changes
 
 ### Step 3: Customize (Optional)
 
 -   Choose your preferred layout (Chat, Q&A, or Document)
 -   Adjust colors, fonts, spacing, and styling
 -   Configure headers, footers, and margins
+-   Merge different chats into one.
 -   Preview changes in real-time on the right panel
 
 ### Step 4: Export, Save, or Backup
 
--   **Export to PDF**: Click "Export PDF" to download immediately
+-   **Export to different formats**: Click on Export dropdonw to see all the available file formats to export in.
 -   **Save Chat**: Store chat locally for future editing/re-export
 -   **Backup Chat**: Export as JSON file for backup/sharing
 -   **Save Preset**: Save your styling settings for quick reuse
 
 ---
-
-## User Guide
-
-### Exporting Chats
-
-#### Initial Export
-
-1. Click the **"Export Chat"** button that appears in the chat header
-2. The extension automatically extracts all messages, title, images, and attachments
 
 #### Supported Platforms
 
@@ -161,25 +140,17 @@ npm run build:firefox
     -   Multi-turn conversations
 -   **Claude** (claude.ai)
     -   Messages, Artifacts (code/documents)
-    -   Include/exclude Artifacts option
 -   **Gemini** (gemini.google.com)
     -   Messages, code blocks, embedded code editors
     -   Monaco editor content extraction
 -   **DeepSeek** (chat.deepseek.com)
     -   Messages, code blocks
-    -   HTML rendering in code blocks
-
-**Platform-Specific Features:**
-
--   All platforms support images and attachments
--   Claude Artifacts can be included/excluded individually
--   Gemini code editors extract with full syntax highlighting
 
 ---
 
-### Chat Editor
+### Content Editing
 
-The Chat Editor provides rich text editing capabilities:
+It provides the capability to edit and insert the content of the chat inline with various tools available for it.
 
 | Tool          | Description             |
 | ------------- | ----------------------- |
@@ -191,34 +162,7 @@ The Chat Editor provides rich text editing capabilities:
 | Lists         | Bullet or ordered lists |
 | Undo/Redo     | Undo/Redo changes       |
 
-**How to Edit**: Click the Edit icon next to a message, make changes, and click Save.
-
----
-
-### Message Management
-
-**Advanced Features**:
-
--   **Selection System**:
-    -   Individual checkboxes for each message
-    -   Visual counter showing selected vs total messages
-    -   Role-based color coding (User/AI)
--   **Drag & Drop Reordering**:
-    -   Smooth drag-and-drop interface using @dnd-kit
-    -   Real-time preview updates during reordering
-    -   Hash-based message tracking (no ID conflicts)
-    -   Maintains selection state after reordering
--   **Rich Text Editor**:
-    -   Bold, Italic, Strikethrough formatting
-    -   Inline code and code blocks
-    -   Bullet and numbered lists
-    -   Undo/Redo support
-    -   Real-time HTML preview
--   **Message Cards**:
-    -   Hover effects and visual feedback
-    -   Content preview with ellipsis
-    -   Edit button with modal dialog
-    -   Empty state handling
+**How to Edit**: Just editing int he preview section.
 
 ---
 
@@ -257,10 +201,8 @@ The Chat Editor provides rich text editing capabilities:
 
 #### General Settings
 
--   Background and text colors
--   Page size (A4, Letter, Legal)
--   Margins and spacing
--   Header and footer options
+-   Background, font size.
+-   Header
 -   Font family and size
 -   Media inclusion options
 
@@ -286,12 +228,12 @@ Store a chat conversation locally with current settings:
 
 #### Backup & Restore
 
-**Export Chat (Backup)**:
+**Export All Chat (Backup)**:
 
 -   Export individual chat as JSON file
 -   Includes all messages, metadata, and settings
 -   Shareable and portable across devices
--   Click "Export Chat" button in preview toolbar
+-   Access via sidebar "IMport Chat" option
 
 **Import Chat (Restore)**:
 
@@ -299,13 +241,6 @@ Store a chat conversation locally with current settings:
 -   Automatically validates and loads chat data
 -   Preserves all message content and metadata
 -   Access via sidebar "Import Chat" option
-
-**Bulk Export**:
-
--   Export multiple saved chats at once
--   Select chats from list and download as ZIP
--   Perfect for backing up all conversations
--   Includes metadata and timestamps
 
 #### Save Preset
 
@@ -331,7 +266,7 @@ Combine multiple saved chats into one conversation:
 **Saved Chats Management** (Sidebar):
 
 -   View all locally saved chats
--   Load, edit, delete, duplicate, or export
+-   Load, edit, delete, duplicate.
 -   Filter by source platform (ChatGPT, Claude, etc.)
 -   Sort by date or name
 -   Quick preview of message count
@@ -359,8 +294,8 @@ Chat Export → Extract Data → Load in Options Page
 
 ```
 App.tsx (Main)
-├── Header (Logo, Theme, Social Links)
-├── Sidebar (Saved Chats, Presets)
+├── Header (Logo, Language Switcher, Theme, Social Links)
+├── Sidebar (Saved Chats, Presets, Backup & Import)
 ├── PreviewContainer
 │   ├── PreviewToolbar (Save/Export Buttons)
 │   └── Layout Preview (Chat/QA/Document)
@@ -475,7 +410,7 @@ C2Pdf_wxt/
 ### Setup
 
 ```bash
-git clone https://github.com/kanhaiyadav/Chat2Pdf.git
+git clone https://github.com/kanhaiyadav/ExportMyChat.git
 cd Ai-Chat-Editor-Exporter
 npm install
 npm run dev
@@ -538,12 +473,6 @@ npm run zip                # Create distribution zip
 2. Upload to [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/developer/dashboard)
 3. Submit for review
 
-**Firefox Add-ons**:
-
-1. Zip the `firefox-mv2` directory
-2. Upload to [Firefox Developer Hub](https://addons.mozilla.org/)
-3. Submit for review
-
 ---
 
 ## Contributing
@@ -571,7 +500,7 @@ We welcome contributions!
 
 ### Getting Help
 
--   **GitHub Issues**: [Report bugs or request features](https://github.com/kanhaiyadav/Chat2Pdf/issues)
+-   **GitHub Issues**: [Report bugs or request features](https://github.com/kanhaiyadav/ExportMyChat/issues)
 -   **Feedback Form**: Use the feedback button in the extension
 -   **Buy Me Coffee**: Support development
 -   **Star the repo**: Show your support!
@@ -587,13 +516,14 @@ We welcome contributions!
 
 **Messages not loading**:
 
--   Reload the extension: `chrome://extensions` → reload Chat2Pdf
+-   Reload the extension: `chrome://extensions` → reload ExportMyChat
 -   Verify chat has messages
 -   Refresh the chat page
 -   Check if content script is running (console should show initialization logs)
 
 **PDF export issues**:
 
+-   Extra margin on the right side: Refresh the page and try to re-export.
 -   Verify at least one message is selected
 -   Check all settings are valid (colors, fonts, etc.)
 -   Try different layouts (Chat, Q&A, Document)
@@ -617,7 +547,7 @@ We welcome contributions!
 **Import failing**:
 
 -   Verify JSON file is valid (not corrupted)
--   Check file was exported from Chat2Pdf
+-   Check file was exported from ExportMyChat
 -   Try importing a smaller file first
 -   Check browser console for specific errors
 
@@ -642,7 +572,7 @@ A: Currently supports ChatGPT, Claude, Gemini, and DeepSeek. We're actively moni
 A: Yes! The backup/export feature creates JSON files that can be imported regardless of the original source platform.
 
 **Q: How do I backup my chats?**
-A: Use the "Export Chat" button to create JSON backups. For multiple chats, use "Bulk Export" to download all as a ZIP file.
+A: Use the "Backup Chats" button to create JSON backups. For single use the json type file export. These json export can be used to import the chats/chat whenever and whereever you want.
 
 **Q: Can I edit exported PDFs?**
 A: PDFs are final documents. Edit content before exporting using the Rich Text Editor in Message Management.
@@ -653,42 +583,26 @@ A: Save the chats you want to merge, then use the "Merge Chats" feature in the S
 **Q: What if I clear browser data?**
 A: Saved chats stored in IndexedDB will be lost. Regularly export important chats as JSON backups.
 
-**Q: How do Claude Artifacts work?**
-A: Artifacts are automatically extracted with "Include in Export" buttons. You can selectively include/exclude them before export.
+**Q: How do I Export Claude/gemini Artifacts?**
+A: Artifacts can be individually exported using Export Artifact button just in the artifact header.
 
 **Q: Can I share my exported chats?**
 A: Yes! Export as JSON and share the file. Recipients can import it using the "Import Chat" feature.
 
 **Q: How do I report bugs?**
-A: Open an issue on [GitHub](https://github.com/kanhaiyadav/Chat2Pdf/issues) with details and screenshots.
+A: Open an issue on [GitHub](https://github.com/kanhaiyadav/ExportMyChat/issues) with details and screenshots.
 
 **Q: Can I contribute?**
 A: Absolutely! See the Contributing section. We welcome code, documentation, and feature suggestions.
 
 ---
 
-## Version
-
--   **v2.0.0** (Current): Multi-platform support release
-    -   ✅ Added Claude support with Artifacts extraction
-    -   ✅ Added Gemini support with Monaco editor extraction
-    -   ✅ Added DeepSeek support with HTML code block rendering
-    -   ✅ Backup/Restore: Export/Import chats as JSON
-    -   ✅ Bulk Export: Download multiple chats as ZIP
-    -   ✅ Enhanced drag-and-drop with hash-based tracking
-    -   ✅ Improved message editor with better formatting
-    -   ✅ Fixed reordering bugs and state management
-    -   ✅ Removed FeedbackModal, added direct review link
-    -   ✅ Enhanced UI/UX across all panels
-
----
-
 ## Connect
 
 -   **GitHub**: [@kanhaiyadav](https://github.com/kanhaiyadav)
--   **Project**: [Ai-Chat-Editor-Exporter](https://github.com/kanhaiyadav/Chat2Pdf)
--   **Issues**: [Report bugs](https://github.com/kanhaiyadav/Chat2Pdf/issues)
+-   **Project**: [Ai-Chat-Editor-Exporter](https://github.com/kanhaiyadav/ExportMyChat)
+-   **Issues**: [Report bugs](https://github.com/kanhaiyadav/ExportMyChat/issues)
 
 ---
 
-**Made with ❤️ by the Chat2Pdf team**
+**Made with ❤️ by Kanhaiya Yadav**

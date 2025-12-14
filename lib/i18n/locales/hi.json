@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "AI चैट संपादित करें और निर्यात करें",
         "reviewTooltip": "हमें एक समीक्षा लिखें",
         "coffeeTooltip": "मुझे कॉफी खरीदें",
@@ -274,8 +274,8 @@
         "copySuccess": "क्लिपबोर्ड पर कॉपी किया गया"
     },
     "coffee": {
-        "title": "Chat2Pdf का समर्थन करें",
-        "message": "यदि आपको Chat2Pdf उपयोगी लगता है, तो मुझे एक कॉफी खरीदने पर विचार करें!",
+        "title": "ExportMyChat का समर्थन करें",
+        "message": "यदि आपको ExportMyChat उपयोगी लगता है, तो मुझे एक कॉफी खरीदने पर विचार करें!",
         "visitPage": "Buy Me a Coffee पेज पर जाएं",
         "thankYou": "बहुत-बहुत धन्यवाद!",
         "contribution": "आपका योगदान इस एक्सटेंशन को बनाए रखने और सुधारने में मदद करता है। हर कॉफी मायने रखती है!"
@@ -394,7 +394,7 @@
         "importError": "चैट आयात करते समय त्रुटि",
         "or": "या",
         "chooseFiles": "फ़ाइलें चुनें",
-        "description": "Chat2Pdf से पहले निर्यात किए गए अपने चैट बैकअप आयात करें।",
+        "description": "ExportMyChat से पहले निर्यात किए गए अपने चैट बैकअप आयात करें।",
         "review": "समीक्षा करें",
         "importing": "चैट आयात की जा रही है...",
         "success": "आयात सफल!",

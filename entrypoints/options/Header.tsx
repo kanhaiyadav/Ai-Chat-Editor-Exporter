@@ -12,18 +12,18 @@ export const Header = () => {
 
 
     const handleGithubClick = () => {
-        window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
+        window.open('https://github.com/kanhaiyadav/ExportMyChat', '_blank');
     };
 
     const handleReview = () => {
-        window.open('https://microsoftedge.microsoft.com/addons/detail/chat2pdf/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
+        window.open('https://microsoftedge.microsoft.com/addons/detail/ExportMyChat/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
     };
 
     return (
         <>
             <div className='w-full flex items-center justify-between px-[50px] h-[65px] py-4 bg-primary'>
                 <div className='flex items-center gap-2'>
-                    <img src="/chat2pdf_dark.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
+                    <img src="/ExportMyChat_dark.png" alt="" className="h-[50px] drop-shadow-sm drop-shadow-black/40" />
                     <div className='mt-[-5px]'>
                         <h1 className='text-2xl text-[#3b2304] text-shadow-md font-bold'>{t('header.title')}</h1>
                         <p className='text-sm font-medium text-[#744915] text-shadow-sm mt-[-3px]'>{t('header.subtitle')}</p>

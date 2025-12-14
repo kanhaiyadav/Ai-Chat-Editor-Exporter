@@ -159,7 +159,7 @@ export const PreviewContainer = ({
                     }}
                 >
                     <div className='app-name absolute top-1 left-0 px-4 text-black/50 w-full flex justify-between'>
-                        <span>Chat2Pdf</span>
+                        <span>ExportMyChat</span>
                         <span>{new Date().toLocaleDateString()}</span>
                     </div>
                     {messages && messages.length > 0 ? (

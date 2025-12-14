@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "تحرير وتصدير محادثات الذكاء الاصطناعي",
         "reviewTooltip": "اكتب لنا مراجعة",
         "coffeeTooltip": "اشتر لي قهوة",
@@ -274,8 +274,8 @@
         "copySuccess": "تم النسخ إلى الحافظة"
     },
     "coffee": {
-        "title": "دعم Chat2Pdf",
-        "message": "إذا وجدت Chat2Pdf مفيدًا، فكر في شراء قهوة لي!",
+        "title": "دعم ExportMyChat",
+        "message": "إذا وجدت ExportMyChat مفيدًا، فكر في شراء قهوة لي!",
         "visitPage": "زيارة صفحة Buy Me a Coffee",
         "thankYou": "شكرًا جزيلاً!",
         "contribution": "تساعد مساهمتك في صيانة وتحسين هذا الإمتداد. كل قهوة مهمة!"
@@ -394,7 +394,7 @@
         "importError": "خطأ في استيراد المحادثات",
         "or": "أو",
         "chooseFiles": "اختر الملفات",
-        "description": "استيراد النسخ الاحتياطية للمحادثات التي قمت بتصديرها مسبقًا من Chat2Pdf.",
+        "description": "استيراد النسخ الاحتياطية للمحادثات التي قمت بتصديرها مسبقًا من ExportMyChat.",
         "review": "مراجعة",
         "importing": "جارٍ استيراد المحادثات...",
         "success": "نجح الاستيراد!",

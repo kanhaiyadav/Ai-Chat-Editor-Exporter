@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "KI-Chats bearbeiten und exportieren",
         "reviewTooltip": "Schreiben Sie uns eine Bewertung",
         "coffeeTooltip": "Spendieren Sie mir einen Kaffee",
@@ -274,8 +274,8 @@
         "copySuccess": "In die Zwischenablage kopiert"
     },
     "coffee": {
-        "title": "Chat2Pdf unterstützen",
-        "message": "Wenn Sie Chat2Pdf nützlich finden, spendieren Sie mir einen Kaffee!",
+        "title": "ExportMyChat unterstützen",
+        "message": "Wenn Sie ExportMyChat nützlich finden, spendieren Sie mir einen Kaffee!",
         "visitPage": "Buy Me a Coffee-Seite besuchen",
         "thankYou": "Vielen Dank!",
         "contribution": "Ihr Beitrag hilft, diese Erweiterung zu pflegen und zu verbessern. Jeder Kaffee zählt!"
@@ -394,7 +394,7 @@
         "importError": "Fehler beim Importieren der Chats",
         "or": "oder",
         "chooseFiles": "Dateien Auswählen",
-        "description": "Importieren Sie Chat-Backups, die Sie zuvor von Chat2Pdf exportiert haben.",
+        "description": "Importieren Sie Chat-Backups, die Sie zuvor von ExportMyChat exportiert haben.",
         "review": "Überprüfen",
         "importing": "Importiere Chats...",
         "success": "Import erfolgreich!",

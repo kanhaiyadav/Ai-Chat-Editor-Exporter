@@ -16,10 +16,10 @@ function App() {
             {/* Header */}
             <div className="popup-header flex items-center gap-4">
                 <div className="flex items-center gap-3 mb-1">
-                    <img src="/chat2pdf2.png" alt="" className='w-[40px]' />
+                    <img src="/ExportMyChat2.png" alt="" className='w-[40px]' />
                 </div>
                 <div>
-                    <h1 className="text-xl font-bold">Chat2PDF</h1>
+                    <h1 className="text-xl font-bold">ExportMyChat</h1>
                     <p className="text-base font-semibold text-gray-900">AI Chat Editor & Exporter</p>
                 </div>
             </div>
@@ -74,7 +74,7 @@ function App() {
                     onClick={handleOpenOptions}
                     className="popup-button mb-[-10px]"
                 >
-                    <span>Open Chat2PDF Editor</span>
+                    <span>Open ExportMyChat Editor</span>
                     <ArrowRight size={16} />
                 </button>
             </div>

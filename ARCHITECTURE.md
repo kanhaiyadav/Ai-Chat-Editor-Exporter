@@ -1,8 +1,8 @@
-# Chat2Pdf Extension Architecture
+# ExportMyChat Extension Architecture
 
 ## Overview
 
-Chat2Pdf is a browser extension that exports AI chat conversations from multiple platforms (ChatGPT, Claude, Gemini, DeepSeek) to beautifully formatted PDFs. Built with React, TypeScript, and the WXT framework.
+ExportMyChat is a browser extension that exports AI chat conversations from multiple platforms (ChatGPT, Claude, Gemini, DeepSeek) to beautifully formatted PDFs. Built with React, TypeScript, and the WXT framework.
 
 ## Platform Support
 

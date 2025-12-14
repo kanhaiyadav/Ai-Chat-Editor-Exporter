@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "Editar y exportar chats de IA",
         "reviewTooltip": "Escríbenos una reseña",
         "coffeeTooltip": "Cómprame un café",
@@ -274,8 +274,8 @@
         "copySuccess": "Copiado al portapapeles"
     },
     "coffee": {
-        "title": "Apoya Chat2Pdf",
-        "message": "Si encuentras Chat2Pdf útil, ¡considera comprarme un café!",
+        "title": "Apoya ExportMyChat",
+        "message": "Si encuentras ExportMyChat útil, ¡considera comprarme un café!",
         "visitPage": "Visitar la página de Buy Me a Coffee",
         "thankYou": "¡Muchas gracias!",
         "contribution": "Tu contribución ayuda a mantener este proyecto gratuito y de código abierto."
@@ -394,7 +394,7 @@
         "importError": "Error al importar chats",
         "or": "o",
         "chooseFiles": "Elegir Archivos",
-        "description": "Importa copias de seguridad de chats que hayas exportado anteriormente desde Chat2Pdf.",
+        "description": "Importa copias de seguridad de chats que hayas exportado anteriormente desde ExportMyChat.",
         "review": "Revisar",
         "importing": "Importando chats...",
         "success": "¡Importación exitosa!",

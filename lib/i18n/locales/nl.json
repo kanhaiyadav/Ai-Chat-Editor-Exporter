@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "AI-chats bewerken en exporteren",
         "reviewTooltip": "Schrijf een recensie",
         "coffeeTooltip": "Koop een koffie voor mij",
@@ -274,8 +274,8 @@
         "copySuccess": "Gekopieerd naar klembord"
     },
     "coffee": {
-        "title": "Ondersteun Chat2Pdf",
-        "message": "Als u Chat2Pdf nuttig vindt, overweeg dan om mij een koffie te kopen!",
+        "title": "Ondersteun ExportMyChat",
+        "message": "Als u ExportMyChat nuttig vindt, overweeg dan om mij een koffie te kopen!",
         "visitPage": "Bezoek Buy Me a Coffee-pagina",
         "thankYou": "Hartelijk bedankt!",
         "contribution": "Uw bijdrage helpt deze extensie te onderhouden en te verbeteren. Elke koffie telt!"
@@ -394,7 +394,7 @@
         "importError": "Fout bij importeren van chats",
         "or": "of",
         "chooseFiles": "Bestanden kiezen",
-        "description": "Importeer uw chatback-ups die u eerder uit Chat2Pdf hebt geëxporteerd.",
+        "description": "Importeer uw chatback-ups die u eerder uit ExportMyChat hebt geëxporteerd.",
         "review": "Bekijken",
         "importing": "Chats importeren...",
         "success": "Import succesvol!",

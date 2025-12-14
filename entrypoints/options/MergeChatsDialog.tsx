@@ -44,6 +44,7 @@ import deepseekLight from "@/assets/deepseek-fill-light.svg";
 import { PiGitMerge } from 'react-icons/pi';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 interface MergeChatsDialogProps {
     isOpen: boolean;
@@ -122,7 +123,7 @@ const SortableChatCard = ({
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{chat.title}</p>
                             <p className="text-xs text-muted-foreground">
-                                {chat.messages.length} messages
+                                {chat.messages.length} {t('mergeChatsDialog.messages')}
                             </p>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "AI 채팅 편집 및 내보내기",
         "reviewTooltip": "리뷰 작성하기",
         "coffeeTooltip": "커피 사주기",
@@ -274,8 +274,8 @@
         "copySuccess": "클립보드에 복사되었습니다"
     },
     "coffee": {
-        "title": "Chat2Pdf 지원하기",
-        "message": "Chat2Pdf가 유용하다면 커피 한 잔 사주세요!",
+        "title": "ExportMyChat 지원하기",
+        "message": "ExportMyChat가 유용하다면 커피 한 잔 사주세요!",
         "visitPage": "Buy Me a Coffee 페이지 방문",
         "thankYou": "감사합니다!",
         "contribution": "귀하의 기여는 이 확장 프로그램을 유지하고 개선하는 데 도움이 됩니다. 모든 커피가 중요합니다!"
@@ -394,7 +394,7 @@
         "importError": "채팅 가져오는 중 오류 발생",
         "or": "또는",
         "chooseFiles": "파일 선택",
-        "description": "Chat2Pdf에서 이전에 내보낸 채팅 백업을 가져옵니다.",
+        "description": "ExportMyChat에서 이전에 내보낸 채팅 백업을 가져옵니다.",
         "review": "검토",
         "importing": "채팅 가져오는 중...",
         "success": "가져오기 성공!",

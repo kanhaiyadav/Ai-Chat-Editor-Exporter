@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig({
     modules: ["@wxt-dev/module-react"],
     manifest: {
-        name: "Chat2Pdf",
+        name: "ExportMyChat",
         description: "A browser extension for converting AI chats to PDF",
         version: "14.0.0",
         content_security_policy: {
@@ -26,6 +26,16 @@ export default defineConfig({
             {
                 resources: ["monaco-extractor.js"],
                 matches: ["https://gemini.google.com/*"],
+            },
+            {
+                resources: ["icon/32.png"],
+                matches: [
+                    "https://chatgpt.com/*",
+                    "https://chat.openai.com/*",
+                    "https://claude.ai/*",
+                    "https://gemini.google.com/*",
+                    "https://chat.deepseek.com/*",
+                ],
             },
         ],
         options_ui: {

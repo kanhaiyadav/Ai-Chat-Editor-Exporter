@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "AIチャットの編集とエクスポート",
         "reviewTooltip": "レビューを書く",
         "coffeeTooltip": "コーヒーをおごる",
@@ -274,8 +274,8 @@
         "copySuccess": "クリップボードにコピーしました"
     },
     "coffee": {
-        "title": "Chat2Pdfをサポート",
-        "message": "Chat2Pdfが役に立った場合は、コーヒーをおごってください！",
+        "title": "ExportMyChatをサポート",
+        "message": "ExportMyChatが役に立った場合は、コーヒーをおごってください！",
         "visitPage": "Buy Me a Coffeeページにアクセス",
         "thankYou": "ありがとうございます！",
         "contribution": "あなたの貢献は、この拡張機能の維持と改善に役立ちます。すべてのコーヒーが重要です！"
@@ -394,7 +394,7 @@
         "importError": "チャットのインポート中にエラーが発生しました",
         "or": "または",
         "chooseFiles": "ファイルを選択",
-        "description": "Chat2Pdfから以前エクスポートしたチャットバックアップをインポートします。",
+        "description": "ExportMyChatから以前エクスポートしたチャットバックアップをインポートします。",
         "review": "確認",
         "importing": "チャットをインポート中...",
         "success": "インポートに成功しました！",

@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "Edit & Export AI chats",
         "reviewTooltip": "Write me a review",
         "coffeeTooltip": "Buy Me a Coffee",
@@ -274,8 +274,8 @@
         "copySuccess": "Copied to clipboard"
     },
     "coffee": {
-        "title": "Support Chat2Pdf",
-        "message": "If you find Chat2Pdf useful, consider buying me a coffee!",
+        "title": "Support ExportMyChat",
+        "message": "If you find ExportMyChat useful, consider buying me a coffee!",
         "visitPage": "Visit Buy Me a Coffee Page",
         "thankYou": "Thank you for your support!",
         "contribution": "Your contribution helps maintain and improve this extension. Every coffee counts!"
@@ -352,7 +352,7 @@
         "or": "or",
         "chooseFiles": "Choose Files",
         "acceptedFormats": "Accepted formats: .json, .jsonld",
-        "description": "Import chat backups that you previously exported from Chat2Pdf.",
+        "description": "Import chat backups that you previously exported from ExportMyChat.",
         "cancel": "Cancel",
         "review": "Review",
         "import": "Import Chats",

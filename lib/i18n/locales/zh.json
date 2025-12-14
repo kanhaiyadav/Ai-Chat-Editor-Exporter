@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "编辑和导出 AI 聊天",
         "reviewTooltip": "给我们写评论",
         "coffeeTooltip": "请我喝咖啡",
@@ -274,8 +274,8 @@
         "copySuccess": "已复制到剪贴板"
     },
     "coffee": {
-        "title": "支持 Chat2Pdf",
-        "message": "如果您觉得 Chat2Pdf 有用，请考虑给我买杯咖啡！",
+        "title": "支持 ExportMyChat",
+        "message": "如果您觉得 ExportMyChat 有用，请考虑给我买杯咖啡！",
         "visitPage": "访问 Buy Me a Coffee 页面",
         "thankYou": "非常感谢！",
         "contribution": "您的贡献有助于保持这个项目免费和开源。"
@@ -394,7 +394,7 @@
         "importError": "导入聊天时出错",
         "or": "或",
         "chooseFiles": "选择文件",
-        "description": "导入您之前从Chat2Pdf导出的聊天备份。",
+        "description": "导入您之前从ExportMyChat导出的聊天备份。",
         "review": "查看",
         "importing": "导入聊天中...",
         "success": "导入成功！",

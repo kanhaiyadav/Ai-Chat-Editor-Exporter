@@ -79,7 +79,7 @@ export const ImportChatDialog = ({
                         };
                         resolve([singleChat]);
                     } else {
-                        reject(new Error('Invalid file format. Please use a file exported from Chat2Pdf.'));
+                        reject(new Error('Invalid file format. Please use a file exported from ExportMyChat.'));
                     }
                 } catch (err) {
                     reject(new Error('Failed to parse file. Make sure it is a valid JSON file.'));

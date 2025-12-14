@@ -62,7 +62,7 @@ export interface PDFSettings {
 }
 
 export const defaultSettings: PDFSettings = {
-    layout: "qa",
+    layout: "document",
     chat: {
         userBubbleColor: "#ffcc41",
         userTextColor: "#000000",

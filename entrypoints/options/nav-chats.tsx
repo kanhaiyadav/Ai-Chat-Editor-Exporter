@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { BsFiletypeJson } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
 
 export function NavChats({
@@ -43,7 +42,6 @@ export function NavChats({
     handleDuplicateChat,
     formatDate,
     error,
-    onExportChat,
 }: {
     chats: SavedChat[]
     chatsBySource: Record<string, SavedChat[]>
@@ -59,7 +57,6 @@ export function NavChats({
     handleDuplicateChat: (chat: SavedChat, e: React.MouseEvent) => void
     formatDate: (date: Date) => string
     error: string
-    onExportChat?: (chat: SavedChat) => void
 }) {
     const { isMobile } = useSidebar()
     const { t } = useTranslation();
@@ -172,16 +169,6 @@ export function NavChats({
                                                                 side={isMobile ? "bottom" : "right"}
                                                                 align={isMobile ? "end" : "start"}
                                                             >
-                                                                <div
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        onExportChat?.(chat);
-                                                                    }}
-                                                                    className="flex gap-1 w-full px-2 py-1 items-center hover:bg-accent hover:shadow-sm cursor-pointer"
-                                                                >
-                                                                    <BsFiletypeJson size={20} />
-                                                                    <span className="ml-2">{t('sidebar.exportChat')}</span>
-                                                                </div>
                                                                 <div
                                                                     className="flex items-center gap-1 w-full px-2 py-1 rounded-sm hover:bg-accent hover:shadow-sm cursor-pointer"
                                                                     onClick={(e) => handleStartEditChat(chat, e)}

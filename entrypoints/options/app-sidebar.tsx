@@ -51,13 +51,12 @@ import { useTranslation } from "react-i18next"
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     onLoadChat: (chat: SavedChat, preset: PDFSettings | null) => void;
     onLoadPreset: (preset: SavedPreset) => void;
-    onExportChat?: (chat: SavedChat) => void;
     onOpenBulkExport?: () => void;
     onOpenImport?: () => void;
     closeChat: () => void;
 }
 
-export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkExport, onOpenImport, closeChat, ...props }: AppSidebarProps) {
+export function AppSidebar({ onLoadChat, onLoadPreset, onOpenBulkExport, onOpenImport, closeChat, ...props }: AppSidebarProps) {
     const { t } = useTranslation();
     const [buyMeCoffeeOpen, setBuyMeCoffeeOpen] = React.useState(false)
 
@@ -312,11 +311,11 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
     };
 
     const handleStarRepo = () => {
-        window.open('https://github.com/kanhaiyadav/Chat2Pdf', '_blank');
+        window.open('https://github.com/kanhaiyadav/ExportMyChat', '_blank');
     };
 
     const handleReview = () => {
-        window.open('https://microsoftedge.microsoft.com/addons/detail/chat2pdf/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
+        window.open('https://microsoftedge.microsoft.com/addons/detail/ExportMyChat/pdnpomlbcffgpmlbliebifojplnbhfkh', '_blank');
     }
 
     return (
@@ -341,7 +340,6 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onExportChat, onOpenBulkE
                         handleDuplicateChat={handleDuplicateChat}
                         formatDate={formatDate}
                         error={error}
-                        onExportChat={onExportChat}
                     />
                     <NavPresets
                         presets={presets || []}

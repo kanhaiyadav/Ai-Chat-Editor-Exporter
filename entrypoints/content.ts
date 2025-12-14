@@ -92,7 +92,8 @@ export default defineContentScript({
             if (isChatGPT) {
                 return (
                     location.href.includes("/c/") ||
-                    location.href.includes("/g/")
+                    location.href.includes("/g/") ||
+                    location.href.includes("temporary-chat")
                 );
             } else if (isClaude) {
                 return location.href.includes("/chat/");
@@ -160,7 +161,7 @@ export default defineContentScript({
                             <path d="M22 6.8V2H17.2" />
                             <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13" />
                         </svg>
-                        <span>Export Chat</span>
+                        <span>ExportMyChat</span>
                     </div>
                 `;
 
@@ -211,7 +212,7 @@ export default defineContentScript({
             exportButton.setAttribute("aria-label", "Export Chat");
             exportButton.style.cssText = "margin-left: -5px;";
 
-            exportButton.innerHTML = `Export Chat`;
+            exportButton.innerHTML = `ExportMyChat`;
 
             buttonContainer.appendChild(exportButton);
             exportButton.addEventListener("click", extractClaudeData);
@@ -231,7 +232,7 @@ export default defineContentScript({
             );
 
             console.log(
-                "Chat2Pdf: ❤️❤️❤️ Inserting Gemini button...",
+                "ExportMyChat: ❤️❤️❤️ Inserting Gemini button...",
                 buttonContainer
             );
 
@@ -258,7 +259,7 @@ export default defineContentScript({
             exportButton.innerHTML = `
                 <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
                 <mat-icon role="img" class="mat-icon notranslate google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">file_download</mat-icon>
-                <span class="mdc-button__label">Export Chat</span>
+                <span class="mdc-button__label">ExportMyChat</span>
                 <span class="mat-focus-indicator"></span>
                 <span class="mat-mdc-button-touch-target"></span>
             `;
@@ -304,7 +305,7 @@ export default defineContentScript({
                             <path d="M11 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22H15C20 22 22 20 22 15V13"></path>
                         </svg>
                 </span>
-                <span class="">Export Chat</span>
+                <span class="">ExportMyChat</span>
             `;
 
             buttonContainer.prepend(exportButton);
@@ -445,7 +446,7 @@ export default defineContentScript({
 
                 // Send to storage
                 chrome.storage.local.set({ chatData }, () => {
-                    console.log("✅ Artifact exported to Chat2PDF");
+                    console.log("✅ Artifact exported to ExportMyChat");
 
                     // Reset button
                     if (exportButton) {
@@ -669,7 +670,7 @@ export default defineContentScript({
 
                 // Send to storage
                 chrome.storage.local.set({ chatData }, () => {
-                    console.log("✅ Gemini artifact exported to Chat2PDF");
+                    console.log("✅ Gemini artifact exported to ExportMyChat");
 
                     // Reset button
                     if (exportButton) {
@@ -1949,7 +1950,7 @@ export default defineContentScript({
                 return;
             }
             console.log(
-                "Chat2Pdf: ❤️❤️❤️ Inserting export button...",
+                "ExportMyChat: ❤️❤️❤️ Inserting export button...",
                 isChatGPT,
                 isClaude,
                 isGemini,
@@ -1997,7 +1998,7 @@ export default defineContentScript({
                 }
 
                 console.log(
-                    "Chat2Pdf: ❤️❤️❤️ URL change detected",
+                    "ExportMyChat: ❤️❤️❤️ URL change detected",
                     isOnChatPage()
                 );
 
@@ -2037,18 +2038,505 @@ export default defineContentScript({
             }, 15000);
         }
 
+        // ==========================================
+        // INDIVIDUAL RESPONSE EXPORT FUNCTIONALITY
+        // ==========================================
+
+        // Get extension icon URL for export buttons
+        const exportIconUrl = chrome.runtime.getURL("icon/32.png");
+
+        // Function to export a single Claude response
+        function exportClaudeResponse(responseContainer: Element) {
+            try {
+                // Get chat title
+                let title = "";
+                const titleElement = document.querySelector(
+                    '[data-testid="chat-title-button"]'
+                );
+                if (titleElement) {
+                    title =
+                        titleElement.textContent?.trim() || "Claude Response";
+                }
+
+                // Get the response content
+                const content = responseContainer.innerHTML?.trim() || "";
+
+                if (!content) {
+                    console.warn("No content found in Claude response");
+                    return;
+                }
+
+                const chatData = {
+                    title: title || "Claude Response",
+                    source: "claude" as const,
+                    messages: [{ role: "assistant", content }],
+                    artifacts: [],
+                };
+
+                chrome.storage.local.set(
+                    { chatData, savedChatId: null, pdfSettings: null },
+                    () => {
+                        chrome.runtime.sendMessage({ action: "openOptions" });
+                        console.log("✅ Claude response exported");
+                    }
+                );
+            } catch (error) {
+                console.error("Error exporting Claude response:", error);
+            }
+        }
+
+        // Function to export a single ChatGPT response
+        function exportChatGPTResponse(turnElement: Element) {
+            try {
+                // Get chat title
+                let title = "";
+                const activeLink = document.querySelector(
+                    'nav[aria-label="Chat history"] a[data-active]'
+                );
+                if (activeLink) {
+                    title = activeLink.textContent?.trim() || "";
+                }
+
+                // Get the assistant content
+                const assistantContent = turnElement.querySelector(
+                    '[data-message-author-role="assistant"]'
+                );
+                const content = assistantContent?.innerHTML?.trim() || "";
+
+                // Get any generated images
+                const images: string[] = [];
+                const imageElements = turnElement.querySelectorAll(
+                    'img[alt="Generated image"]'
+                );
+                imageElements.forEach((img) => {
+                    const src = (img as HTMLImageElement).src;
+                    if (src && !images.includes(src)) {
+                        images.push(src);
+                    }
+                });
+
+                if (!content && images.length === 0) {
+                    console.warn("No content found in ChatGPT response");
+                    return;
+                }
+
+                const message: {
+                    role: string;
+                    content: string;
+                    images?: string[];
+                } = {
+                    role: "assistant",
+                    content,
+                };
+                if (images.length > 0) message.images = images;
+
+                const chatData = {
+                    title: title || "ChatGPT Response",
+                    source: "chatgpt" as const,
+                    messages: [message],
+                };
+
+                chrome.storage.local.set(
+                    { chatData, savedChatId: null, pdfSettings: null },
+                    () => {
+                        chrome.runtime.sendMessage({ action: "openOptions" });
+                        console.log("✅ ChatGPT response exported");
+                    }
+                );
+            } catch (error) {
+                console.error("Error exporting ChatGPT response:", error);
+            }
+        }
+
+        // Function to export a single Gemini response
+        async function exportGeminiResponse(modelResponse: Element) {
+            try {
+                // Get chat title
+                let title = "";
+                const titleElement = document.querySelector(
+                    ".conversation-title"
+                );
+                if (titleElement) {
+                    title =
+                        titleElement.textContent?.trim() || "Gemini Response";
+                }
+
+                // Get the message content
+                const messageContent = modelResponse.querySelector(
+                    "message-content .markdown"
+                );
+                const content = messageContent?.innerHTML?.trim() || "";
+
+                // Get any generated images
+                const images: string[] = [];
+                const imageElements = modelResponse.querySelectorAll(
+                    "generated-image img"
+                );
+                imageElements.forEach((img) => {
+                    const src = (img as HTMLImageElement).src;
+                    if (src && !images.includes(src)) {
+                        images.push(src);
+                    }
+                });
+
+                // Convert images to data URLs
+                if (images.length > 0) {
+                    const dataUrlPromises = images.map((url) =>
+                        imageUrlToDataUrl(url)
+                    );
+                    const dataUrls = await Promise.all(dataUrlPromises);
+                    images.length = 0;
+                    images.push(...dataUrls);
+                }
+
+                if (!content && images.length === 0) {
+                    console.warn("No content found in Gemini response");
+                    return;
+                }
+
+                const message: {
+                    role: string;
+                    content: string;
+                    images?: string[];
+                } = {
+                    role: "assistant",
+                    content,
+                };
+                if (images.length > 0) message.images = images;
+
+                const chatData = {
+                    title: title || "Gemini Response",
+                    source: "gemini" as const,
+                    messages: [message],
+                    artifacts: [],
+                };
+
+                chrome.storage.local.set(
+                    { chatData, savedChatId: null, pdfSettings: null },
+                    () => {
+                        chrome.runtime.sendMessage({ action: "openOptions" });
+                        console.log("✅ Gemini response exported");
+                    }
+                );
+            } catch (error) {
+                console.error("Error exporting Gemini response:", error);
+            }
+        }
+
+        // Function to export a single DeepSeek response
+        function exportDeepSeekResponse(assistantMessageDiv: Element) {
+            try {
+                // Get chat title
+                let title = document.title.replace(" - DeepSeek", "").trim();
+                if (!title || title === "DeepSeek") {
+                    title = "DeepSeek Response";
+                }
+
+                // Clone the message div for processing
+                const clonedDiv = assistantMessageDiv.cloneNode(
+                    true
+                ) as HTMLElement;
+
+                // Process code blocks
+                const codeBlocks = clonedDiv.querySelectorAll(".md-code-block");
+                codeBlocks.forEach((codeBlock) => {
+                    const preElement = codeBlock.querySelector("pre");
+                    if (preElement) {
+                        const codeText = preElement.textContent || "";
+                        const languageEl = codeBlock.querySelector(".d813de27");
+                        const language = languageEl?.textContent?.trim() || "";
+                        const header = document.createElement("div");
+                        header.className = "code-header";
+                        header.textContent = language;
+
+                        // Escape HTML entities
+                        const escapedCode = codeText
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+
+                        // Replace with formatted code block
+                        const codeDiv = document.createElement("div");
+                        codeDiv.className = "deepseek-code";
+                        codeDiv.innerHTML = `<pre><code class="language-${language}">${escapedCode}</code></pre>`;
+                        codeBlock.replaceWith(codeDiv);
+                        codeDiv.prepend(header);
+                    }
+                });
+
+                // Get the processed HTML
+                let assistantHTML = clonedDiv.innerHTML;
+                assistantHTML = assistantHTML
+                    .replace(/<span[^>]*>/g, "")
+                    .replace(/<\/span>/g, "");
+
+                if (!assistantHTML) {
+                    console.warn("No content found in DeepSeek response");
+                    return;
+                }
+
+                const chatData = {
+                    title,
+                    source: "deepseek" as const,
+                    messages: [{ role: "assistant", content: assistantHTML }],
+                };
+
+                chrome.storage.local.set(
+                    { chatData, savedChatId: null, pdfSettings: null },
+                    () => {
+                        chrome.runtime.sendMessage({ action: "openOptions" });
+                        console.log("✅ DeepSeek response exported");
+                    }
+                );
+            } catch (error) {
+                console.error("Error exporting DeepSeek response:", error);
+            }
+        }
+
+        // Function to insert export button for Claude responses
+        function insertClaudeResponseExportButtons() {
+            // Find all Claude assistant response containers (font-claude-response)
+            const responseContainers = document.querySelectorAll(
+                ".font-claude-response"
+            );
+
+            responseContainers.forEach((responseContainer) => {
+                // Find the action bar within or near this response
+                // The action bar is a sibling or child element with the specific classes
+                const parentElement = responseContainer.parentElement;
+                if (!parentElement) return;
+
+                // Look for the action bar in the parent's children or siblings
+                let actionBar = parentElement.querySelector(
+                    ".text-text-300.flex.items-stretch.justify-between"
+                );
+
+                // If not found directly, try looking in the grandparent
+                if (!actionBar && parentElement.parentElement) {
+                    actionBar = parentElement.parentElement.querySelector(
+                        ".text-text-300.flex.items-stretch.justify-between"
+                    );
+                }
+
+                if (!actionBar) return;
+
+                // Skip if already has export button
+                if (actionBar.querySelector(".response-export-btn")) return;
+
+                // Create the export button wrapper
+                const buttonWrapper = document.createElement("div");
+                buttonWrapper.className = "w-fit";
+                buttonWrapper.setAttribute("data-state", "closed");
+
+                const exportButton = document.createElement("button");
+                exportButton.className = `response-export-btn inline-flex items-center justify-center relative shrink-0 can-focus select-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:drop-shadow-none border-transparent transition font-base duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] h-8 w-8 rounded-md active:scale-95 group/btn Button_ghost__BUAoh`;
+                exportButton.type = "button";
+                exportButton.setAttribute("aria-label", "Export Response");
+                exportButton.title = "Export this response";
+
+                exportButton.innerHTML = `
+                    <div class="flex items-center justify-center text-text-500 group-hover/btn:text-text-100" style="width: 20px; height: 20px;">
+                        <img src="${exportIconUrl}" width="18" height="18" />
+                    </div>
+                `;
+
+                exportButton.addEventListener("click", () => {
+                    exportClaudeResponse(responseContainer);
+                });
+
+                buttonWrapper.appendChild(exportButton);
+
+                // Insert before the retry button container (the .flex.items-center div)
+                // Use Array.from().find() to ensure we get a direct child and avoid nested .flex.items-center elements
+                const retryButtonContainer = Array.from(
+                    actionBar.children
+                ).find(
+                    (child) =>
+                        child.classList.contains("flex") &&
+                        child.classList.contains("items-center")
+                );
+
+                if (retryButtonContainer) {
+                    actionBar.insertBefore(buttonWrapper, retryButtonContainer);
+                } else {
+                    actionBar.appendChild(buttonWrapper);
+                }
+            });
+        }
+
+        // Function to insert export button for ChatGPT responses
+        function insertChatGPTResponseExportButtons() {
+            // Find all ChatGPT turn action button containers
+            const actionContainers = document.querySelectorAll(
+                '[data-testid="conversation-turn-"] .flex.flex-wrap.items-center, [class*="group-hover/turn-messages"]'
+            );
+
+            actionContainers.forEach((container) => {
+                // Skip if already has export button
+                if (container.querySelector(".response-export-btn")) return;
+
+                // Find the parent turn element
+                const turnElement = container.closest(
+                    '[data-testid^="conversation-turn"]'
+                );
+                if (!turnElement) return;
+
+                // Only add to assistant responses
+                const isAssistant = turnElement.querySelector(
+                    '[data-message-author-role="assistant"]'
+                );
+                if (!isAssistant) return;
+
+                // Create the export button
+                const exportButton = document.createElement("button");
+                exportButton.className =
+                    "response-export-btn text-token-text-secondary hover:bg-token-bg-secondary rounded-lg";
+                exportButton.setAttribute("aria-label", "Export Response");
+                exportButton.title = "Export this response";
+
+                exportButton.innerHTML = `
+                    <span class="flex items-center justify-center touch:w-10 h-8 w-8">
+                        <img src="${exportIconUrl}" width="18" height="18" class="icon" />
+                    </span>
+                `;
+
+                exportButton.addEventListener("click", () => {
+                    exportChatGPTResponse(turnElement);
+                });
+
+                // Insert at the end of the button group
+                container.prepend(exportButton);
+            });
+        }
+
+        // Function to insert export button for Gemini responses
+        function insertGeminiResponseExportButtons() {
+            // Find all Gemini response action containers
+            const actionContainers = document.querySelectorAll(
+                ".buttons-container-v2"
+            );
+
+            actionContainers.forEach((container) => {
+                // Skip if already has export button
+                if (container.querySelector(".response-export-btn")) return;
+
+                // Find the model-response parent
+                const modelResponse = container.closest("model-response");
+                if (!modelResponse) return;
+
+                // Create the export button
+                const exportButton = document.createElement("button");
+                exportButton.className =
+                    "response-export-btn mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-tooltip-trigger icon-button mat-unthemed";
+                exportButton.setAttribute("mat-button", "");
+                exportButton.setAttribute("tabindex", "0");
+                exportButton.setAttribute("aria-label", "Export Response");
+                exportButton.title = "Export this response";
+
+                exportButton.innerHTML = `
+                    <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+                    <img src="${exportIconUrl}" style="width: 18px; height: 18px;" />
+                    <span class="mat-focus-indicator"></span>
+                    <span class="mat-mdc-button-touch-target"></span>
+                    <span class="mat-ripple mat-mdc-button-ripple"></span>
+                `;
+
+                exportButton.addEventListener("click", () => {
+                    exportGeminiResponse(modelResponse);
+                });
+                container.appendChild(exportButton);
+                // Insert before the spacer
+                const spacer = container.querySelector(".spacer");
+                if (spacer) {
+                    container.insertAdjacentElement("afterend", spacer);
+                } else {
+                    container.appendChild(exportButton);
+                }
+            });
+        }
+
+        // Function to insert export button for DeepSeek responses
+        function insertDeepSeekResponseExportButtons() {
+            // Find all DeepSeek response action containers
+            const actionContainers =
+                document.querySelectorAll(".ds-flex._0a3d93b");
+
+            actionContainers.forEach((container) => {
+                // Skip if already has export button
+                if (container.querySelector(".response-export-btn")) return;
+
+                // Find the assistant message content
+                const parentMessage = container.closest("._4f9bf79");
+                if (!parentMessage) return;
+
+                const assistantMessageDiv =
+                    parentMessage.querySelector(".ds-markdown");
+                if (!assistantMessageDiv) return;
+
+                // Find the button group container
+                const buttonGroup = container.querySelector(
+                    ".ds-flex._965abe9._54866f7"
+                );
+                if (!buttonGroup) return;
+
+                // Create the export button
+                const exportButton = document.createElement("div");
+                exportButton.className =
+                    "response-export-btn db183363 ds-icon-button ds-icon-button--m ds-icon-button--sizing-container";
+                exportButton.setAttribute("tabindex", "0");
+                exportButton.setAttribute("role", "button");
+                exportButton.setAttribute("aria-disabled", "false");
+                exportButton.title = "Export this response";
+
+                exportButton.innerHTML = `
+                    <div class="ds-icon-button__hover-bg"></div>
+                    <div class="ds-icon">
+                        <img src="${exportIconUrl}" width="18" height="18" />
+                    </div>
+                    <div class="ds-focus-ring"></div>
+                `;
+
+                exportButton.addEventListener("click", () => {
+                    exportDeepSeekResponse(assistantMessageDiv);
+                });
+
+                // Insert at the end of the button group
+                buttonGroup.appendChild(exportButton);
+            });
+        }
+
+        // Function to insert response export buttons based on platform
+        function insertResponseExportButtons() {
+            if (!isOnChatPage()) return;
+
+            if (isClaude) {
+                insertClaudeResponseExportButtons();
+            } else if (isChatGPT) {
+                insertChatGPTResponseExportButtons();
+            } else if (isGemini) {
+                insertGeminiResponseExportButtons();
+            } else if (isDeepSeek) {
+                insertDeepSeekResponseExportButtons();
+            }
+        }
+
         // Set up MutationObserver to watch for DOM changes
         const observer = new MutationObserver(() => {
             checkUrlChange();
 
-            console.log("Chat2Pdf: ❤️❤️❤️ URL change detected", isOnChatPage());
+            console.log(
+                "ExportMyChat: ❤️❤️❤️ URL change detected",
+                isOnChatPage()
+            );
 
             if (
                 isOnChatPage() &&
                 !document.querySelector("#export-chat-button")
             ) {
                 console.log(
-                    "Chat2Pdf: ❤️❤️❤️ Inserting export button...",
+                    "ExportMyChat: ❤️❤️❤️ Inserting export button...",
                     isChatGPT,
                     isClaude,
                     isGemini,
@@ -2070,6 +2558,9 @@ export default defineContentScript({
                     insertGeminiArtifactExportButton();
                 }
             }
+
+            // Insert response export buttons for all platforms
+            insertResponseExportButtons();
         });
 
         observer.observe(document.body, {

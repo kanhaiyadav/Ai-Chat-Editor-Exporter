@@ -1,6 +1,6 @@
 {
     "header": {
-        "title": "Chat2Pdf",
+        "title": "ExportMyChat",
         "subtitle": "AI sohbetlerini düzenle ve dışa aktar",
         "reviewTooltip": "Bize bir yorum yazın",
         "coffeeTooltip": "Bana bir kahve ısmarla",
@@ -274,8 +274,8 @@
         "copySuccess": "Panoya kopyalandı"
     },
     "coffee": {
-        "title": "Chat2Pdf'i Destekle",
-        "message": "Chat2Pdf'i yararlı buluyorsanız, bana bir kahve ısmarlamayı düşünün!",
+        "title": "ExportMyChat'i Destekle",
+        "message": "ExportMyChat'i yararlı buluyorsanız, bana bir kahve ısmarlamayı düşünün!",
         "visitPage": "Buy Me a Coffee Sayfasını Ziyaret Et",
         "thankYou": "Çok teşekkürler!",
         "contribution": "Katkınız bu uzantıyı sürdürmeye ve geliştirmeye yardımcı olur. Her kahve önemlidir!"
@@ -394,7 +394,7 @@
         "importError": "Sohbetleri içe aktarırken hata oluştu",
         "or": "veya",
         "chooseFiles": "Dosya seçin",
-        "description": "Chat2Pdf'ten daha önce dışa aktardığınız sohbet yedeklerini içe aktarın.",
+        "description": "ExportMyChat'ten daha önce dışa aktardığınız sohbet yedeklerini içe aktarın.",
         "review": "İncele",
         "importing": "Sohbetler içe aktarılıyor...",
         "success": "İçe aktarma başarılı!",
