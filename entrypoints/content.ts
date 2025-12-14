@@ -20,6 +20,12 @@ export default defineContentScript({
         const isGemini = location.hostname.includes("gemini.google.com");
         const isDeepSeek = location.hostname.includes("deepseek.com");
 
+        let isTemporaryChat =
+            location.href.includes("temporary-chat") ||
+            location.href.includes("incognito") ||
+            document.querySelector(".temp-chat-on") !== null;
+        const isShare = location.href.includes("share");
+
         // Initialize currentChatId AFTER isChatGPT, isClaude, and isGemini are defined
         let currentChatId = extractChatId(location.href);
 
@@ -89,18 +95,23 @@ export default defineContentScript({
 
         // Function to check if we're on a chat page
         function isOnChatPage() {
+            isTemporaryChat =
+                location.href.includes("temporary-chat") ||
+                location.href.includes("incognito") ||
+                document.querySelector(".temp-chat-on") !== null;
             if (isChatGPT) {
                 return (
                     location.href.includes("/c/") ||
                     location.href.includes("/g/") ||
-                    location.href.includes("temporary-chat")
+                    location.href.includes("temporary-chat") ||
+                    location.href.includes("share")
                 );
             } else if (isClaude) {
-                return location.href.includes("/chat/");
+                return ( location.href.includes("/chat/") || location.href.includes("/share/") || location.href.includes("incognito") );
             } else if (isGemini) {
-                return location.href.includes("/app");
+                return location.href.includes("/app") || location.href.includes("/share/");
             } else if (isDeepSeek) {
-                return location.href.includes("/chat/");
+                return location.href.includes("/chat/") || location.href.includes("/share/");
             }
             return false;
         } // Function to get current active artifact
@@ -179,16 +190,14 @@ export default defineContentScript({
 
         // Function to insert the button for Claude
         function insertClaudeButton() {
-            const buttonContainer = document.querySelector("header");
-            buttonContainer?.style.setProperty("align-items", "center");
-            buttonContainer?.style.setProperty("padding-right", "10px");
-
             if (
-                !buttonContainer ||
                 document.querySelector("#export-chat-button")
             ) {
                 return;
             }
+            const buttonContainer = document.querySelector("header");
+            buttonContainer?.style.setProperty("align-items", "center");
+            buttonContainer?.style.setProperty("padding-right", "10px");
 
             const exportButton = document.createElement("button");
             exportButton.id = "export-chat-button";
@@ -214,7 +223,20 @@ export default defineContentScript({
 
             exportButton.innerHTML = `ExportMyChat`;
 
-            buttonContainer.appendChild(exportButton);
+            if (!buttonContainer) {
+                exportButton.style.cssText = `
+  position: absolute;
+  top: 58px;
+  right: 20px;
+  z-index: 2147483647;
+`;
+
+                document.querySelector('.root')?.appendChild(exportButton);
+
+            } else {
+                buttonContainer.appendChild(exportButton);
+            }
+
             exportButton.addEventListener("click", extractClaudeData);
 
             console.log("✅ Export Chat button inserted for Claude");
@@ -929,6 +951,10 @@ export default defineContentScript({
                     title = activeLink.textContent?.trim() || "";
                 }
 
+                if (isTemporaryChat) {
+                    title = "Temporary ChatGPT Chat";
+                }
+
                 const turns = document.querySelectorAll(
                     '[data-testid^="conversation-turn"]'
                 );
@@ -1159,6 +1185,10 @@ export default defineContentScript({
                 );
                 if (titleElement) {
                     title = titleElement.textContent?.trim() || "Claude Chat";
+                }
+
+                if (isTemporaryChat) {
+                    title = "Temporary Claude Chat";
                 }
 
                 const messageContainers = document.querySelectorAll(
@@ -1476,9 +1506,17 @@ export default defineContentScript({
                     title = titleElement.textContent?.trim() || "Gemini Chat";
                 }
 
-                const conversationContainers = document.querySelectorAll(
+                if (isTemporaryChat) {
+                    title = "Temporary Gemini Chat";
+                }
+
+                let conversationContainers = document.querySelectorAll(
                     ".conversation-container"
                 );
+
+                if (conversationContainers.length === 0) {
+                    conversationContainers = document.querySelectorAll('share-turn-viewer');
+                }
 
                 const messages: {
                     role: string;
@@ -1646,7 +1684,8 @@ export default defineContentScript({
 
                     // Extract assistant message
                     const modelResponse =
-                        container.querySelector("model-response");
+                        container.querySelector("model-response") ||
+                        container.querySelector(".response-container-content");
                     if (modelResponse) {
                         const messageContent = modelResponse.querySelector(
                             "message-content .markdown"
