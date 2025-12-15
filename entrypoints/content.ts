@@ -107,11 +107,21 @@ export default defineContentScript({
                     location.href.includes("share")
                 );
             } else if (isClaude) {
-                return ( location.href.includes("/chat/") || location.href.includes("/share/") || location.href.includes("incognito") );
+                return (
+                    location.href.includes("/chat/") ||
+                    location.href.includes("/share/") ||
+                    location.href.includes("incognito")
+                );
             } else if (isGemini) {
-                return location.href.includes("/app") || location.href.includes("/share/");
+                return (
+                    location.href.includes("/app") ||
+                    location.href.includes("/share/")
+                );
             } else if (isDeepSeek) {
-                return location.href.includes("/chat/") || location.href.includes("/share/");
+                return (
+                    location.href.includes("/chat/") ||
+                    location.href.includes("/share/")
+                );
             }
             return false;
         } // Function to get current active artifact
@@ -190,9 +200,7 @@ export default defineContentScript({
 
         // Function to insert the button for Claude
         function insertClaudeButton() {
-            if (
-                document.querySelector("#export-chat-button")
-            ) {
+            if (document.querySelector("#export-chat-button")) {
                 return;
             }
             const buttonContainer = document.querySelector("header");
@@ -231,8 +239,7 @@ export default defineContentScript({
   z-index: 2147483647;
 `;
 
-                document.querySelector('.root')?.appendChild(exportButton);
-
+                document.querySelector(".root")?.appendChild(exportButton);
             } else {
                 buttonContainer.appendChild(exportButton);
             }
@@ -280,7 +287,7 @@ export default defineContentScript({
 
             exportButton.innerHTML = `
                 <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
-                <mat-icon role="img" class="mat-icon notranslate google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">file_download</mat-icon>
+                <mat-icon role="img" class="mat-icon notranslate google-symbols mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">file_upload</mat-icon>
                 <span class="mdc-button__label">ExportMyChat</span>
                 <span class="mat-focus-indicator"></span>
                 <span class="mat-mdc-button-touch-target"></span>
@@ -1515,7 +1522,8 @@ export default defineContentScript({
                 );
 
                 if (conversationContainers.length === 0) {
-                    conversationContainers = document.querySelectorAll('share-turn-viewer');
+                    conversationContainers =
+                        document.querySelectorAll("share-turn-viewer");
                 }
 
                 const messages: {
