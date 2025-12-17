@@ -1,8 +1,14 @@
 import Dexie, { Table } from "dexie";
 import { PDFSettings, Message, ChatSource } from "@/entrypoints/options/types";
 
+// Generate a UUID for sync identification across devices
+export function generateSyncId(): string {
+    return crypto.randomUUID();
+}
+
 export interface SavedPreset {
     id?: number;
+    syncId: string; // UUID for cross-device sync identification
     name: string;
     settings: PDFSettings;
     createdAt: Date;
@@ -11,6 +17,7 @@ export interface SavedPreset {
 
 export interface SavedChat {
     id?: number;
+    syncId: string; // UUID for cross-device sync identification
     name: string;
     title: string;
     messages: Message[];
@@ -44,6 +51,32 @@ export class SettingsDatabase extends Dexie {
             presets: "++id, name, createdAt, updatedAt",
             chats: "++id, name, source, createdAt, updatedAt",
         });
+        // Add version 5 to include syncId for cross-device sync
+        this.version(5)
+            .stores({
+                presets: "++id, syncId, name, createdAt, updatedAt",
+                chats: "++id, syncId, name, source, createdAt, updatedAt",
+            })
+            .upgrade(async (tx) => {
+                // Migrate existing presets - add syncId
+                await tx
+                    .table("presets")
+                    .toCollection()
+                    .modify((preset: any) => {
+                        if (!preset.syncId) {
+                            preset.syncId = crypto.randomUUID();
+                        }
+                    });
+                // Migrate existing chats - add syncId
+                await tx
+                    .table("chats")
+                    .toCollection()
+                    .modify((chat: any) => {
+                        if (!chat.syncId) {
+                            chat.syncId = crypto.randomUUID();
+                        }
+                    });
+            });
     }
 }
 
@@ -54,12 +87,18 @@ export const presetOperations = {
     // Save a new preset
     async savePreset(name: string, settings: PDFSettings): Promise<number> {
         const now = new Date();
-        return await db.presets.add({
+        const id = await db.presets.add({
+            syncId: generateSyncId(),
             name,
             settings,
             createdAt: now,
             updatedAt: now,
         });
+
+        // Trigger auto-sync
+        triggerAutoSync();
+
+        return id;
     },
 
     // Get all presets
@@ -83,11 +122,46 @@ export const presetOperations = {
             settings,
             updatedAt: new Date(),
         });
+
+        // Trigger auto-sync
+        triggerAutoSync();
     },
 
     // Delete a preset
     async deletePreset(id: number): Promise<void> {
+        // Get syncId before deletion for tracking
+        const preset = await db.presets.get(id);
         await db.presets.delete(id);
+
+        // Track deletion for sync using syncId
+        if (preset?.syncId) {
+            trackDeletion("preset", preset.syncId);
+        }
+
+        // Trigger auto-sync
+        triggerAutoSync();
+    },
+
+    // Delete a preset without tracking (used during sync)
+    async deletePresetWithoutTracking(id: number): Promise<void> {
+        await db.presets.delete(id);
+    },
+
+    // Save a preset with a specific syncId (used during sync/restore)
+    async savePresetWithSyncId(
+        syncId: string,
+        name: string,
+        settings: PDFSettings
+    ): Promise<number> {
+        const now = new Date();
+        const id = await db.presets.add({
+            syncId,
+            name,
+            settings,
+            createdAt: now,
+            updatedAt: now,
+        });
+        return id;
     },
 
     // Check if a preset name exists
@@ -109,7 +183,37 @@ export const presetOperations = {
     },
 };
 
-// Utility functions for chat management
+// Helper function to track deletions for sync
+async function trackDeletion(type: "chat" | "preset", syncId: string) {
+    try {
+        const { googleDriveSync } = await import("./googleDriveSync");
+        await googleDriveSync.trackDeletion(type, syncId);
+    } catch (error) {
+        console.error("Failed to track deletion:", error);
+    }
+}
+
+// Helper function to trigger sync if enabled
+async function triggerAutoSync() {
+    try {
+        const { googleDriveSync } = await import("./googleDriveSync");
+        const syncStatus = await googleDriveSync.getSyncStatus();
+
+        if (
+            syncStatus.enabled &&
+            syncStatus.authenticated &&
+            !syncStatus.syncInProgress
+        ) {
+            // Trigger sync in background
+            const chats = await chatOperations.getAllChats();
+            const presets = await presetOperations.getAllPresets();
+            googleDriveSync.syncAll(chats, presets).catch(console.error);
+        }
+    } catch (error) {
+        console.error("Auto-sync error:", error);
+    }
+}
+
 export const chatOperations = {
     // Save a new chat
     async saveChat(
@@ -120,7 +224,8 @@ export const chatOperations = {
         settings: PDFSettings
     ): Promise<number> {
         const now = new Date();
-        return await db.chats.add({
+        const id = await db.chats.add({
+            syncId: generateSyncId(),
             name,
             title,
             messages,
@@ -129,6 +234,11 @@ export const chatOperations = {
             createdAt: now,
             updatedAt: now,
         });
+
+        // Trigger auto-sync
+        triggerAutoSync();
+
+        return id;
     },
 
     // Get all chats
@@ -158,11 +268,52 @@ export const chatOperations = {
             settings,
             updatedAt: new Date(),
         });
+
+        // Trigger auto-sync
+        triggerAutoSync();
     },
 
     // Delete a chat
     async deleteChat(id: number): Promise<void> {
+        // Get syncId before deletion for tracking
+        const chat = await db.chats.get(id);
         await db.chats.delete(id);
+
+        // Track deletion for sync using syncId
+        if (chat?.syncId) {
+            trackDeletion("chat", chat.syncId);
+        }
+
+        // Trigger auto-sync
+        triggerAutoSync();
+    },
+
+    // Delete a chat without tracking (used during sync)
+    async deleteChatWithoutTracking(id: number): Promise<void> {
+        await db.chats.delete(id);
+    },
+
+    // Save a chat with a specific syncId (used during sync/restore)
+    async saveChatWithSyncId(
+        syncId: string,
+        name: string,
+        title: string,
+        messages: Message[],
+        source: ChatSource,
+        settings: PDFSettings
+    ): Promise<number> {
+        const now = new Date();
+        const id = await db.chats.add({
+            syncId,
+            name,
+            title,
+            messages,
+            source,
+            settings,
+            createdAt: now,
+            updatedAt: now,
+        });
+        return id;
     },
 
     // Check if a chat name exists

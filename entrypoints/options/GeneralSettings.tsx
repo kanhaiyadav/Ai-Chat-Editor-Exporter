@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { fontFamilies, PDFSettings } from './types';
 import { LuSettings } from "react-icons/lu";
+import { GoogleDriveSyncSettings } from '@/components/GoogleDriveSyncSettings';
 
 interface GeneralSettingsProps {
     settings: PDFSettings['general'];
@@ -214,6 +215,11 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     checked={settings?.includeUserAttachments}
                                     onCheckedChange={(checked) => onUpdate({ includeUserAttachments: checked })}
                                 />
+                            </div>
+
+                            {/* Google Drive Sync Section */}
+                            <div className='pt-4 border-t'>
+                                <GoogleDriveSyncSettings />
                             </div>
 
                         </div>

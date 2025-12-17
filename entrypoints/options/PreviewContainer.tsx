@@ -193,7 +193,7 @@ export const PreviewContainer = ({
                             />
                         )
                     ) : (
-                        <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+                            <div className='text-center p-[40px] text-[#9ca3af] flex flex-col items-center'>
                             <img src="/empty.png" alt="" className='w-[300px] h-auto' />
                             <p>If you think this is unexpected,</p>
                             <p className='!mt-[-10px]'>make sure you click on the export chat button on the chat page <br /> only after the chat page has fully loaded.</p>

@@ -7,12 +7,19 @@ export default defineConfig({
     modules: ["@wxt-dev/module-react"],
     manifest: {
         name: "ExportMyChat",
+        key: "cmfbkbpocbpnioeefbgbohejpbgbkbih",
         description: "A browser extension for converting AI chats to PDF",
         version: "14.0.0",
         content_security_policy: {
             extension_pages: "script-src 'self'; object-src 'self'",
         },
-        permissions: ["scripting", "activeTab", "downloads", "storage"],
+        permissions: [
+            "scripting",
+            "activeTab",
+            "downloads",
+            "storage",
+            "identity",
+        ],
         host_permissions: [
             "https://chatgpt.com/*",
             "https://chat.openai.com/*",
@@ -21,6 +28,9 @@ export default defineConfig({
             "https://lh3.google.com/*",
             "https://lh3.googleusercontent.com/*",
             "https://chat.deepseek.com/*",
+            "https://www.googleapis.com/*",
+            "https://accounts.google.com/*",
+            "https://oauth2.googleapis.com/*",
         ],
         web_accessible_resources: [
             {

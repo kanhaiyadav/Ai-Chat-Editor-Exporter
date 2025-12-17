@@ -5,6 +5,7 @@ import { FaGithub, FaStar } from "react-icons/fa6";
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { BuyMeCoffeeModal } from '@/components/BuyMeCoffeeModal';
+import { SyncStatusIndicator } from '@/components/SyncStatusIndicator';
 
 export const Header = () => {
     const { t } = useTranslation();
@@ -30,6 +31,7 @@ export const Header = () => {
                     </div>
                 </div>
                 <div className='flex items-center gap-6'>
+                    <SyncStatusIndicator />
                     <LanguageSelector />
                     <ThemeToggle />
                     <FaStar
