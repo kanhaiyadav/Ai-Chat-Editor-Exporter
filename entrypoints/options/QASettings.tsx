@@ -67,24 +67,26 @@ export const QASettings = ({ settings, isExpanded, onToggle, onUpdate }: QASetti
                                 value={settings.answerColor}
                                 onChange={(value) => onUpdate({ answerColor: value })}
                             />
+                            <div className='flex gap-4'>
+                                <div>
+                                    <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.questionPrefix')}</Label>
+                                    <Input
+                                        type="text"
+                                        value={settings.questionPrefix}
+                                        onChange={(e) => onUpdate({ questionPrefix: e.target.value })}
+                                    />
+                                </div>
 
-                            <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.questionPrefix')}</Label>
-                                <Input
-                                    type="text"
-                                    value={settings.questionPrefix}
-                                    onChange={(e) => onUpdate({ questionPrefix: e.target.value })}
-                                />
+                                <div>
+                                    <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.answerPrefix')}</Label>
+                                    <Input
+                                        type="text"
+                                        value={settings.answerPrefix}
+                                        onChange={(e) => onUpdate({ answerPrefix: e.target.value })}
+                                    />
+                                </div>
                             </div>
 
-                            <div>
-                                <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.answerPrefix')}</Label>
-                                <Input
-                                    type="text"
-                                    value={settings.answerPrefix}
-                                    onChange={(e) => onUpdate({ answerPrefix: e.target.value })}
-                                />
-                            </div>
 
                             <div>
                                 <Label className='block text-sm font-medium text-foreground/70 mb-2'>{t('settings.qaStyle.separatorStyle')}</Label>

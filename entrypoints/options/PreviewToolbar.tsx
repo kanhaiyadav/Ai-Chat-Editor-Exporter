@@ -16,6 +16,8 @@ import { FaFilePdf } from "react-icons/fa6";
 import { LuFileText } from "react-icons/lu";
 import { VscJson } from "react-icons/vsc";
 import { useTranslation } from 'react-i18next';
+import { PiChatsLight } from "react-icons/pi";
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface PreviewToolbarProps {
     currentChatId: number | null;
@@ -31,6 +33,7 @@ interface PreviewToolbarProps {
     onExportJSON: () => void;
     onMerge: () => void;
     onCloseChat?: () => void;
+    onManageMessages?: () => void;
 }
 
 export const PreviewToolbar = ({
@@ -47,6 +50,8 @@ export const PreviewToolbar = ({
     onExportJSON,
     onMerge,
     onCloseChat,
+    onManageMessages,
+
 }: PreviewToolbarProps) => {
     const { t } = useTranslation();
 
@@ -89,7 +94,7 @@ export const PreviewToolbar = ({
     return (
         <div className='sticky top-0 z-10 bg-accent border-b border-border/40 px-4 py-2 flex items-center justify-between gap-2 !rounded-none'>
             {/* Left side - Chat actions */}
-            <div className='flex items-center gap-2 w-full'>
+            <div className='flex items-center w-full'>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -128,16 +133,6 @@ export const PreviewToolbar = ({
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-
-                <Button
-                    onClick={onMerge}
-                    size="sm"
-                    className="gap-2 [&_svg:not([class*='size-'])]:size-5"
-                    variant="ghost"
-                >
-                    <PiGitMerge size={16} />
-                    {t('preview.mergeChats')}
-                </Button>
 
                 {currentChatId !== null ? (
                     <>
@@ -181,17 +176,42 @@ export const PreviewToolbar = ({
                         {t('preview.saveAs')}
                     </Button>
                 )}
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 [&_svg:not([class*='size-'])]:size-5"
+                    onClick={onManageMessages}
+                >
+                    <PiChatsLight size={16} />
+                    {t('preview.manageMessages')}
+                </Button>
+
+                <Button
+                    onClick={onMerge}
+                    size="sm"
+                    className="gap-2 [&_svg:not([class*='size-'])]:size-5"
+                    variant="ghost"
+                >
+                    <PiGitMerge size={16} />
+                    {t('preview.mergeChats')}
+                </Button>
                 {
                     (currentChatId || chatDataExists) && (
-                        <Button
-                            variant={'ghost'}
-                            size="sm"
-                            className="ml-auto gap-2 !bg-red-500/10 group"
-                            onClick={handleCloseChat}
-                        >
-                            <X className='text-red-600 group-hover:text-red-500' />
-                            <span className='text-red-600 group-hover:text-red-500'>{t('preview.closeChat')}</span>
-                        </Button>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant={'ghost'}
+                                    size="sm"
+                                    className="ml-auto gap-2 !bg-red-500/10 group border border-red-500/40 hover:!bg-red-500/20 [&_svg:not([class*='size-'])]:size-[22px]"
+                                    onClick={handleCloseChat}
+                                >
+                                    <X className='text-red-600 group-hover:text-red-500' />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{t('preview.closeChat')}</p>
+                            </TooltipContent>
+                        </Tooltip>
                     )}
             </div>
         </div>

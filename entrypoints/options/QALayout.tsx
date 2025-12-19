@@ -9,10 +9,17 @@ interface QALayoutProps {
     onStartEdit: (index: number, element?: HTMLDivElement) => void;
     onContentChange: (index: number, content: string) => void;
     onFinishEdit: () => void;
+    isEditingContent?: boolean;
 }
 
-export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onContentChange, onFinishEdit }: QALayoutProps) => {
+export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onContentChange, onFinishEdit, isEditingContent }: QALayoutProps) => {
     let questionNumber = 0;
+
+    // Generate a unique key for each message to force re-render on reorder
+    const getMessageKey = (message: Message, index: number) => {
+        const contentHash = message.content ? message.content.slice(0, 50) : '';
+        return `${index}-${message.role}-${contentHash}`;
+    };
 
     return (
         <>
@@ -42,7 +49,7 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                 ) : null;
 
                 return (
-                    <div key={index}>
+                    <div key={getMessageKey(message, index)}>
                         {separator}
                         <div style={{
                             marginBottom: '16px',
@@ -81,8 +88,8 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                                     message.content !== '' &&
                                     (isQuestion ?
                                         <div
-                                            style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: 'text' }}
-                                            contentEditable={true}
+                                            style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: isEditingContent ? 'text' : 'default' }}
+                                            contentEditable={isEditingContent}
                                             suppressContentEditableWarning
                                             ref={(el) => {
                                                 if (el && !el.innerHTML && message.content) {
@@ -90,29 +97,37 @@ export const QALayout = ({ messages, settings, editingIndex, onStartEdit, onCont
                                                 }
                                             }}
                                             onClick={(e) => {
-                                                onStartEdit(index, e.currentTarget);
-                                                e.currentTarget.focus();
+                                                if (isEditingContent) {
+                                                    onStartEdit(index, e.currentTarget);
+                                                    e.currentTarget.focus();
+                                                }
                                             }}
                                             onInput={(e) => {
-                                                onContentChange(index, e.currentTarget.innerHTML);
+                                                if (isEditingContent) {
+                                                    onContentChange(index, e.currentTarget.innerHTML);
+                                                }
                                             }}
                                         >
                                         </div> :
                                         <div
-                                            contentEditable={true}
+                                            contentEditable={isEditingContent}
                                             suppressContentEditableWarning
-                                            style={{ outline: 'none', cursor: 'text' }}
+                                            style={{ outline: 'none', cursor: isEditingContent ? 'text' : 'default' }}
                                             ref={(el) => {
                                                 if (el && !el.innerHTML && message.content) {
                                                     el.innerHTML = message.content;
                                                 }
                                             }}
                                             onClick={(e) => {
-                                                onStartEdit(index, e.currentTarget);
-                                                e.currentTarget.focus();
+                                                if (isEditingContent) {
+                                                    onStartEdit(index, e.currentTarget);
+                                                    e.currentTarget.focus();
+                                                }
                                             }}
                                             onInput={(e) => {
-                                                onContentChange(index, e.currentTarget.innerHTML);
+                                                if (isEditingContent) {
+                                                    onContentChange(index, e.currentTarget.innerHTML);
+                                                }
                                             }}
                                         />)
                                 }

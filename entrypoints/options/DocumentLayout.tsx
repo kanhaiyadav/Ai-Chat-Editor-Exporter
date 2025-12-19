@@ -9,9 +9,16 @@ interface DocumentLayoutProps {
     onStartEdit: (index: number, element?: HTMLDivElement) => void;
     onContentChange: (index: number, content: string) => void;
     onFinishEdit: () => void;
+    isEditingContent?: boolean;
 }
 
-export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, onContentChange, onFinishEdit }: DocumentLayoutProps) => {
+export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, onContentChange, onFinishEdit, isEditingContent }: DocumentLayoutProps) => {
+    // Generate a unique key for each message to force re-render on reorder
+    const getMessageKey = (message: Message, index: number) => {
+        const contentHash = message.content ? message.content.slice(0, 50) : '';
+        return `${index}-${message.role}-${contentHash}`;
+    };
+
     return (
         <>
             {
@@ -38,7 +45,7 @@ export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, 
                 const isTopic = message.role === 'user';
                 const includeImage = isTopic ? settings.general.includeUserImages : settings.general.includeAIImages;
                 return (
-                    <div key={index} style={{
+                    <div key={getMessageKey(message, index)} style={{
                         marginBottom: '16px',
                     }}>
                         {
@@ -57,8 +64,8 @@ export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, 
                             }}>
                                 {isTopic ?
                                     <div
-                                        style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: 'text' }}
-                                        contentEditable={true}
+                                        style={{ whiteSpace: 'pre-wrap', outline: 'none', cursor: isEditingContent ? 'text' : 'default' }}
+                                        contentEditable={isEditingContent}
                                         suppressContentEditableWarning
                                         ref={(el) => {
                                             if (el && !el.innerHTML && message.content) {
@@ -66,29 +73,37 @@ export const DocumentLayout = ({ messages, settings, editingIndex, onStartEdit, 
                                             }
                                         }}
                                         onClick={(e) => {
-                                            onStartEdit(index, e.currentTarget);
-                                            e.currentTarget.focus();
+                                            if (isEditingContent) {
+                                                onStartEdit(index, e.currentTarget);
+                                                e.currentTarget.focus();
+                                            }
                                         }}
                                         onInput={(e) => {
-                                            onContentChange(index, e.currentTarget.innerHTML);
+                                            if (isEditingContent) {
+                                                onContentChange(index, e.currentTarget.innerHTML);
+                                            }
                                         }}
                                     >
                                     </div> :
                                     <div
-                                        contentEditable={true}
+                                        contentEditable={isEditingContent}
                                         suppressContentEditableWarning
-                                        style={{ outline: 'none', cursor: 'text' }}
+                                        style={{ outline: 'none', cursor: isEditingContent ? 'text' : 'default' }}
                                         ref={(el) => {
                                             if (el && !el.innerHTML && message.content) {
                                                 el.innerHTML = message.content;
                                             }
                                         }}
                                         onClick={(e) => {
-                                            onStartEdit(index, e.currentTarget);
-                                            e.currentTarget.focus();
+                                            if (isEditingContent) {
+                                                onStartEdit(index, e.currentTarget);
+                                                e.currentTarget.focus();
+                                            }
                                         }}
                                         onInput={(e) => {
-                                            onContentChange(index, e.currentTarget.innerHTML);
+                                            if (isEditingContent) {
+                                                onContentChange(index, e.currentTarget.innerHTML);
+                                            }
                                         }}
                                     />}
                             </div>

@@ -10,7 +10,6 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { fontFamilies, PDFSettings } from './types';
 import { LuSettings } from "react-icons/lu";
-import { GoogleDriveSyncSettings } from '@/components/GoogleDriveSyncSettings';
 
 interface GeneralSettingsProps {
     settings: PDFSettings['general'];
@@ -164,33 +163,34 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     </Select>
                                 </div>
                             </div>
-
-                            <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.fontSize')}</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings?.fontSize}</span>
+                            <div className='flex gap-4'>
+                                <div className='flex-1'>
+                                    <div className='flex items-center justify-between mb-2'>
+                                        <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.fontSize')}</Label>
+                                        <span className='text-sm font-semibold text-amber-600'>{settings?.fontSize}</span>
+                                    </div>
+                                    <Slider
+                                        value={[settings?.fontSize || 16]}
+                                        onValueChange={(values) => onUpdate({ fontSize: values[0] })}
+                                        min={10}
+                                        max={24}
+                                        step={1}
+                                    />
                                 </div>
-                                <Slider
-                                    value={[settings?.fontSize || 16]}
-                                    onValueChange={(values) => onUpdate({ fontSize: values[0] })}
-                                    min={10}
-                                    max={24}
-                                    step={1}
-                                />
-                            </div>
 
-                            <div>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.lineHeight')}</Label>
-                                    <span className='text-sm font-semibold text-amber-600'>{settings?.lineHeight}</span>
+                                <div className='flex-1'>
+                                    <div className='flex items-center justify-between mb-2'>
+                                        <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.lineHeight')}</Label>
+                                        <span className='text-sm font-semibold text-amber-600'>{settings?.lineHeight}</span>
+                                    </div>
+                                    <Slider
+                                        value={[settings?.lineHeight || 1.6]}
+                                        onValueChange={(values) => onUpdate({ lineHeight: values[0] })}
+                                        min={1.2}
+                                        max={2.5}
+                                        step={0.1}
+                                    />
                                 </div>
-                                <Slider
-                                    value={[settings?.lineHeight || 1.6]}
-                                    onValueChange={(values) => onUpdate({ lineHeight: values[0] })}
-                                    min={1.2}
-                                    max={2.5}
-                                    step={0.1}
-                                />
                             </div>
 
                             <div className='flex items-center justify-between'>
@@ -207,19 +207,6 @@ export const GeneralSettings = ({ settings, isExpanded, onToggle, onUpdate }: Ge
                                     checked={settings?.includeUserImages}
                                     onCheckedChange={(checked) => onUpdate({ includeUserImages: checked })}
                                 />
-                            </div>
-
-                            <div className='flex items-center justify-between'>
-                                <Label className='text-sm font-medium text-foreground/70'>{t('settings.general.includeUserDocs')}</Label>
-                                <Switch
-                                    checked={settings?.includeUserAttachments}
-                                    onCheckedChange={(checked) => onUpdate({ includeUserAttachments: checked })}
-                                />
-                            </div>
-
-                            {/* Google Drive Sync Section */}
-                            <div className='pt-4 border-t'>
-                                <GoogleDriveSyncSettings />
                             </div>
 
                         </div>

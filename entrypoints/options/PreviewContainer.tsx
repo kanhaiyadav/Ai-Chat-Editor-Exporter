@@ -5,6 +5,11 @@ import { DocumentLayout } from './DocumentLayout';
 import { PreviewToolbar } from './PreviewToolbar';
 import { useState, useEffect } from 'react';
 import { Spinner } from '@/components/ui/spinner';
+import { Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useTranslation } from 'react-i18next';
+import { FiEdit } from "react-icons/fi";
 
 interface PreviewContainerProps {
     source: 'chatgpt' | 'claude' | 'deepseek' | 'gemini';
@@ -24,10 +29,13 @@ interface PreviewContainerProps {
     onExportJSON: () => void;
     onMerge: () => void;
     onCloseChat?: () => void;
+    onManageMessages?: () => void;
     editingIndex: number | null;
     onStartEdit: (index: number, element?: HTMLDivElement) => void;
     onContentChange: (index: number, content: string) => void;
     onFinishEdit: () => void;
+    isEditingContent?: boolean;
+    onToggleEditContent?: () => void;
 }
 
 export const PreviewContainer = ({
@@ -48,12 +56,15 @@ export const PreviewContainer = ({
     onExportJSON,
     onMerge,
     onCloseChat,
+    onManageMessages,
     editingIndex,
     onStartEdit,
     onContentChange,
     onFinishEdit,
+    isEditingContent,
+    onToggleEditContent,
 }: PreviewContainerProps) => {
-
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [prevMessageCount, setPrevMessageCount] = useState(0);
 
@@ -128,7 +139,7 @@ export const PreviewContainer = ({
     }, [loading, messages, artifacts, source]);
 
     return (
-        <div className='flex-1 h-full flex flex-col bg-background mt-1'>
+        <div className='flex-1 h-full flex flex-col bg-background mt-1 relative'>
             <PreviewToolbar
                 currentChatId={currentChatId}
                 chatSaved={chatSaved}
@@ -143,6 +154,7 @@ export const PreviewContainer = ({
                 onExportJSON={onExportJSON}
                 onMerge={onMerge}
                 onCloseChat={onCloseChat}
+                onManageMessages={onManageMessages}
             />
 
             <div
@@ -172,6 +184,7 @@ export const PreviewContainer = ({
                                 onStartEdit={onStartEdit}
                                 onContentChange={onContentChange}
                                 onFinishEdit={onFinishEdit}
+                                isEditingContent={isEditingContent}
                             />
                         ) : settings && settings.layout === 'qa' ? (
                             <QALayout
@@ -181,6 +194,7 @@ export const PreviewContainer = ({
                                 onStartEdit={onStartEdit}
                                 onContentChange={onContentChange}
                                 onFinishEdit={onFinishEdit}
+                                isEditingContent={isEditingContent}
                             />
                         ) : (
                             <DocumentLayout
@@ -190,10 +204,11 @@ export const PreviewContainer = ({
                                 onStartEdit={onStartEdit}
                                 onContentChange={onContentChange}
                                 onFinishEdit={onFinishEdit}
+                                isEditingContent={isEditingContent}
                             />
                         )
                     ) : (
-                            <div className='text-center p-[40px] text-[#9ca3af] flex flex-col items-center'>
+                        <div className='text-center p-[40px] text-[#9ca3af] flex flex-col items-center'>
                             <img src="/empty.png" alt="" className='w-[300px] h-auto' />
                             <p>If you think this is unexpected,</p>
                             <p className='!mt-[-10px]'>make sure you click on the export chat button on the chat page <br /> only after the chat page has fully loaded.</p>
@@ -208,6 +223,30 @@ export const PreviewContainer = ({
                     </div>
                 </div>
             </div>
+
+            {/* Floating Edit Content Button */}
+            {messages && messages.length > 0 && (
+                <div
+                    className={`absolute bottom-6 right-6 z-50 transition-all duration-300 ease-in-out ${isEditingContent ? 'opacity-0 scale-0 pointer-events-none' : 'opacity-100 scale-100'
+                        }`}
+                >
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                onClick={onToggleEditContent}
+                                size="lg"
+                                className="gap-2 shadow-2xl hover:shadow-xl transition-shadow rounded-full h-13 px-6"
+                            >
+                                <FiEdit className="w-6 h-6" />
+                                {t('preview.editContent')}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                            <p>{t('preview.editContentTooltipOff')}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+            )}
         </div>
     );
 };

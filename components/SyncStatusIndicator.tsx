@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Cloud, CloudOff, RefreshCw } from "lucide-react";
+import { CloudOff, RefreshCw } from "lucide-react";
+import { BsCloudCheck } from "react-icons/bs";
 import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSync";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -44,12 +45,12 @@ export function SyncStatusIndicator() {
 
     const getStatusIcon = () => {
         if (syncStatus.syncInProgress) {
-            return <RefreshCw className="h-4 w-4 animate-spin text-blue-600" />;
+            return <RefreshCw className="h-5 w-5 animate-spin dark:text-blue-500 text-blue-600" />;
         }
         if (syncStatus.error) {
-            return <CloudOff className="h-4 w-4 text-red-600" />;
+            return <CloudOff className="h-6 w-6 dark:text-red-500 text-red-600" />;
         }
-        return <Cloud className="h-4 w-4 text-green-600" />;
+        return <BsCloudCheck className="h-6 w-6 dark:text-green-500 text-green-600" />;
     };
 
     const getStatusText = () => {
@@ -81,11 +82,8 @@ export function SyncStatusIndicator() {
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/50 cursor-help">
+                    <div className="p-3 rounded-md cursor-help">
                         {getStatusIcon()}
-                        <span className="text-xs font-medium text-muted-foreground">
-                            {syncStatus.syncInProgress ? "Syncing..." : "Synced"}
-                        </span>
                     </div>
                 </TooltipTrigger>
                 <TooltipContent>

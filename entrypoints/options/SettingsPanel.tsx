@@ -1,143 +1,47 @@
-import { useState, useEffect, useRef } from 'react';
-import { RotateCcw, Save, SaveAll, Pencil, Check, X, Upload, Palette } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { RotateCcw, Save, SaveAll, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import { PDFSettings, Message } from './types';
+import { PDFSettings } from './types';
 import { LayoutSelector } from './LayoutSelection';
 import { ChatSettings } from './ChatSettings';
 import { QASettings } from './QASettings';
 import { DocumentSettings } from './DocumentSettings';
 import { GeneralSettings } from './GeneralSettings';
-import { MessageManagement } from './MessageManagement';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, presetOperations } from '@/lib/settingsDB';
-import { ChatEditor } from './Editor';
-import { EditorToolbar } from './EditorToolbar';
-import { ImageDialog, TableDialog, LinkDialog } from './EditorDialogs';
 import { useTranslation } from 'react-i18next';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SettingsPanelProps {
     settings: PDFSettings;
     expandedSections: { [key: string]: boolean };
-    messages: Message[] | null;
-    selectedMessages: Set<number>;
     currentPresetId: number | null;
     settingsChanged: boolean;
     presetSaved: boolean;
     onUpdateSettings: (updates: Partial<PDFSettings>) => void;
     onToggleSection: (section: string) => void;
     onResetSettings: () => void;
-    onUpdateMessage: (index: number, content: string) => void;
-    onToggleMessage: (index: number) => void;
-    onReorderMessages: (newOrder: Message[]) => void;
     onSavePreset: () => void;
     onSaveAsPreset: () => void;
-    editingMessageIndex: number | null;
-    editingElementRef: HTMLDivElement | null;
 }
 
 export const SettingsPanel = ({
     settings,
     expandedSections,
-    messages,
-    selectedMessages,
     currentPresetId,
     settingsChanged,
     presetSaved,
     onUpdateSettings,
     onToggleSection,
     onResetSettings,
-    onUpdateMessage,
-    onToggleMessage,
-    onReorderMessages,
     onSavePreset,
     onSaveAsPreset,
-    editingMessageIndex,
-    editingElementRef,
 }: SettingsPanelProps) => {
     const { t } = useTranslation();
     const [isEditingPresetName, setIsEditingPresetName] = useState(false);
     const [editedPresetName, setEditedPresetName] = useState('');
     const [error, setError] = useState('');
-
-    // Dialog states for toolbar
-    const [imageDialogOpen, setImageDialogOpen] = useState(false);
-    const [tableDialogOpen, setTableDialogOpen] = useState(false);
-    const [linkDialogOpen, setLinkDialogOpen] = useState(false);
-    const [savedRange, setSavedRange] = useState<Range | null>(null);
-
-    const saveSelection = () => {
-        if (!editingElementRef) return;
-        const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            if (editingElementRef.contains(range.commonAncestorContainer)) {
-                setSavedRange(range.cloneRange());
-            }
-        }
-    };
-
-    // Helper function to insert HTML at cursor position
-    const insertHtmlAtCursor = (html: string) => {
-        if (!editingElementRef) return;
-
-        editingElementRef.focus();
-
-        const selection = window.getSelection();
-        if (!selection) return;
-
-        if (savedRange) {
-            selection.removeAllRanges();
-            selection.addRange(savedRange);
-            setSavedRange(null);
-        } else if (selection.rangeCount === 0) {
-            // If no selection, append at the end
-            const range = document.createRange();
-            range.selectNodeContents(editingElementRef);
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-        // Try document.execCommand first
-        const success = document.execCommand('insertHTML', false, html);
-
-        // If execCommand fails, manually insert
-        if (!success && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-
-            const frag = document.createDocumentFragment();
-            let node;
-            while ((node = tempDiv.firstChild)) {
-                frag.appendChild(node);
-            }
-
-            range.insertNode(frag);
-            range.collapse(false);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-        // Trigger input event to save changes / React listeners
-        const inputEvent = typeof InputEvent !== 'undefined'
-            ? new InputEvent('input', { bubbles: true, cancelable: true, data: html })
-            : new Event('input', { bubbles: true });
-        editingElementRef.dispatchEvent(inputEvent);
-
-        // Ensure message state updates even if synthetic events don't fire
-        if (editingMessageIndex !== null) {
-            onUpdateMessage(editingMessageIndex, editingElementRef.innerHTML);
-        }
-    };
 
     // Get current preset details
     const currentPreset = useLiveQuery(
@@ -150,40 +54,6 @@ export const SettingsPanel = ({
             setEditedPresetName(currentPreset.name);
         }
     }, [currentPreset]);
-
-    // Add paste event listener to strip formatting when pasting in code blocks
-    useEffect(() => {
-        if (!editingElementRef) return;
-
-        const handlePaste = (e: ClipboardEvent) => {
-            const selection = window.getSelection();
-            if (!selection || selection.rangeCount === 0) return;
-
-            // Check if cursor is inside a code element
-            let node = selection.anchorNode;
-            let isInCode = false;
-            while (node && node !== editingElementRef) {
-                if (node.nodeName === 'CODE' || (node as Element).tagName === 'CODE') {
-                    isInCode = true;
-                    break;
-                }
-                node = node.parentNode;
-            }
-
-            if (isInCode) {
-                e.preventDefault();
-                e.stopPropagation();
-                const text = e.clipboardData?.getData('text/plain') || '';
-                document.execCommand('insertText', false, text);
-            }
-        };
-
-        editingElementRef.addEventListener('paste', handlePaste as EventListener);
-
-        return () => {
-            editingElementRef.removeEventListener('paste', handlePaste as EventListener);
-        };
-    }, [editingElementRef]);
 
     const handleStartEditPresetName = () => {
         if (currentPreset) {
@@ -230,12 +100,14 @@ export const SettingsPanel = ({
     return (
         <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border border-border'>
             {/* Sticky Header with Preset Name */}
-            <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-3 pb-[15px]'>
+            <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-1 pb-[8px]'>
                 {isEditingPresetName ? (
                     <div className='space-y-2'>
                         <div className='flex items-center gap-2'>
                             <Input
                                 value={editedPresetName}
+                                autoFocus
+                                onFocus={(e) => e.target.select()}
                                 onChange={(e) => {
                                     setEditedPresetName(e.target.value);
                                     setError('');
@@ -248,7 +120,6 @@ export const SettingsPanel = ({
                                     }
                                 }}
                                 className='h-8 flex-1'
-                                autoFocus
                             />
                             <Button
                                 onClick={handleSavePresetName}
@@ -271,15 +142,52 @@ export const SettingsPanel = ({
                     </div>
                 ) : (
                     <div className='flex items-center justify-between'>
-                        <h3 className='text-sm font-semibold truncate flex-1'>{presetDisplayName}</h3>
-                        {currentPresetId && (
-                            <div
-                                onClick={handleStartEditPresetName}
-                                className='p-0 ml-2'
-                            >
-                                <Pencil size={15} />
-                            </div>
-                        )}
+                        {
+
+                            currentPresetId ? (
+                                <h3 className='text-sm font-semibold truncate flex-1'
+                                    onClick={handleStartEditPresetName}
+
+                                >{presetDisplayName}</h3>
+                            ) :
+                                <h3 className='text-sm font-semibold truncate flex-1'>{presetDisplayName}</h3>
+                        }
+                        <div>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size={'icon'} variant={'ghost'} onClick={onSavePreset} disabled={currentPresetId === null || !settingsChanged}>
+                                        {presetSaved ? (
+                                            <Check size={16} className='text-green-500' />
+                                        ) : (
+                                            <Save size={16} />
+                                        )}
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{presetSaved ? t('settingsPanel.saved') : t('settingsPanel.save')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size={'icon'} variant={'ghost'} onClick={onSaveAsPreset}>
+                                        <SaveAll size={16} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t('settingsPanel.saveAs')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size={'icon'} variant={'ghost'} onClick={onResetSettings}>
+                                        <RotateCcw size={14} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t('settingsPanel.resetToDefault')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </div>
                     </div>
                 )}
             </div>
@@ -329,146 +237,7 @@ export const SettingsPanel = ({
                     onToggle={() => onToggleSection('general')}
                     onUpdate={(updates) => onUpdateSettings({ general: { ...settings.general, ...updates } })}
                 />
-
-                <MessageManagement
-                    messages={messages}
-                    isExpanded={expandedSections.messages}
-                    onToggle={() => onToggleSection('messages')}
-                    onUpdateMessage={onUpdateMessage}
-                    onToggleMessage={onToggleMessage}
-                    onReorderMessages={onReorderMessages}
-                    selectedMessages={selectedMessages}
-                />
-
-                {/* Editor Toolbar - Always visible */}
-                <Card className="shadow-sm border border-gray-200 gap-1">
-                    <CardHeader className="px-4">
-                        <CardTitle className="flex items-center justify-between font-semibold text-sm">
-                            <span className="flex items-center gap-2">
-                                <Pencil size={16} />
-                                {t('settingsPanel.editorToolbar')}
-                            </span>
-                            {editingMessageIndex !== null && (
-                                <span className='text-xs font-normal text-muted-foreground'>
-                                    Editing Message #{editingMessageIndex + 1}
-                                </span>
-                            )}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="px-4 pb-2~">
-                        <EditorToolbar
-                            onFormat={(command, value) => {
-                                if (editingElementRef) {
-                                    editingElementRef.focus();
-                                    setTimeout(() => {
-                                        document.execCommand(command, false, value);
-                                    }, 0);
-                                }
-                            }}
-                            onInsertImage={() => {
-                                saveSelection();
-                                setImageDialogOpen(true);
-                            }}
-                            onInsertTable={() => {
-                                saveSelection();
-                                setTableDialogOpen(true);
-                            }}
-                            onInsertCodeBlock={() => {
-                                if (editingElementRef) {
-                                    const codeHTML = `<pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto; font-family: monospace;"><code><br></code></pre>`;
-                                    insertHtmlAtCursor(codeHTML);
-
-                                    // Focus and place cursor inside the code element
-                                    setTimeout(() => {
-                                        const pre = editingElementRef.querySelector('pre:last-of-type');
-                                        const code = pre?.querySelector('code');
-                                        if (code) {
-                                            const range = document.createRange();
-                                            const selection = window.getSelection();
-                                            range.setStart(code, 0);
-                                            range.collapse(true);
-                                            selection?.removeAllRanges();
-                                            selection?.addRange(range);
-                                            editingElementRef.focus();
-                                        }
-                                    }, 10);
-                                }
-                            }}
-                            onInsertLink={() => {
-                                saveSelection();
-                                setLinkDialogOpen(true);
-                            }}
-                        />
-                    </CardContent>
-                </Card>
             </div>
-
-            {/* Fixed Button Bar */}
-            <div className='flex flex-col gap-2 w-full bg-accent py-4 px-6 mt-auto shadow-lg border-t border-border'>
-                <div className='flex items-center gap-2 w-full'>
-                    <Button
-                        onClick={onSavePreset}
-                        variant="default"
-                        className="flex-1"
-                        size="lg"
-                        disabled={currentPresetId === null || !settingsChanged}
-                    >
-                        {presetSaved ? (
-                            <>
-                                <Check size={16} className='mr-1 text-green-500' />
-                                Saved
-                            </>
-                        ) : (
-                            <>
-                                <Save size={16} className='mr-1' />
-                                {t('settingsPanel.save')}
-                            </>
-                        )}
-                    </Button>
-                    <Button
-                        onClick={onSaveAsPreset}
-                        variant="secondary"
-                        className="flex-1"
-                        size="lg"
-                    >
-                        <SaveAll size={16} className='mr-1' />
-                        {t('settingsPanel.saveAs')}
-                    </Button>
-                </div>
-
-                <Button
-                    onClick={onResetSettings}
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                >
-                    <RotateCcw size={14} className='mr-1' />
-                    {t('settingsPanel.resetToDefault')}
-                </Button>
-            </div>
-
-            {/* Editor Dialogs */}
-            <ImageDialog
-                open={imageDialogOpen}
-                onOpenChange={setImageDialogOpen}
-                onInsert={(html) => {
-                    insertHtmlAtCursor(html);
-                }}
-            />
-            <TableDialog
-                open={tableDialogOpen}
-                onOpenChange={setTableDialogOpen}
-                onInsert={(html) => {
-                    insertHtmlAtCursor(html);
-                }}
-            />
-            <LinkDialog
-                open={linkDialogOpen}
-                onOpenChange={setLinkDialogOpen}
-                onInsert={(html) => {
-                    insertHtmlAtCursor(html);
-                }}
-            />
         </div>
     );
 };

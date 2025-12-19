@@ -18,6 +18,8 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
+import { MessageManagementPanel } from './MessageManagementPanel';
+import { EditorPanel } from './EditorPanel';
 
 interface StorageChange {
     newValue?: any;
@@ -32,6 +34,7 @@ interface ChatData {
     messages: Message[];
     source: ChatSource;
     artifacts: Array<any>;
+    htmlCleaned?: boolean; // Flag to track if HTML has been cleaned
 }
 
 const deepEqual = (a: unknown, b: unknown): boolean => {
@@ -92,11 +95,10 @@ function App() {
     const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
         presets: false,
         layout: false,
-        chatStyle: false,
-        qaStyle: false,
-        documentStyle: false,
-        general: false,
-        messages: false,
+        chatStyle: true,
+        qaStyle: true,
+        documentStyle: true,
+        general: true,
     });
     const { effectiveTheme, loading } = useTheme();
     const [settings, setSettings] = useState<PDFSettings>(defaultSettings);
@@ -124,6 +126,9 @@ function App() {
     const [showImportDialog, setShowImportDialog] = useState(false);
     const [editingMessageIndex, setEditingMessageIndex] = useState<number | null>(null);
     const [editingElementRef, setEditingElementRef] = useState<HTMLDivElement | null>(null);
+    const [showMessageManagementPanel, setShowMessageManagementPanel] = useState(false);
+    const [isEditingContent, setIsEditingContent] = useState(false);
+    const [showEditorPanel, setShowEditorPanel] = useState(false);
 
 
     useEffect(() => {
@@ -148,6 +153,7 @@ function App() {
                 const SavedChatData: ChatData = {
                     ...chatData,
                     source: chatData?.source || ("chatgpt" as ChatSource),
+                    htmlCleaned: true, // Saved chats are already cleaned
                 };
                 setChatData(SavedChatData);
 
@@ -170,17 +176,28 @@ function App() {
             } else {
 
                 const { chatData } = await getFromStorage(["chatData"]);
-                const cleanedChatData = chatData?.messages?.map((msg: Message) => ({
-                    ...msg,
-                    content: cleanHTML(msg.content, chatData?.source),
-                }));
+
+                // Only clean HTML if it hasn't been cleaned before
+                const needsCleaning = chatData && !chatData.htmlCleaned;
+                const cleanedChatData = needsCleaning
+                    ? chatData?.messages?.map((msg: Message) => ({
+                        ...msg,
+                        content: cleanHTML(msg.content, chatData?.source),
+                    }))
+                    : chatData?.messages;
 
                 const chatDataWithSource = {
                     ...chatData,
                     messages: cleanedChatData,
                     source: chatData?.source || ("chatgpt" as ChatSource),
+                    htmlCleaned: true, // Mark as cleaned
                 };
                 setChatData(chatDataWithSource);
+
+                // Save the cleaned data back to storage so it persists
+                if (needsCleaning && chatData) {
+                    chrome.storage.local.set({ chatData: chatDataWithSource });
+                }
 
                 if (cleanedChatData) {
                     const initialSelectedMessages: Set<number> = new Set(
@@ -202,16 +219,29 @@ function App() {
             const listener = (changes: StorageChanges, areaName: string) => {
                 if (areaName === "local") {
                     if (changes.chatData && changes.chatData.newValue) {
-                        const cleanedMessages = changes.chatData.newValue.messages?.map(
-                            (msg: Message) => ({
-                                ...msg,
-                                content: cleanHTML(msg.content, changes.chatData.newValue.source || "chatgpt"),
-                            })
-                        );
-                        setChatData({
-                            ...changes.chatData.newValue,
-                            messages: cleanedMessages
-                        });
+                        const newChatData = changes.chatData.newValue;
+
+                        // Only clean HTML if it hasn't been cleaned before
+                        if (newChatData.htmlCleaned) {
+                            // Already cleaned, use as-is
+                            setChatData(newChatData);
+                        } else {
+                            // Clean HTML for fresh data from external sources
+                            const cleanedMessages = newChatData.messages?.map(
+                                (msg: Message) => ({
+                                    ...msg,
+                                    content: cleanHTML(msg.content, newChatData.source || "chatgpt"),
+                                })
+                            );
+                            const cleanedChatData = {
+                                ...newChatData,
+                                messages: cleanedMessages,
+                                htmlCleaned: true,
+                            };
+                            setChatData(cleanedChatData);
+                            // Save the cleaned data back to storage
+                            chrome.storage.local.set({ chatData: cleanedChatData });
+                        }
                     }
                     if (changes.pdfSettings) {
                         setSettings(changes.pdfSettings.newValue);
@@ -323,15 +353,26 @@ function App() {
         if (element) {
             setEditingElementRef(element);
         }
+        // Open editor panel when starting to edit
+        setShowEditorPanel(true);
     };
 
-    const handleContentChange = (index: number, content: string) => {
+    // This is now only called when user explicitly saves from the editor panel
+    const handleSaveEditedContent = (index: number, content: string) => {
         handleUpdateMessage(index, content);
+    };
+
+    // No-op for live content changes - we don't save immediately anymore
+    const handleContentChange = (index: number, content: string) => {
+        // Content changes are tracked locally in contentEditable, not saved to state
+        // This prevents the re-render that causes focus loss
     };
 
     const handleFinishEdit = () => {
         setEditingMessageIndex(null);
         setEditingElementRef(null);
+        setShowEditorPanel(false);
+        setIsEditingContent(false); // Deactivate editing button
     };
 
     const handleToggleMessage = (index: number) => {
@@ -346,41 +387,24 @@ function App() {
         });
     };
 
-    const generateMessageHash = (message: Message): string => {
-        const content = `${message.role}-${message.content || ''}`;
-        let hash = 0;
-        for (let i = 0; i < content.length; i++) {
-            const char = content.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        return `message-${Math.abs(hash)}`;
-    };
-
     const handleReorderMessages = (newOrder: Message[]) => {
         if (!chatData) return;
 
-        // Create a map of message hash to original index for all messages
-        const hashToOldIndex = new Map<string, number>();
-        chatData.messages.forEach((msg, index) => {
-            const hash = generateMessageHash(msg);
-            hashToOldIndex.set(hash, index);
-        });
+        // We need to map old selection indices to new indices
+        // The newOrder already contains the reordered messages
+        // We need to find where each originally-selected message ended up
 
-        // Create a set of hashes for selected messages
-        const selectedHashes = new Set<string>();
-        chatData.messages.forEach((msg, index) => {
-            if (selectedMessages.has(index)) {
-                const hash = generateMessageHash(msg);
-                selectedHashes.add(hash);
-            }
-        });
-
-        // Find new indices for selected messages
+        // Create a reference map using original message references
+        const originalMessages = chatData.messages;
         const newSelectedMessages = new Set<number>();
-        newOrder.forEach((msg, newIndex) => {
-            const hash = generateMessageHash(msg);
-            if (selectedHashes.has(hash)) {
+
+        // For each message in the new order, check if it was selected in the old order
+        // We do this by finding its original index through reference comparison
+        newOrder.forEach((newMsg, newIndex) => {
+            const originalIndex = originalMessages.findIndex(
+                (oldMsg) => oldMsg === newMsg
+            );
+            if (originalIndex !== -1 && selectedMessages.has(originalIndex)) {
                 newSelectedMessages.add(newIndex);
             }
         });
@@ -551,12 +575,13 @@ function App() {
     };
 
     const loadChatData = (chat: SavedChat, preset: PDFSettings | null) => {
-        // Load chat data
+        // Load chat data - mark as htmlCleaned since saved chats are already cleaned
         const newChatData = {
             title: chat.title,
             messages: chat.messages,
             source: chat.source,
             artifacts: [],
+            htmlCleaned: true, // Saved chats are already cleaned, don't clean again
         };
         setChatData(newChatData);
         chrome.storage.local.set({ chatData: newChatData, savedChatId: chat.id! });
@@ -812,31 +837,60 @@ function App() {
                             onExportJSON={handleExportJSON}
                             onMerge={() => setShowMergeDialog(true)}
                             onCloseChat={handleCloseChat}
+                            onManageMessages={() => setShowMessageManagementPanel(true)}
                             editingIndex={editingMessageIndex}
                             onStartEdit={handleStartEditMessage}
                             onContentChange={handleContentChange}
                             onFinishEdit={handleFinishEdit}
+                            isEditingContent={isEditingContent}
+                            onToggleEditContent={() => {
+                                const newEditingState = !isEditingContent;
+                                setIsEditingContent(newEditingState);
+                                setShowEditorPanel(newEditingState);
+                                if (!newEditingState) {
+                                    // Also clear editing state when turning off
+                                    setEditingMessageIndex(null);
+                                    setEditingElementRef(null);
+                                }
+                            }}
                         />
 
-                        <SettingsPanel
-                            settings={settings}
-                            expandedSections={expandedSections}
-                            messages={chatData?.messages || []}
-                            selectedMessages={selectedMessages}
-                            currentPresetId={currentPresetId}
-                            settingsChanged={settingsChanged}
-                            presetSaved={presetSaved}
-                            onUpdateSettings={updateSettings}
-                            onToggleSection={toggleSection}
-                            onResetSettings={handleResetSettingsRequest}
-                            onUpdateMessage={handleUpdateMessage}
-                            onToggleMessage={handleToggleMessage}
-                            onReorderMessages={handleReorderMessages}
-                            onSavePreset={handleSavePreset}
-                            onSaveAsPreset={handleSaveAsPreset}
-                            editingMessageIndex={editingMessageIndex}
-                            editingElementRef={editingElementRef}
-                        />
+                        {/* Settings Panel with Editor and Message Management overlays */}
+                        <div className='relative h-full overflow-hidden'>
+                            <SettingsPanel
+                                settings={settings}
+                                expandedSections={expandedSections}
+                                currentPresetId={currentPresetId}
+                                settingsChanged={settingsChanged}
+                                presetSaved={presetSaved}
+                                onUpdateSettings={updateSettings}
+                                onToggleSection={toggleSection}
+                                onResetSettings={handleResetSettingsRequest}
+                                onSavePreset={handleSavePreset}
+                                onSaveAsPreset={handleSaveAsPreset}
+                            />
+                            <EditorPanel
+                                isOpen={showEditorPanel}
+                                onClose={handleFinishEdit}
+                                editingMessageIndex={editingMessageIndex}
+                                editingElementRef={editingElementRef}
+                                onSaveContent={handleSaveEditedContent}
+                                onSaveAndClose={() => {
+                                    setShowEditorPanel(false);
+                                    setIsEditingContent(false);
+                                    setEditingMessageIndex(null);
+                                    setEditingElementRef(null);
+                                }}
+                            />
+                            <MessageManagementPanel
+                                isOpen={showMessageManagementPanel}
+                                onClose={() => setShowMessageManagementPanel(false)}
+                                messages={chatData?.messages || null}
+                                selectedMessages={selectedMessages}
+                                onToggleMessage={handleToggleMessage}
+                                onReorderMessages={handleReorderMessages}
+                            />
+                        </div>
                     </div>
                 </SidebarInset>
             </SidebarProvider>
