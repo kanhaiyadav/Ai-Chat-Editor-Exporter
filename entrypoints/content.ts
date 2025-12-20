@@ -169,7 +169,7 @@ export default defineContentScript({
                 const exportButton = document.createElement("button");
                 exportButton.id = "export-chat-button";
                 exportButton.className =
-                    "btn relative btn-ghost text-token-text-primary mx-2";
+                    "btn relative btn-ghost text-token-text-primary hover:bg-token-surface-hover keyboard-focused:bg-token-surface-hover rounded-lg max-sm:hidden";
                 exportButton.setAttribute("aria-label", "Export Chat");
 
                 exportButton.innerHTML = `
@@ -231,7 +231,7 @@ export default defineContentScript({
 
             exportButton.innerHTML = `ExportMyChat`;
 
-            if (!buttonContainer) {
+            if (!buttonContainer && isTemporaryChat) {
                 exportButton.style.cssText = `
   position: absolute;
   top: 58px;
@@ -241,7 +241,7 @@ export default defineContentScript({
 
                 document.querySelector(".root")?.appendChild(exportButton);
             } else {
-                buttonContainer.appendChild(exportButton);
+                buttonContainer?.appendChild(exportButton);
             }
 
             exportButton.addEventListener("click", extractClaudeData);

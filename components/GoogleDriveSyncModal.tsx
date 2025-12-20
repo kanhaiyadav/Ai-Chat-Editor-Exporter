@@ -183,7 +183,7 @@ export function GoogleDriveSyncModal({
                         onClick={handleSignOut}
                         disabled={loading}
                         variant="outline"
-                        className="w-full"
+                        className="w-full bg-accent"
                     >
                         {loading ? (
                             <>

@@ -99,7 +99,7 @@ export const PreviewToolbar = ({
                     <DropdownMenuTrigger asChild>
                         <Button
                             size="sm"
-                            className="gap-2 [&_svg:not([class*='size-'])]:size-4"
+                            className="gap-2 [&_svg:not([class*='size-'])]:size-4 mr-1"
                         >
                             <Download />
                             {t('preview.export')}

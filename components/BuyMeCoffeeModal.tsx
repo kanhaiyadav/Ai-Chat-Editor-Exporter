@@ -20,6 +20,7 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
     onOpenChange,
 }) => {
     const { t } = useTranslation();
+    const [imageLoaded, setImageLoaded] = React.useState(false);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -60,12 +61,20 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
                     <div className="space-y-3">
                         <p className="text-center text-sm font-medium">Or scan with Google Pay</p>
                         <div className="flex justify-center">
-                            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-                                {/* QR Code Image - Replace with your actual QR code */}
+                            <div className="p-4 rounded-lg bg-muted/50 border border-border relative min-h-[232px] flex items-center justify-center">
+                                {/* Loading State */}
+                                {!imageLoaded && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-[200px] h-[200px] rounded-md bg-gray-500/10 dark:bg-muted animate-pulse"></div>
+                                    </div>
+                                )}
+                                {/* QR Code Image */}
                                 <img
-                                    src="/qr.jpeg"
+                                    src="https://github.com/kanhaiyadav/assests/blob/main/qr.gif?raw=true"
                                     alt="Google Pay QR Code"
-                                    className="w-[200px] h-[200px]"
+                                    className={`w-[200px] h-[200px] rounded-md transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                                        }`}
+                                    onLoad={() => setImageLoaded(true)}
                                 />
                             </div>
                         </div>

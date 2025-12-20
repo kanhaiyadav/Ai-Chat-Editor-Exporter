@@ -9,7 +9,7 @@ export default defineConfig({
         name: "ExportMyChat",
         key: "cmfbkbpocbpnioeefbgbohejpbgbkbih",
         description: "A browser extension for converting AI chats to PDF",
-        version: "14.0.0",
+        version: "15.0.0",
         content_security_policy: {
             extension_pages: "script-src 'self'; object-src 'self'",
         },

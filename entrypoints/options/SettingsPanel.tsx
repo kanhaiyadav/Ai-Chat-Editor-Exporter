@@ -98,9 +98,9 @@ export const SettingsPanel = ({
     const presetDisplayName = currentPreset?.name || t('settingsPanel.untitledPreset');
 
     return (
-        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-1 flex flex-col border border-border'>
+        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-0.5 flex flex-col border border-border'>
             {/* Sticky Header with Preset Name */}
-            <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-1 pb-[8px]'>
+            <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-1 pb-[7px]'>
                 {isEditingPresetName ? (
                     <div className='space-y-2'>
                         <div className='flex items-center gap-2'>

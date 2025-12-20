@@ -33,37 +33,46 @@ App.tsx (Main Component)
 │   └── Dialog states (save, merge, export, import, etc.)
 │
 ├── Handlers
-│   ├── handleReorderMessages() - drag-and-drop with flushSync
-│   ├── handleUpdateMessage() - edit message content
+│   ├── handleReorderMessages() - drag-and-drop reordering
+│   ├── handleContentChange() - edit message content inline
 │   ├── handleToggleMessage() - selection toggle
 │   ├── handleSaveChat() - save to IndexedDB
-│   ├── handleExportChat() - export as JSON
+│   ├── handleExportJSON() - export as JSON
 │   ├── handleImportChat() - import from JSON
-│   └── handleMergeChats() - merge multiple chats
+│   ├── handleMergeChats() - merge multiple chats
+│   ├── handleGeneratePDF() - export to PDF
+│   ├── handleOpenInWord() - export to DOCX
+│   ├── handleExportMarkdown() - export to MD
+│   ├── handleExportHTML() - export to HTML
+│   └── handleExportPlainText() - export to TXT
 │
 └── Child Components
-    ├── Header (Logo, Theme, Social Links, Review)
+    ├── Header (Logo, Language Selector, Theme, Social Links, Review)
     ├── AppSidebar
     │   ├── SavedChatsManagement (with export/import/merge)
     │   ├── PresetManagement
+    │   ├── GoogleDriveSyncSettings (cloud sync)
     │   └── BuyMeCoffee / Social Actions
     ├── PreviewContainer
-    │   ├── PreviewToolbar (Export PDF, Save Chat, Export JSON)
+    │   ├── PreviewToolbar (Export PDF/DOCX/HTML/MD/JSON/TXT, Save Chat, Merge)
     │   └── Layout Renderers
     │       ├── ChatLayout (bubble style)
     │       ├── QALayout (structured Q&A)
     │       └── DocumentLayout (formal document)
-    └── SettingsPanel
-        ├── MessageManagement ⭐
-        │   ├── Drag-and-drop reordering (@dnd-kit)
-        │   ├── Selection system (Set<number>)
-        │   ├── Message cards with edit dialog
-        │   └── ChatEditor (rich text editor)
-        ├── LayoutSelection
-        ├── ChatSettings
-        ├── QASettings
-        ├── DocumentSettings
-        └── GeneralSettings
+    ├── SettingsPanel
+    │   ├── LayoutSelection
+    │   ├── ChatSettings
+    │   ├── QASettings
+    │   ├── DocumentSettings
+    │   └── GeneralSettings
+    ├── EditorPanel ⭐ (Overlay)
+    │   ├── EditorToolbar (formatting controls)
+    │   ├── Editor (ContentEditable with rich text)
+    │   └── EditorForms (image/table/link dialogs)
+    └── MessageManagementPanel ⭐ (Overlay)
+        ├── Drag-and-drop reordering (@dnd-kit)
+        ├── Selection system (Set<number>)
+        └── Message cards with role indicators
 ```
 
 ---
@@ -142,28 +151,31 @@ Synchronous state update → Preview updates instantly
 Save to Chrome Storage → chrome.storage.local.set()
 ```
 
-### 5. Message Editing
+### 5. Message Editing (Inline)
 
 ```
-User clicks Edit → handleEditClick(index, content)
+User enables edit mode → Click edit icon in PreviewToolbar
 ↓
-Open Dialog with ChatEditor component
+setIsEditingContent(true) → setShowEditorPanel(true)
 ↓
-User edits content (formatting, code, lists)
+User clicks message in preview → handleStartEdit(index, element)
 ↓
-onChange(html) → update local state
+EditorPanel opens with EditorToolbar
 ↓
-User clicks Save → handleSave()
+User edits content directly in preview (contentEditable)
 ↓
-onUpdateMessage(index, newContent)
+EditorToolbar provides formatting options
+  - Bold, italic, underline, headings
+  - Lists, code blocks, tables
+  - Links, images, alignment
 ↓
-Update chatData.messages[index].content
+onContentChange(html) → update chatData.messages[index].content
 ↓
 flushSync update state
 ↓
 Save to Chrome Storage
 ↓
-Preview updates automatically
+Preview updates in real-time
 ```
 
 ### 6. Backup & Restore
@@ -246,10 +258,12 @@ Initialize selectedMessages
 Show loaded notification
 ```
 
-### 8. PDF Export
+### 8. Multi-Format Export
+
+**PDF Export:**
 
 ```
-User clicks "Export PDF" → handleExportPDF()
+User clicks "Export PDF" → handleGeneratePDF()
 ↓
 Gather: filteredMessages, settings, layout
 ↓
@@ -267,11 +281,36 @@ Trigger browser print dialog: window.print()
 User saves as PDF via browser's print-to-PDF
 ```
 
+**DOCX Export:**
+
+```
+handleOpenInWord() → exportToWord()
+↓
+Generate HTML with Word-compatible styling
+↓
+Create Blob with application/msword MIME type
+↓
+Download as .docx file
+```
+
+**HTML/Markdown/Plain Text Export:**
+
+```
+exportToHTML/Markdown/PlainText()
+↓
+Convert messages to target format
+↓
+Create downloadable file
+↓
+Trigger download
+```
+
 ---
 
 ## File Structure
 
 ```
+C2Pdf_wxt/
 entrypoints/
 ├── background.ts                  # Service worker (future use)
 ├── content.ts                     # 🔥 Platform detection & extraction
@@ -280,10 +319,22 @@ entrypoints/
 │   ├── Gemini extraction (Monaco editor)
 │   └── DeepSeek extraction (HTML rendering)
 │
+├── popup/                         # 🔥 Browser action popup
+│   ├── App.tsx                    # Popup component with platform guides
+│   ├── main.tsx                   # Entry point
+│   ├── App.css, style.css         # Popup styles
+│   └── index.html                 # Popup HTML
+│
+├── popup/                         # 🔥 Browser action popup
+│   ├── App.tsx                    # Popup component with platform guides
+│   ├── main.tsx                   # Entry point
+│   ├── App.css, style.css         # Popup styles
+│   └── index.html                 # Popup HTML
+│
 └── options/                       # Main extension UI
     ├── App.tsx                    # 🔥 Main component with state management
-    ├── Header.tsx                 # Navigation bar with review link
-    ├── app-sidebar.tsx            # 🔥 Sidebar with chats/presets management
+    ├── Header.tsx                 # Navigation bar with language, theme, review
+    ├── app-sidebar.tsx            # 🔥 Sidebar with chats/presets/sync
     │
     ├── PreviewContainer.tsx       # PDF preview panel
     ├── PreviewToolbar.tsx         # Export/Save/Backup buttons
@@ -298,8 +349,11 @@ entrypoints/
     ├── DocumentSettings.tsx       # Document-specific settings
     ├── GeneralSettings.tsx        # Global settings
     │
-    ├── MessageManagement.tsx      # 🔥 Message selection/edit/reorder
-    ├── Editor.tsx                 # 🔥 Rich text editor (TipTap-based)
+    ├── MessageManagementPanel.tsx # 🔥 Message selection/edit/reorder (overlay)
+    ├── EditorPanel.tsx            # 🔥 Rich text editor panel (overlay)
+    ├── EditorToolbar.tsx          # 🔥 Editor formatting toolbar
+    ├── EditorForms.tsx            # 🔥 Image/table/link dialogs
+    ├── Editor.tsx                 # 🔥 ContentEditable-based rich editor
     │
     ├── SaveChatDialog.tsx         # Save chat modal
     ├── SavePresetDialog.tsx       # Save preset modal
@@ -314,7 +368,7 @@ entrypoints/
     ├── PresetManagement.tsx       # Preset list in sidebar
     ├── nav-main.tsx               # Main navigation items
     ├── nav-chats.tsx              # Chat navigation component
-    ├── nav-presets.tsx            # Preset navigation component
+    ├── nav-presets.tsx            # Presets navigation component
     ├── team-switcher.tsx          # Sidebar toggle component
     │
     ├── types.ts                   # TypeScript types
@@ -325,20 +379,25 @@ entrypoints/
 
 components/                        # Reusable components
 ├── ThemeToggle.tsx               # Light/Dark theme switcher
+├── LanguageSelector.tsx          # 🔥 Multi-language selector (i18n)
 ├── BuyMeCoffeeModal.tsx          # Support modal
+├── GoogleDriveSyncModal.tsx      # 🔥 Google Drive sync modal
+├── GoogleDriveSyncSettings.tsx   # 🔥 Google Drive sync settings
+├── SyncStatusIndicator.tsx       # 🔥 Cloud sync status indicator
 └── ui/                           # Shadcn/ui components
     ├── button.tsx
     ├── button-group.tsx
     ├── card.tsx
-    ├── checkbox.tsx             # 🔥 Used in MessageManagement
+    ├── checkbox.tsx             # 🔥 Used in MessageManagementPanel
     ├── collapsible.tsx
     ├── dialog.tsx               # 🔥 Used for all modals
     ├── dropdown-menu.tsx
     ├── input.tsx
     ├── label.tsx
-    ├── scroll-area.tsx          # 🔥 Used in MessageManagement
+    ├── scroll-area.tsx          # 🔥 Used in MessageManagementPanel
     ├── select.tsx
     ├── separator.tsx
+    ├── sheet.tsx                # 🔥 Used for overlay panels
     ├── sidebar.tsx              # 🔥 Sidebar primitive
     ├── skeleton.tsx
     ├── slider.tsx
@@ -348,13 +407,21 @@ components/                        # Reusable components
     └── tooltip.tsx
 
 lib/
-├── settingsDB.ts                # 🔥 IndexedDB operations (Dexie)
+├── settingsDB.ts                # 🔥 IndexedDB operations (Dexie with syncId)
+├── googleDriveSync.ts           # 🔥 Google Drive sync service
 ├── themeStorage.ts              # Theme persistence
 ├── useTheme.ts                  # Theme hook
-└── utils.ts                     # Utility functions
+├── utils.ts                     # Utility functions
+└── i18n/                        # 🔥 Internationalization
+    ├── config.ts                # i18n configuration
+    └── locales/                 # 15 language files
+        ├── en.json, es.json, fr.json, de.json, it.json
+        ├── pt.json, ru.json, zh.json, ja.json, ko.json
+        └── ar.json, hi.json, nl.json, pl.json, tr.json
 
 hooks/
-└── use-mobile.ts                # Mobile detection hook
+├── use-mobile.ts                # Mobile detection hook
+└── use-toast.ts                 # Toast notification hook
 
 public/                          # Static assets
 ├── monaco-extractor.js          # 🔥 Gemini Monaco editor extractor
@@ -364,7 +431,11 @@ public/                          # Static assets
 
 assets/
 ├── tailwind.css                 # Global styles
-├── *.svg                        # Platform logos (light/dark)
+└── Platform logos (SVG)
+    ├── openai.svg, openai-light.svg (ChatGPT)
+    ├── claude.svg, claude-light.svg (Claude)
+    ├── gemini-fill.svg, gemini-fill-light.svg (Gemini)
+    └── deepseek-fill.svg, deepseek-fill-light.svg (DeepSeek)
 
 wxt.config.ts                    # WXT framework configuration
 tsconfig.json                    # TypeScript configuration
@@ -377,43 +448,77 @@ package.json                     # Dependencies and scripts
 
 ## Key Features by Component
 
-### MessageManagement.tsx
+### MessageManagementPanel.tsx
 
--   ✅ Collapsible section with icon
--   ✅ Scrollable message list (320px max height)
+-   ✅ Overlay panel (Sheet component)
+-   ✅ Scrollable message list
+-   ✅ Drag-and-drop reordering with @dnd-kit
 -   ✅ Message cards with hover effects
--   ✅ Role-based color coding
--   ✅ Message selection tracking
--   ✅ Selection counter
+-   ✅ Role-based color coding (user/assistant)
+-   ✅ Message selection tracking (checkboxes)
+-   ✅ Selection counter and statistics
 -   ✅ Empty state handling
--   ✅ Edit dialog integration
+-   ✅ Keyboard navigation support
 
-### Editor.tsx
+### Editor.tsx + EditorPanel.tsx
 
--   ✅ TipTap rich text editor
--   ✅ Comprehensive formatting toolbar
--   ✅ Active state indicators
--   ✅ Disabled state handling
--   ✅ Code block support
--   ✅ List formatting
+-   ✅ ContentEditable-based rich text editor
+-   ✅ Comprehensive formatting toolbar (EditorToolbar)
+-   ✅ Text formatting: bold, italic, underline, subscript, superscript
+-   ✅ Text alignment: left, center, right, justify
+-   ✅ Headings: H1, H2, H3
+-   ✅ Lists: bullet and ordered
+-   ✅ Code block insertion with syntax highlighting
+-   ✅ Table insertion with customizable colors
+-   ✅ Link insertion with styling
+-   ✅ Image insertion (URL or upload)
+-   ✅ Horizontal separator
 -   ✅ Undo/Redo functionality
--   ✅ Real-time content updates
--   ✅ Prose styling integration
+-   ✅ Real-time preview updates
+-   ✅ Dialog-based forms for complex elements (EditorForms)
 
 ### App.tsx Enhancements
 
--   ✅ Message selection state
--   ✅ Message update handler
--   ✅ Message toggle handler
+-   ✅ Message selection state (Set<number>)
+-   ✅ Message content editing handlers
+-   ✅ Message toggle and reordering handlers
 -   ✅ Message filtering logic
 -   ✅ Auto-select all messages on load
 -   ✅ Chrome storage integration
+-   ✅ Overlay panel management (Editor, MessageManagement)
+-   ✅ Multi-format export handlers
+-   ✅ Google Drive sync state management
 
-### SettingsPanel.tsx Updates
+### Database Schema (Dexie)
 
--   ✅ New props for message management
--   ✅ MessageManagement component integration
--   ✅ Proper prop drilling
+**SavedChat:**
+
+```typescript
+{
+  id: number,
+  syncId: string,      // 🔥 UUID for cross-device sync
+  name: string,
+  title: string,
+  messages: Message[],
+  source: ChatSource,
+  settings: PDFSettings,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+
+**SavedPreset:**
+
+```typescript
+{
+  id: number,
+  syncId: string,      // 🔥 UUID for cross-device sync
+  name: string,
+  settings: PDFSettings,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
 ## Styling Approach
 

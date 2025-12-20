@@ -1,10 +1,11 @@
-import { X, Pencil, Save, RotateCcw } from 'lucide-react';
+import { X, Save, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { EditorToolbar } from './EditorToolbar';
 import { ImageForm, TableForm, LinkForm } from './EditorForms';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { useState, useRef, useEffect } from 'react';
+import { FiEdit } from 'react-icons/fi';
 
 interface EditorPanelProps {
     isOpen: boolean;
@@ -199,13 +200,13 @@ export const EditorPanel = ({
         <>
             {/* Sliding Panel - positioned to overlay settings panel only */}
             <div
-                className={`absolute top-0 right-0 h-full w-[350px] xl:w-[420px] bg-background border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`absolute top-[2px] right-0 h-[calc(100%-2px)] w-[350px] xl:w-[420px] bg-accent border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Header */}
-                <div className='flex items-center justify-between px-4 py-3 pb-[7px] border-b border-border bg-accent'>
+                <div className='flex items-center justify-between px-4 pt-2.5 pb-[6px] border-b border-border bg-accent'>
                     <div className='flex items-center gap-2'>
-                        <Pencil size={18} />
+                        <FiEdit size={18} />
                         <h2 className='text-sm font-semibold'>{t('editor.panelTitle')}</h2>
                         {editingMessageIndex !== null && (
                             <span className='text-xs text-muted-foreground ml-2'>
@@ -224,10 +225,10 @@ export const EditorPanel = ({
                 </div>
 
                 {/* Content */}
-                <div className='flex-1 overflow-y-auto p-4'>
+                <div className='flex-1 overflow-y-scroll p-4'>
                     {editingMessageIndex === null ? (
                         <div className="text-center py-12 text-muted-foreground">
-                            <Pencil size={48} className="mx-auto mb-3 opacity-30" />
+                            <FiEdit size={48} className="mx-auto mb-3 opacity-30" />
                             <p className="text-sm">{t('editor.noMessageSelected')}</p>
                             <p className="text-xs mt-2">{t('editor.clickToEdit')}</p>
                         </div>

@@ -142,9 +142,9 @@ const SortableMessageItem = ({
                         )}
                     </div>
                 </div>
-                <div className='flex flex-col justify-between items-center gap-1'>
+                <div className='flex flex-col justify-between items-center gap-3 h-full'>
                     <GripVertical size={18} className="text-muted-foreground" />
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex flex-col">
                         <button
                             onClick={handleMoveUp}
                             disabled={isFirst}
@@ -266,11 +266,11 @@ export const MessageManagementPanel = ({
         <>
             {/* Sliding Panel - positioned to overlay settings panel only */}
             <div
-                className={`absolute top-0 right-0 h-full w-[350px] xl:w-[420px] bg-background border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`absolute top-[2px] right-0 h-[calc(100%-2px)] w-[350px] xl:w-[420px] bg-accent border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Header */}
-                <div className='flex items-center justify-between px-4 py-3 pb-[7px] border-b border-border bg-accent'>
+                <div className='flex items-center justify-between px-4 pt-2.5 pb-[6px] border-b border-border bg-accent'>
                     <div className='flex items-center gap-2'>
                         <MessageSquare size={18} />
                         <h2 className='text-sm font-semibold'>{t('settings.messages.title')}</h2>

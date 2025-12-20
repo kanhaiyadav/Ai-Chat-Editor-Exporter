@@ -4,15 +4,22 @@
   <img src="public/icon/128.png" alt="ExportMyChat Logo" width="200" style="border-radius: 12px; margin: 20px 0;">
 </div>
 
-A powerful browser extension that transforms AI chat conversations into beautifully formatted Documents(**pdf**, **docx**, **html**, **md**, **json**, **txt**). Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, and extensive customization capabilities. 
+A powerful browser extension that transforms AI chat conversations into beautifully formatted Documents(**pdf**, **docx**, **html**, **md**, **json**, **txt**). Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, and extensive customization capabilities.
 
-![alt text](Gemini_Generated_Image_fyvge3fyvge3fyvg.png)
+<div align="center">
+    <img src="thumbnail.png" alt="ExportMyChat Preview" width="800" style="margin: 20px 0;">
+</div>
+
 ## Table of Contents
 
 -   [Features](#features)
 -   [Installation](#installation)
 -   [Getting Started](#getting-started)
--   [User Guide](#user-guide)
+-   [Content Editing](#content-editing)
+-   [Layout Options](#layout-options)
+-   [Customization](#customization)
+-   [Saving & Managing](#saving--managing)
+-   [Google Drive Sync](#google-drive-sync)
 -   [Architecture](#architecture)
 -   [Tech Stack](#tech-stack)
 -   [Project Structure](#project-structure)
@@ -20,6 +27,7 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 -   [Build & Distribution](#build--distribution)
 -   [Contributing](#contributing)
 -   [Support](#support)
+-   [FAQ](#faq)
 
 ---
 
@@ -35,8 +43,11 @@ A powerful browser extension that transforms AI chat conversations into beautifu
     -   Select/deselect individual messages to include/exclude from the export
     -   Drag-and-drop reordering with real-time preview
     -   Hash-based message tracking for reliable state management
+-   **Cloud Sync:** Save your chats and style presets to **Google Drive** and sync across all your devices. Your data remains under your control in your personal Google Drive.
 -   **Backup & Restore**:
-    -   Export All of your chats as a bulk in JSON for backup, which can be later imported in any device with the extension to get the chats back.
+    -   Export all of your chats in bulk as JSON for backup
+    -   Import chats from JSON files on any device with the extension
+    -   Restore your entire chat library with one click
 -   **Chat Management**:
     -   Save unlimited chats locally
     -   Merge multiple conversations
@@ -45,7 +56,7 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 -   **Extensive Customization**: Colors, fonts, spacing, bubble styles, margins, headers/footers, background
 -   **Preset System**: Save and reuse styling configurations
 -   **Theme Support**: Light/Dark mode with system detection
--   **Multi-language support**: We support 16 diffent languages including (Hindi, French, Spanish, Chinese, Japnese, Arabic etc.)
+-   **Multi-language support**: We support 15 different languages including (English, Spanish, French, German, Italian, Portuguese, Russian, Chinese, Japanese, Korean, Arabic, Hindi, Dutch, Turkish, and Polish)
 -   **Media Handling**: Include/exclude generated images by the chat models.
 -   **Artifact Support**: Export Claude Artifacts and Gemini code blocks.
 
@@ -57,7 +68,7 @@ A powerful browser extension that transforms AI chat conversations into beautifu
 
 ```bash
 git clone https://github.com/kanhaiyadav/ExportMyChat.git
-cd Ai-Chat-Editor-Exporter
+cd ExportMyChat
 ```
 
 2. **Install dependencies**:
@@ -124,7 +135,7 @@ npm run build:firefox
 
 ### Step 4: Export, Save, or Backup
 
--   **Export to different formats**: Click on Export dropdonw to see all the available file formats to export in.
+-   **Export to different formats**: Click on Export dropdown to see all the available file formats to export in.
 -   **Save Chat**: Store chat locally for future editing/re-export
 -   **Backup Chat**: Export as JSON file for backup/sharing
 -   **Save Preset**: Save your styling settings for quick reuse
@@ -150,19 +161,31 @@ npm run build:firefox
 
 ### Content Editing
 
-It provides the capability to edit and insert the content of the chat inline with various tools available for it.
+A powerful rich text editor with comprehensive formatting tools for inline editing of chat messages.
 
-| Tool          | Description             |
-| ------------- | ----------------------- |
-| Bold          | Make text bold          |
-| Italic        | Make text italic        |
-| Strikethrough | Strike text             |
-| Inline Code   | Code snippet            |
-| Code Block    | Full code block         |
-| Lists         | Bullet or ordered lists |
-| Undo/Redo     | Undo/Redo changes       |
+| Tool        | Description                     |
+| ----------- | ------------------------------- |
+| Undo/Redo   | Undo or redo changes            |
+| Bold        | Make text bold                  |
+| Italic      | Make text italic                |
+| Underline   | Underline text                  |
+| Subscript   | Create subscript text           |
+| Superscript | Create superscript text         |
+| Alignment   | Left, center, right, or justify |
+| Headings    | H1, H2, H3 headings             |
+| Lists       | Bullet or ordered lists         |
+| Code Block  | Insert code blocks              |
+| Links       | Insert hyperlinks               |
+| Tables      | Insert and format tables        |
+| Images      | Insert images with URLs         |
+| Separator   | Horizontal divider line         |
 
-**How to Edit**: Just editing int he preview section.
+**How to Edit**:
+
+1. Enable editing mode by clicking the edit icon in the preview toolbar
+2. Click on any message in the preview to start editing
+3. Use the editor toolbar to format text and insert elements
+4. Changes are reflected in real-time
 
 ---
 
@@ -233,7 +256,7 @@ Store a chat conversation locally with current settings:
 -   Export individual chat as JSON file
 -   Includes all messages, metadata, and settings
 -   Shareable and portable across devices
--   Access via sidebar "IMport Chat" option
+-   Access via sidebar "Import Chat" option
 
 **Import Chat (Restore)**:
 
@@ -280,6 +303,36 @@ Combine multiple saved chats into one conversation:
 
 ---
 
+### Google Drive Sync
+
+Seamlessly sync your chats and presets across all your devices using Google Drive.
+
+#### Features
+
+-   **Two-Way Sync**: Changes sync automatically between local storage and Google Drive
+-   **Secure**: All data is stored in your personal Google Drive under your control
+-   **Automatic Conflict Resolution**: Smart merging when changes occur on multiple devices
+-   **Selective Sync**: Choose to sync chats, presets, or both
+-   **Sync Indicator**: Visual status showing sync state (synced, syncing, errors)
+
+#### How to Use
+
+1. Click the Google Drive icon in the header
+2. Sign in with your Google account
+3. Grant permission to access Google Drive
+4. Enable sync for chats and/or presets
+5. Your data automatically syncs across all devices
+
+#### Sync Options
+
+-   **Sync Chats**: Sync all saved chats to Google Drive
+-   **Sync Presets**: Sync all style presets to Google Drive
+-   **Auto Sync**: Automatically sync changes in real-time
+-   **Manual Sync**: Trigger sync manually when needed
+-   **Clear Cloud Data**: Remove all synced data from Google Drive
+
+---
+
 ## Architecture
 
 ### Data Flow
@@ -295,17 +348,31 @@ Chat Export → Extract Data → Load in Options Page
 ```
 App.tsx (Main)
 ├── Header (Logo, Language Switcher, Theme, Social Links)
-├── Sidebar (Saved Chats, Presets, Backup & Import)
-├── PreviewContainer
-│   ├── PreviewToolbar (Save/Export Buttons)
-│   └── Layout Preview (Chat/QA/Document)
-└── SettingsPanel
-    ├── MessageManagement (Edit/Reorder/Select)
-    ├── LayoutSelector
-    ├── ChatSettings
-    ├── QASettings
-    ├── DocumentSettings
-    └── GeneralSettings
+├── SidebarProvider
+│   ├── AppSidebar
+│   │   ├── nav-main (Main Navigation)
+│   │   ├── nav-chats (Saved Chats)
+│   │   └── nav-presets (Saved Presets)
+│   └── SidebarInset
+│       ├── PreviewContainer
+│       │   ├── PreviewToolbar (Save/Export Buttons)
+│       │   └── Layout Renderers (ChatLayout/QALayout/DocumentLayout)
+│       └── Settings Area
+│           ├── SettingsPanel
+│           │   ├── LayoutSelection
+│           │   ├── ChatSettings
+│           │   ├── QASettings
+│           │   ├── DocumentSettings
+│           │   └── GeneralSettings
+│           ├── EditorPanel (Overlay - Rich Text Editor)
+│           └── MessageManagementPanel (Overlay - Message List/Edit/Reorder)
+├── SaveChatDialog
+├── SavePresetDialog
+├── UnsavedChangesDialog
+├── MergeChatsDialog
+├── ConfirmationDialog
+├── BulkExportChatsDialog
+└── ImportChatDialog
 ```
 
 ---
@@ -316,7 +383,7 @@ App.tsx (Main)
 
 -   React 19.1
 -   TypeScript 5.9
--   Vite (build tool)
+-   Vite (via WXT build tool)
 
 ### UI & Styling
 
@@ -330,11 +397,14 @@ App.tsx (Main)
 -   Dexie 4 (IndexedDB)
 -   dexie-react-hooks
 -   Chrome Storage API
+-   Google Drive API (cloud sync)
+-   Google Drive API
 
 ### Interactive Features
 
--   @dnd-kit (drag-and-drop)
--   ContentEditable API (text editing)
+-   @dnd-kit (drag-and-drop for message reordering)
+-   ContentEditable API (rich text editing)
+-   i18next (internationalization)
 
 ### Chrome Extension
 
@@ -350,50 +420,105 @@ C2Pdf_wxt/
 ├── entrypoints/
 │   ├── background.ts              # Service worker
 │   ├── content.ts                 # Content script (chat pages)
-│   └── options/                   # Main extension UI
-│       ├── App.tsx                # Main component
-│       ├── Header.tsx             # Navigation bar
-│       ├── MessageManagement.tsx  # Message list/edit
-│       ├── Editor.tsx             # Rich text editor
-│       ├── SettingsPanel.tsx      # Settings container
-│       ├── ChatSettings.tsx       # Chat settings
-│       ├── QASettings.tsx         # Q&A settings
-│       ├── DocumentSettings.tsx   # Document settings
-│       ├── GeneralSettings.tsx    # General settings
-│       ├── PreviewContainer.tsx   # PDF preview
-│       ├── ChatLayout.tsx         # Chat layout
-│       ├── QALayout.tsx           # Q&A layout
-│       ├── DocumentLayout.tsx     # Document layout
-│       ├── SaveChatDialog.tsx     # Save chat modal
-│       ├── SavePresetDialog.tsx   # Save preset modal
-│       ├── MergeChatsDialog.tsx   # Merge chats modal
-│       └── types.ts               # TypeScript types
+│   ├── options/                   # Main extension UI
+│   │   ├── App.tsx                # Main component
+│   │   ├── Header.tsx             # Navigation bar
+│   │   ├── app-sidebar.tsx        # Application sidebar
+│   │   ├── Editor.tsx             # Rich text editor
+│   │   ├── EditorPanel.tsx        # Editor panel wrapper
+│   │   ├── EditorToolbar.tsx      # Editor toolbar
+│   │   ├── EditorForms.tsx        # Editor forms
+│   │   ├── MessageManagementPanel.tsx  # Message list/edit
+│   │   ├── SettingsPanel.tsx      # Settings container
+│   │   ├── ChatSettings.tsx       # Chat settings
+│   │   ├── QASettings.tsx         # Q&A settings
+│   │   ├── DocumentSettings.tsx   # Document settings
+│   │   ├── GeneralSettings.tsx    # General settings
+│   │   ├── LayoutSelection.tsx    # Layout selector
+│   │   ├── PreviewContainer.tsx   # PDF preview
+│   │   ├── PreviewToolbar.tsx     # Preview toolbar
+│   │   ├── ChatLayout.tsx         # Chat layout
+│   │   ├── QALayout.tsx           # Q&A layout
+│   │   ├── DocumentLayout.tsx     # Document layout
+│   │   ├── SaveChatDialog.tsx     # Save chat modal
+│   │   ├── ExportChatDialog.tsx   # Export chat modal
+│   │   ├── ImportChatDialog.tsx   # Import chat modal
+│   │   ├── SavePresetDialog.tsx   # Save preset modal
+│   │   ├── MergeChatsDialog.tsx   # Merge chats modal
+│   │   ├── BulkExportChatsDialog.tsx  # Bulk export modal
+│   │   ├── ConfirmationDialog.tsx # Confirmation modal
+│   │   ├── UnsavedChangesDialog.tsx  # Unsaved changes modal
+│   │   ├── SavedChatsManagement.tsx  # Saved chats management
+│   │   ├── PresetManagement.tsx   # Preset management
+│   │   ├── nav-main.tsx           # Main navigation
+│   │   ├── nav-chats.tsx          # Chats navigation
+│   │   ├── nav-presets.tsx        # Presets navigation
+│   │   ├── team-switcher.tsx      # Team switcher component
+│   │   ├── types.ts               # TypeScript types
+│   │   ├── utils.tsx              # Utility functions
+│   │   ├── main.tsx               # Entry point
+│   │   ├── style.css              # Styles
+│   │   └── index.html             # HTML template
+│   └── popup/                     # Browser action popup
+│       ├── App.tsx                # Popup component
+│       ├── main.tsx               # Entry point
+│       ├── App.css                # Popup styles
+│       ├── style.css              # Global popup styles
+│       └── index.html             # Popup HTML
 │
 ├── components/                    # Reusable components
-│   ├── Button.tsx
-│   ├── ThemeToggle.tsx
-│   ├── FeedbackModal.tsx
+│   ├── ThemeToggle.tsx            # Theme switcher
+│   ├── LanguageSelector.tsx       # Language selector
+│   ├── BuyMeCoffeeModal.tsx       # Buy me coffee modal
+│   ├── GoogleDriveSyncModal.tsx   # Google Drive sync modal
+│   ├── GoogleDriveSyncSettings.tsx # Google Drive settings
+│   ├── SyncStatusIndicator.tsx    # Sync status indicator
 │   └── ui/                        # Shadcn/ui components
 │
 ├── hooks/
-│   └── use-mobile.ts
+│   ├── use-mobile.ts              # Mobile detection hook
+│   └── use-toast.ts               # Toast notification hook
 │
 ├── lib/
 │   ├── settingsDB.ts              # Database operations
+│   ├── googleDriveSync.ts         # Google Drive sync
 │   ├── useTheme.ts                # Theme hook
-│   └── utils.ts                   # Utilities
+│   ├── themeStorage.ts            # Theme storage
+│   ├── utils.ts                   # Utilities
+│   └── i18n/                      # Internationalization
+│       ├── config.ts              # i18n configuration
+│       └── locales/               # Language files
+│           ├── en.json            # English
+│           ├── es.json            # Spanish
+│           ├── fr.json            # French
+│           ├── de.json            # German
+│           ├── it.json            # Italian
+│           ├── pt.json            # Portuguese
+│           ├── ru.json            # Russian
+│           ├── zh.json            # Chinese
+│           ├── ja.json            # Japanese
+│           ├── ko.json            # Korean
+│           ├── ar.json            # Arabic
+│           ├── hi.json            # Hindi
+│           ├── nl.json            # Dutch
+│           ├── pl.json            # Polish
+│           └── tr.json            # Turkish
 │
 ├── assets/
-│   └── tailwind.css
+│   └── tailwind.css               # Tailwind styles
 │
 ├── public/                        # Static assets
-│   ├── icon/
-│   ├── chat/
-│   └── side/
+│   ├── monaco-extractor.js        # Monaco editor extractor
+│   ├── icon/                      # Extension icons
+│   ├── chat/                      # Chat images
+│   └── side/                      # Sidebar images
 │
+├── ARCHITECTURE.md                # Architecture documentation
+├── components.json                # Shadcn components config
+├── generate-key.js                # Extension key generator
 ├── wxt.config.ts                  # WXT config
-├── tsconfig.json                  # TS config
-├── tailwind.config.js             # Tailwind config
+├── tsconfig.json                  # TypeScript config
+├── postcss.config.mjs             # PostCSS config
 └── package.json                   # Dependencies
 ```
 
@@ -411,7 +536,7 @@ C2Pdf_wxt/
 
 ```bash
 git clone https://github.com/kanhaiyadav/ExportMyChat.git
-cd Ai-Chat-Editor-Exporter
+cd ExportMyChat
 npm install
 npm run dev
 ```
@@ -563,7 +688,7 @@ We welcome contributions!
 ## FAQ
 
 **Q: Is my chat data secure?**
-A: Yes! All data is stored locally in your browser. Nothing is sent to external servers. Your conversations never leave your device.
+A: Yes! All data is stored locally in your browser's IndexedDB. If you use Google Drive sync, data is encrypted and stored in your personal Google Drive under your control. Your conversations never leave your device except when you explicitly enable cloud sync.
 
 **Q: Does this work with all AI chat platforms?**
 A: Currently supports ChatGPT, Claude, Gemini, and DeepSeek. We're actively monitoring new platforms and community requests for future additions.
@@ -581,7 +706,7 @@ A: PDFs are final documents. Edit content before exporting using the Rich Text E
 A: Save the chats you want to merge, then use the "Merge Chats" feature in the Saved Chats Management panel.
 
 **Q: What if I clear browser data?**
-A: Saved chats stored in IndexedDB will be lost. Regularly export important chats as JSON backups.
+A: Saved chats stored in IndexedDB will be lost unless you've enabled Google Drive sync. We recommend either enabling cloud sync or regularly exporting important chats as JSON backups.
 
 **Q: How do I Export Claude/gemini Artifacts?**
 A: Artifacts can be individually exported using Export Artifact button just in the artifact header.
@@ -594,6 +719,12 @@ A: Open an issue on [GitHub](https://github.com/kanhaiyadav/ExportMyChat/issues)
 
 **Q: Can I contribute?**
 A: Absolutely! See the Contributing section. We welcome code, documentation, and feature suggestions.
+
+**Q: How does Google Drive sync work?**
+A: When you enable Google Drive sync, the extension stores your chats and presets in your personal Google Drive. The data is automatically synced across all devices where you use the extension with the same Google account. You maintain full control and can delete the data anytime.
+
+**Q: Is Google Drive sync secure?**
+A: Yes! Data is stored in your personal Google Drive under your control. The extension only accesses the app folder it creates and cannot access any other files in your Drive.
 
 ---
 
