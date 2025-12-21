@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - ExportMyChat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+
+        header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .last-updated {
+            color: #95a5a6;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        p,
+        li {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            color: #7f8c8d;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Privacy Policy</h1>
+            <p class="subtitle">ExportMyChat Browser Extension</p>
+            <p class="last-updated">Last Updated: December 21, 2025</p>
+        </header>
+
+        <div class="highlight">
+            <strong>Quick Summary:</strong> ExportMyChat is committed to protecting your privacy. We do not collect,
+            store, or transmit your chat data to any external servers. All data processing happens locally in your
+            browser, and you maintain complete control over your information.
+        </div>
+
+        <div class="section">
+            <h2>1. Introduction</h2>
+            <p>
+                ExportMyChat ("we", "our", or "the extension") is a browser extension that allows users to export, edit,
+                and manage AI chat conversations from platforms like ChatGPT, Claude, Gemini, and DeepSeek. This Privacy
+                Policy explains how we handle your data and protect your privacy.
+            </p>
+            <p>
+                By using ExportMyChat, you agree to the practices described in this Privacy Policy.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>2. Information We Do NOT Collect</h2>
+            <p>We want to be absolutely clear about what we DON'T do:</p>
+            <ul>
+                <li><strong>We do NOT collect your chat conversations</strong> - Your AI chat data never leaves your
+                    device</li>
+                <li><strong>We do NOT track your usage</strong> - No analytics, telemetry, or tracking scripts</li>
+                <li><strong>We do NOT sell your data</strong> - We have no data to sell</li>
+                <li><strong>We do NOT store data on our servers</strong> - We don't have any servers</li>
+                <li><strong>We do NOT require account creation</strong> - No email addresses or personal information
+                    needed</li>
+                <li><strong>We do NOT use cookies</strong> - Except for essential browser storage APIs</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>3. How ExportMyChat Works</h2>
+
+            <h3>3.1 Local Data Processing</h3>
+            <p>
+                ExportMyChat operates entirely within your browser using the following local storage mechanisms:
+            </p>
+            <ul>
+                <li><strong>Chrome Storage API:</strong> Temporarily stores chat data during the export process</li>
+                <li><strong>IndexedDB:</strong> Stores your saved chats, presets, and settings locally in your browser
+                </li>
+                <li><strong>localStorage:</strong> Stores user preferences like theme and language settings</li>
+            </ul>
+
+            <h3>3.2 Content Script Permissions</h3>
+            <p>
+                The extension requires permission to access specific AI chat platforms to extract conversation content:
+            </p>
+            <ul>
+                <li>chatgpt.com and chat.openai.com</li>
+                <li>claude.ai</li>
+                <li>gemini.google.com</li>
+                <li>chat.deepseek.com</li>
+            </ul>
+            <p>
+                <strong>Important:</strong> The extension only reads content from these pages when you explicitly click
+                the "Export" button. It does not continuously monitor or transmit your conversations.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>4. Google Drive Integration (Optional)</h2>
+
+            <h3>4.1 What Data is Stored</h3>
+            <p>
+                If you choose to enable Google Drive sync, the extension will store the following in YOUR personal
+                Google Drive:
+            </p>
+            <ul>
+                <li>Saved chat conversations (as JSON files)</li>
+                <li>Style presets and settings (as JSON files)</li>
+                <li>Metadata for synchronization purposes</li>
+            </ul>
+
+            <h3>4.2 Google Drive Permissions</h3>
+            <p>
+                ExportMyChat requests the <code>drive.file</code> scope, which means:
+            </p>
+            <ul>
+                <li>✅ We can ONLY access files created by our extension</li>
+                <li>✅ Data is stored in a dedicated app folder in your Drive</li>
+                <li>❌ We CANNOT access your other Google Drive files</li>
+                <li>❌ We CANNOT read your emails, contacts, or other Google data</li>
+            </ul>
+
+            <h3>4.3 Data Transmission</h3>
+            <p>
+                When Google Drive sync is enabled:
+            </p>
+            <ul>
+                <li>Data is transmitted directly between your browser and Google's servers using secure HTTPS
+                    connections</li>
+                <li>We do not have any intermediate servers that see or store your data</li>
+                <li>You can view all synced files directly in your Google Drive</li>
+                <li>You can delete all synced data at any time</li>
+            </ul>
+
+            <div class="warning">
+                <strong>Note:</strong> Google Drive sync is completely optional. The extension works fully without it,
+                storing all data only in your browser.
+            </div>
+
+            <h3>4.4 Revoking Access</h3>
+            <p>
+                You can revoke ExportMyChat's access to your Google Drive at any time by:
+            </p>
+            <ol>
+                <li>Visiting <a href="https://myaccount.google.com/permissions" target="_blank">Google Account
+                        Permissions</a></li>
+                <li>Finding "ExportMyChat" in the list</li>
+                <li>Clicking "Remove Access"</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>5. Data Export and Sharing</h2>
+            <p>
+                ExportMyChat allows you to export your conversations in various formats (PDF, DOCX, HTML, Markdown,
+                JSON, TXT). When you export:
+            </p>
+            <ul>
+                <li>Files are generated locally in your browser</li>
+                <li>Files are downloaded directly to your computer</li>
+                <li>No data is sent to any external servers during export</li>
+                <li>You have complete control over what you do with exported files</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>6. Third-Party Services</h2>
+
+            <h3>6.1 AI Chat Platforms</h3>
+            <p>
+                ExportMyChat integrates with third-party AI platforms (ChatGPT, Claude, Gemini, DeepSeek). Each platform
+                has its own privacy policy:
+            </p>
+            <ul>
+                <li><a href="https://openai.com/privacy/" target="_blank">OpenAI (ChatGPT) Privacy Policy</a></li>
+                <li><a href="https://www.anthropic.com/privacy" target="_blank">Anthropic (Claude) Privacy Policy</a>
+                </li>
+                <li><a href="https://policies.google.com/privacy" target="_blank">Google (Gemini) Privacy Policy</a>
+                </li>
+                <li><a href="https://www.deepseek.com/privacy" target="_blank">DeepSeek Privacy Policy</a></li>
+            </ul>
+
+            <h3>6.2 Google APIs</h3>
+            <p>
+                When using Google Drive sync, we use Google's APIs, which are subject to:
+            </p>
+            <ul>
+                <li><a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a></li>
+                <li><a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google
+                        API Services User Data Policy</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>7. Children's Privacy</h2>
+            <p>
+                ExportMyChat is not directed to children under the age of 13. We do not knowingly collect personal
+                information from children. If you are a parent or guardian and believe your child has provided us with
+                information, please contact us (though we don't collect such information).
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>8. Data Security</h2>
+            <p>
+                We take data security seriously:
+            </p>
+            <ul>
+                <li>All data stored locally uses browser's built-in security features</li>
+                <li>Google Drive sync uses OAuth 2.0 authentication</li>
+                <li>All data transmission to Google Drive uses HTTPS encryption</li>
+                <li>We follow browser extension security best practices</li>
+                <li>Regular security updates and patches</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>9. Your Rights and Control</h2>
+            <p>
+                You have complete control over your data:
+            </p>
+            <ul>
+                <li><strong>Access:</strong> All your data is stored locally and accessible through the extension</li>
+                <li><strong>Delete:</strong> You can delete any saved chats or presets at any time</li>
+                <li><strong>Export:</strong> Export all your data as JSON files</li>
+                <li><strong>Disable Sync:</strong> Turn off Google Drive sync anytime</li>
+                <li><strong>Uninstall:</strong> Removing the extension deletes all local data (Google Drive data remains
+                    unless you delete it)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>10. Updates to Privacy Policy</h2>
+            <p>
+                We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated
+                "Last Updated" date. We encourage you to review this policy periodically.
+            </p>
+            <p>
+                For significant changes that affect how we handle your data, we will provide notice through the
+                extension or our GitHub repository.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>11. Open Source</h2>
+            <p>
+                ExportMyChat is open source software. You can review our code at:
+            </p>
+            <p>
+                <a href="https://github.com/kanhaiyadav/ExportMyChat"
+                    target="_blank">https://github.com/kanhaiyadav/ExportMyChat</a>
+            </p>
+            <p>
+                This transparency allows you to verify our privacy claims and see exactly how your data is handled.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>12. Contact Information</h2>
+            <p>
+                If you have questions or concerns about this Privacy Policy or ExportMyChat's privacy practices, please
+                contact us:
+            </p>
+            <ul>
+                <li><strong>GitHub Issues:</strong> <a href="https://github.com/kanhaiyadav/ExportMyChat/issues"
+                        target="_blank">Report an issue</a></li>
+                <li><strong>Developer:</strong> Kanhaiya Yadav</li>
+                <li><strong>GitHub Profile:</strong> <a href="https://github.com/kanhaiyadav"
+                        target="_blank">@kanhaiyadav</a></li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 ExportMyChat. All rights reserved.</p>
+            <p>
+                <a href="terms-of-service.html">Terms of Service</a> |
+                <a href="https://github.com/kanhaiyadav/ExportMyChat" target="_blank">GitHub</a>
+            </p>
+        </footer>
+    </div>
+</body>
+
+</html>
