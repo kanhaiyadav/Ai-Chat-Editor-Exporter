@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ExportMyChat - Legal Documents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,220 +17,477 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1a1a2e;
+            background: #f0f2f5;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 400px;
+            background: linear-gradient(135deg, #f59e0b 0%, #ffb900 50%, #fbbf24 100%);
+            z-index: -1;
+        }
+
+        .background-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 880px;
+            margin: 0 auto;
             background-color: white;
-            padding: 60px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 0;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            padding: 48px 40px 40px;
+            background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 24px;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 48px;
-            font-weight: bold;
+            overflow: hidden;
+            animation: scaleIn 0.5s ease-out 0.2s both;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: #111827;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+            animation: fadeIn 0.5s ease-out 0.3s both;
         }
 
         .subtitle {
-            color: #7f8c8d;
-            font-size: 1.2em;
-            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+
+        .content {
+            padding: 40px;
         }
 
         .description {
-            color: #555;
-            font-size: 1.1em;
-            line-height: 1.8;
-            margin-bottom: 40px;
-            padding: 0 20px;
+            color: #4b5563;
+            font-size: 1rem;
+            line-height: 1.75;
+            margin-bottom: 32px;
+            text-align: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 0.5s ease-out 0.5s both;
         }
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .card {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
+            background: #ffffff;
+            padding: 32px 28px;
+            border-radius: 16px;
             text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+            position: relative;
+            animation: fadeIn 0.5s ease-out 0.6s both;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f59e0b, #ffb900);
+            border-radius: 16px 16px 0 0;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px -8px rgba(255, 185, 0, 0.25);
+            border-color: #fde68a;
+            border-radius: 0px;
+        }
+
+        .card:hover::before {
+            opacity: 1;
         }
 
         .card-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.08);
+        }
+
+        .card-icon i {
+            font-size: 24px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .card h2 {
-            color: #2c3e50;
-            font-size: 1.5em;
-            margin-bottom: 15px;
+            color: #111827;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
         .card p {
-            color: #666;
-            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
             line-height: 1.6;
         }
 
         .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #111827;
             color: white;
             text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn i {
+            font-size: 12px;
+            transition: transform 0.2s ease;
         }
 
         .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #1f2937;
+            transform: translateY(-1px);
+        }
+
+        .btn:hover i {
+            transform: translateX(3px);
+        }
+
+        .highlights {
+            background: #f9fafb;
+            padding: 28px 32px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            animation: fadeIn 0.5s ease-out 0.8s both;
+        }
+
+        .highlights-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .highlights-header i {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-size: 16px;
+        }
+
+        .highlights-header h3 {
+            color: #111827;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .highlights ul {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .highlights li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .highlights li i {
+            color: #10b981;
+            font-size: 14px;
+            margin-top: 4px;
+            flex-shrink: 0;
         }
 
         footer {
             text-align: center;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
+            padding: 32px 40px;
+            background: #fafafa;
+            border-top: 1px solid #e5e7eb;
         }
 
         footer p {
-            color: #7f8c8d;
-            margin-bottom: 15px;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-bottom: 16px;
         }
 
         .links {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 32px;
             flex-wrap: wrap;
         }
 
         .links a {
-            color: #667eea;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
             text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .links a i {
+            font-size: 16px;
         }
 
         .links a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+            color: #f59e0b;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 40px 30px;
+            body {
+                padding: 20px 16px;
+            }
+
+            .background-pattern {
+                height: 300px;
+            }
+
+            header {
+                padding: 36px 24px 32px;
+            }
+
+            .content {
+                padding: 28px 24px;
             }
 
             h1 {
-                font-size: 2em;
+                font-size: 1.75rem;
             }
 
             .cards {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .card {
+                padding: 28px 24px;
+            }
+
+            .highlights {
+                padding: 24px;
+            }
+
+            footer {
+                padding: 28px 24px;
             }
 
             .links {
                 flex-direction: column;
-                gap: 15px;
+                gap: 16px;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="background-pattern"></div>
+
     <div class="container">
         <header>
-            <div class="logo">EC</div>
+            <div class="logo">
+                <img src="https://github.com/kanhaiyadav/assests/blob/main/128.png?raw=true" alt="ExportMyChat Logo">
+            </div>
             <h1>ExportMyChat</h1>
             <p class="subtitle">Legal Documents & Policies</p>
         </header>
 
-        <p class="description">
-            Welcome to ExportMyChat's legal documentation center. Here you can find important information about how we
-            handle your data and the terms governing your use of our browser extension.
-        </p>
+        <div class="content">
+            <p class="description">
+                Welcome to our legal documentation center. Find important information about how we protect your data and
+                the terms that govern your use of our browser extension.
+            </p>
 
-        <div class="cards">
-            <div class="card">
-                <div class="card-icon">🔒</div>
-                <h2>Privacy Policy</h2>
-                <p>Learn how we protect your privacy and handle your data. We don't collect, store, or transmit your
-                    conversations to any external servers.</p>
-                <a href="privacy-policy.html" class="btn">Read Privacy Policy</a>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h2>Privacy Policy</h2>
+                    <p>Learn how we protect your privacy and handle your data. We don't collect, store, or transmit your
+                        conversations to any external servers.</p>
+                    <a href="privacy-policy.html" class="btn">
+                        Read Policy
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h2>Terms of Service</h2>
+                    <p>Understand the terms and conditions for using ExportMyChat, including your rights and
+                        responsibilities as a user.</p>
+                    <a href="terms-of-service.html" class="btn">
+                        Read Terms
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-icon">📋</div>
-                <h2>Terms of Service</h2>
-                <p>Understand the terms and conditions for using ExportMyChat, including your rights and
-                    responsibilities.</p>
-                <a href="terms-of-service.html" class="btn">Read Terms of Service</a>
+            <div class="highlights">
+                <div class="highlights-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>Key Points</h3>
+                </div>
+                <ul>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Your data stays on your device — we don't operate any servers</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Google Drive sync is optional and uses your personal Drive storage</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Fully open source — review our code anytime on GitHub</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Zero tracking, analytics, or data collection of any kind</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Complete control over your exported conversations</span>
+                    </li>
+                </ul>
             </div>
-        </div>
-
-        <div
-            style="background: #e8f4f8; padding: 30px; border-radius: 15px; margin: 30px 0; border-left: 4px solid #667eea;">
-            <h3 style="color: #2c3e50; margin-bottom: 15px;">💡 Key Points</h3>
-            <ul style="color: #555; margin-left: 20px; line-height: 2;">
-                <li>Your data stays on your device - we don't have servers</li>
-                <li>Google Drive sync is optional and uses your personal Drive</li>
-                <li>Open source - you can review our code on GitHub</li>
-                <li>No tracking, analytics, or data collection</li>
-                <li>Full control over your exported conversations</li>
-            </ul>
         </div>
 
         <footer>
             <p>&copy; 2025 ExportMyChat. All rights reserved.</p>
             <div class="links">
-                <a href="https://github.com/kanhaiyadav/ExportMyChat" target="_blank">GitHub Repository</a>
-                <a href="https://github.com/kanhaiyadav/ExportMyChat/issues" target="_blank">Report Issues</a>
-                <a href="https://github.com/kanhaiyadav" target="_blank">Developer Profile</a>
+                <a href="https://github.com/kanhaiyadav/ExportMyChat" target="_blank">
+                    <i class="fab fa-github"></i>
+                    Repository
+                </a>
+                <a href="https://github.com/kanhaiyadav/ExportMyChat/issues" target="_blank">
+                    <i class="fas fa-bug"></i>
+                    Report Issues
+                </a>
+                <a href="https://github.com/kanhaiyadav" target="_blank">
+                    <i class="fas fa-user"></i>
+                    Developer
+                </a>
             </div>
         </footer>
     </div>
