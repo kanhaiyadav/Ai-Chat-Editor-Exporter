@@ -4,7 +4,7 @@
   <img src="public/icon/128.png" alt="ExportMyChat Logo" width="200" style="border-radius: 12px; margin: 20px 0;">
 </div>
 
-A powerful browser extension that transforms AI chat conversations into beautifully formatted Documents(**pdf**, **docx**, **html**, **md**, **json**, **txt**). Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, and extensive customization capabilities.
+A powerful browser extension that transforms AI chat conversations into beautifully formatted Documents(**pdf**, **docx**, **html**, **md**, **json**, **txt**). Supports **ChatGPT**, **Claude**, **Gemini**, and **DeepSeek** with rich text editing, message management, backup/restore, cloud sync, and extensive customization capabilities.
 
 <div align="center">
     <img src="thumbnail.png" alt="ExportMyChat Preview" width="800" style="margin: 20px 0;">

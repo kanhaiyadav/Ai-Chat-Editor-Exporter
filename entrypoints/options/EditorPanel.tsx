@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { EditorToolbar } from './EditorToolbar';
 import { ImageForm, TableForm, LinkForm } from './EditorForms';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { FiEdit } from 'react-icons/fi';
 
 interface EditorPanelProps {
@@ -14,16 +14,22 @@ interface EditorPanelProps {
     editingElementRef: HTMLDivElement | null;
     onSaveContent: (index: number, content: string) => void;
     onSaveAndClose: () => void;
+    onCloseRequestCancelled?: () => void;
 }
 
-export const EditorPanel = ({
+export interface EditorPanelRef {
+    requestClose: () => void;
+}
+
+export const EditorPanel = forwardRef<EditorPanelRef, EditorPanelProps>(({
     isOpen,
     onClose,
     editingMessageIndex,
     editingElementRef,
     onSaveContent,
     onSaveAndClose,
-}: EditorPanelProps) => {
+    onCloseRequestCancelled,
+}, ref) => {
     const { t } = useTranslation();
 
     // Form states for toolbar (image, table, link)
@@ -177,6 +183,13 @@ export const EditorPanel = ({
         }
     };
 
+    // Expose requestClose method to parent via ref
+    useImperativeHandle(ref, () => ({
+        requestClose: () => {
+            handleClose();
+        }
+    }), [hasChanges]);
+
     const handleUnsavedSave = () => {
         setShowUnsavedDialog(false);
         handleSave();
@@ -194,6 +207,7 @@ export const EditorPanel = ({
 
     const handleUnsavedCancel = () => {
         setShowUnsavedDialog(false);
+        onCloseRequestCancelled?.();
     };
 
     return (
@@ -359,4 +373,4 @@ export const EditorPanel = ({
             />
         </>
     );
-};
+});

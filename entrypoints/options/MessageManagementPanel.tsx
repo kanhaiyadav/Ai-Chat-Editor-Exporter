@@ -1,10 +1,10 @@
-import { X, MessageSquare, GripVertical, Image, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, MessageSquare, GripVertical, Image, ArrowUp, ArrowDown, Save, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Message } from './types';
 import { useTranslation } from 'react-i18next';
 import { HiOutlineDocumentText } from "react-icons/hi2";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -22,6 +22,7 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 
 interface MessageManagementPanelProps {
     isOpen: boolean;
@@ -30,6 +31,12 @@ interface MessageManagementPanelProps {
     selectedMessages: Set<number>;
     onToggleMessage: (index: number) => void;
     onReorderMessages: (newOrder: Message[]) => void;
+    onSaveChanges: (messages: Message[], selectedIndices: Set<number>) => void;
+    onCloseRequestCancelled?: () => void;
+}
+
+export interface MessageManagementPanelRef {
+    requestClose: () => void;
 }
 
 // Counter for generating unique IDs
@@ -168,23 +175,71 @@ const SortableMessageItem = ({
     );
 };
 
-export const MessageManagementPanel = ({
+export const MessageManagementPanel = forwardRef<MessageManagementPanelRef, MessageManagementPanelProps>(({
     isOpen,
     onClose,
     messages,
     selectedMessages,
     onToggleMessage,
     onReorderMessages,
-}: MessageManagementPanelProps) => {
+    onSaveChanges,
+    onCloseRequestCancelled,
+}, ref) => {
     const { t } = useTranslation();
+
+    // Local state for working copy
+    const [localMessages, setLocalMessages] = useState<Message[] | null>(null);
+    const [localSelectedMessages, setLocalSelectedMessages] = useState<Set<number>>(new Set());
 
     // Store stable IDs for each message
     const [messageIds, setMessageIds] = useState<string[]>([]);
     const prevMessagesRef = useRef<Message[] | null>(null);
 
+    // Track changes
+    const [hasChanges, setHasChanges] = useState(false);
+    const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+
+    // Original state for comparison
+    const originalMessagesRef = useRef<Message[] | null>(null);
+    const originalSelectedRef = useRef<Set<number>>(new Set());
+
+    // Initialize local state when panel opens or messages change externally
+    useEffect(() => {
+        if (isOpen && messages) {
+            // Only reset if messages changed externally (not from our local changes)
+            const messagesChanged = JSON.stringify(messages) !== JSON.stringify(originalMessagesRef.current);
+            if (messagesChanged || !originalMessagesRef.current) {
+                setLocalMessages([...messages]);
+                setLocalSelectedMessages(new Set(selectedMessages));
+                originalMessagesRef.current = [...messages];
+                originalSelectedRef.current = new Set(selectedMessages);
+                setHasChanges(false);
+            }
+        }
+    }, [isOpen, messages, selectedMessages]);
+
+    // Check for changes whenever local state changes
+    const checkForChanges = useCallback(() => {
+        if (!localMessages || !originalMessagesRef.current) return false;
+
+        // Check if messages order changed
+        const messagesOrderChanged = JSON.stringify(localMessages) !== JSON.stringify(originalMessagesRef.current);
+
+        // Check if selection changed
+        const originalSelected = originalSelectedRef.current;
+        const selectionChanged = localSelectedMessages.size !== originalSelected.size ||
+            [...localSelectedMessages].some(idx => !originalSelected.has(idx));
+
+        return messagesOrderChanged || selectionChanged;
+    }, [localMessages, localSelectedMessages]);
+
+    useEffect(() => {
+        setHasChanges(checkForChanges());
+    }, [localMessages, localSelectedMessages, checkForChanges]);
+
     // Generate stable IDs when messages change (but not on reorder)
     useEffect(() => {
-        if (!messages) {
+        if (!localMessages) {
             setMessageIds([]);
             prevMessagesRef.current = null;
             return;
@@ -192,17 +247,17 @@ export const MessageManagementPanel = ({
 
         // Check if this is a completely new set of messages (not just reordered)
         const prevMessages = prevMessagesRef.current;
-        const isNewMessageSet = !prevMessages || prevMessages.length !== messages.length;
+        const isNewMessageSet = !prevMessages || prevMessages.length !== localMessages.length;
 
         if (isNewMessageSet) {
             // Generate new IDs for new message set
-            const newIds = messages.map(() => generateUniqueId());
+            const newIds = localMessages.map(() => generateUniqueId());
             setMessageIds(newIds);
         }
         // If same length, IDs are maintained through reorder operations
 
-        prevMessagesRef.current = messages;
-    }, [messages]);
+        prevMessagesRef.current = localMessages;
+    }, [localMessages]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -218,35 +273,141 @@ export const MessageManagementPanel = ({
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
-        if (over && active.id !== over.id && messages && messageIds.length === messages.length) {
+        if (over && active.id !== over.id && localMessages && messageIds.length === localMessages.length) {
             const oldIndex = messageIds.indexOf(active.id.toString());
             const newIndex = messageIds.indexOf(over.id.toString());
 
             if (oldIndex !== -1 && newIndex !== -1) {
-                const newMessages = arrayMove(messages, oldIndex, newIndex);
+                const newMessages = arrayMove(localMessages, oldIndex, newIndex);
                 const newIds = arrayMove(messageIds, oldIndex, newIndex);
+
+                // Update selection indices to match new positions
+                const newSelected = new Set<number>();
+                localSelectedMessages.forEach(selectedIdx => {
+                    if (selectedIdx === oldIndex) {
+                        newSelected.add(newIndex);
+                    } else if (selectedIdx > oldIndex && selectedIdx <= newIndex) {
+                        newSelected.add(selectedIdx - 1);
+                    } else if (selectedIdx < oldIndex && selectedIdx >= newIndex) {
+                        newSelected.add(selectedIdx + 1);
+                    } else {
+                        newSelected.add(selectedIdx);
+                    }
+                });
+
                 setMessageIds(newIds);
-                onReorderMessages(newMessages);
+                setLocalMessages(newMessages);
+                setLocalSelectedMessages(newSelected);
             }
         }
     };
 
     const handleMoveUp = (index: number) => {
-        if (messages && index > 0 && messageIds.length === messages.length) {
-            const newMessages = arrayMove(messages, index, index - 1);
+        if (localMessages && index > 0 && messageIds.length === localMessages.length) {
+            const newMessages = arrayMove(localMessages, index, index - 1);
             const newIds = arrayMove(messageIds, index, index - 1);
+
+            // Update selection indices
+            const newSelected = new Set<number>();
+            localSelectedMessages.forEach(selectedIdx => {
+                if (selectedIdx === index) {
+                    newSelected.add(index - 1);
+                } else if (selectedIdx === index - 1) {
+                    newSelected.add(index);
+                } else {
+                    newSelected.add(selectedIdx);
+                }
+            });
+
             setMessageIds(newIds);
-            onReorderMessages(newMessages);
+            setLocalMessages(newMessages);
+            setLocalSelectedMessages(newSelected);
         }
     };
 
     const handleMoveDown = (index: number) => {
-        if (messages && index < messages.length - 1 && messageIds.length === messages.length) {
-            const newMessages = arrayMove(messages, index, index + 1);
+        if (localMessages && index < localMessages.length - 1 && messageIds.length === localMessages.length) {
+            const newMessages = arrayMove(localMessages, index, index + 1);
             const newIds = arrayMove(messageIds, index, index + 1);
+
+            // Update selection indices
+            const newSelected = new Set<number>();
+            localSelectedMessages.forEach(selectedIdx => {
+                if (selectedIdx === index) {
+                    newSelected.add(index + 1);
+                } else if (selectedIdx === index + 1) {
+                    newSelected.add(index);
+                } else {
+                    newSelected.add(selectedIdx);
+                }
+            });
+
             setMessageIds(newIds);
-            onReorderMessages(newMessages);
+            setLocalMessages(newMessages);
+            setLocalSelectedMessages(newSelected);
         }
+    };
+
+    const handleToggleMessage = (index: number) => {
+        const newSelected = new Set(localSelectedMessages);
+        if (newSelected.has(index)) {
+            newSelected.delete(index);
+        } else {
+            newSelected.add(index);
+        }
+        setLocalSelectedMessages(newSelected);
+    };
+
+    const handleSave = () => {
+        if (localMessages) {
+            // Filter out deselected messages
+            const filteredMessages = localMessages.filter((_, index) => localSelectedMessages.has(index));
+            // Create new selection set with all remaining messages selected
+            const newSelected = new Set<number>(filteredMessages.map((_, i) => i));
+            onSaveChanges(filteredMessages, newSelected);
+            setHasChanges(false);
+            onClose();
+        }
+    };
+
+    const handleCancel = () => {
+        // Restore original state
+        if (originalMessagesRef.current) {
+            setLocalMessages([...originalMessagesRef.current]);
+            setLocalSelectedMessages(new Set(originalSelectedRef.current));
+        }
+        setHasChanges(false);
+        onClose();
+    };
+
+    const handleClose = () => {
+        if (hasChanges) {
+            setShowUnsavedDialog(true);
+        } else {
+            onClose();
+        }
+    };
+
+    // Expose requestClose method to parent via ref
+    useImperativeHandle(ref, () => ({
+        requestClose: () => {
+            handleClose();
+        }
+    }), [hasChanges]);
+
+    const handleUnsavedSave = () => {
+        setShowUnsavedDialog(false);
+        handleSave();
+    };
+
+    const handleUnsavedDiscard = () => {
+        setShowUnsavedDialog(false);
+        handleCancel();
+    };
+
+    const handleUnsavedCancel = () => {
+        setShowUnsavedDialog(false);
+        onCloseRequestCancelled?.();
     };
 
     const getRoleBadgeColor = (role: string) => {
@@ -278,7 +439,7 @@ export const MessageManagementPanel = ({
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={onClose}
+                        onClick={handleClose}
                         className='h-8 w-8'
                     >
                         <X size={18} />
@@ -287,7 +448,7 @@ export const MessageManagementPanel = ({
 
                 {/* Content */}
                 <div className='flex-1 overflow-y-auto p-4'>
-                    {!messages || messages.length === 0 ? (
+                    {!localMessages || localMessages.length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground">
                             <MessageSquare size={48} className="mx-auto mb-3 opacity-30" />
                             <p className="text-sm">{t('settings.messages.noMessages')}</p>
@@ -303,20 +464,20 @@ export const MessageManagementPanel = ({
                                 strategy={verticalListSortingStrategy}
                             >
                                 <div className="space-y-2">
-                                    {messages.map((message, index) => (
+                                    {localMessages.map((message, index) => (
                                         <SortableMessageItem
                                             key={messageIds[index] || `temp-${index}`}
                                             messageId={messageIds[index] || `temp-${index}`}
                                             message={message}
                                             index={index}
-                                            isSelected={selectedMessages.has(index)}
-                                            onToggle={onToggleMessage}
+                                            isSelected={localSelectedMessages.has(index)}
+                                            onToggle={handleToggleMessage}
                                             getRoleBadgeColor={getRoleBadgeColor}
                                             truncateText={truncateText}
                                             onMoveUp={handleMoveUp}
                                             onMoveDown={handleMoveDown}
                                             isFirst={index === 0}
-                                            isLast={index === messages.length - 1}
+                                            isLast={index === localMessages.length - 1}
                                         />
                                     ))}
                                 </div>
@@ -326,12 +487,45 @@ export const MessageManagementPanel = ({
                 </div>
 
                 {/* Footer */}
-                {messages && messages.length > 0 && (
-                    <div className="px-4 py-3 border-t border-border bg-accent text-xs text-muted-foreground">
-                        {t('settings.messages.selectedCount', { selected: selectedMessages.size, total: messages.length })}
+                {localMessages && localMessages.length > 0 && (
+                    <div className="px-4 py-3 border-t border-border bg-accent">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between w-full">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleCancel}
+                                    className="h-8"
+                                >
+                                    <RotateCcw size={14} className="mr-1.5" />
+                                    {t('unsavedChatWarning.cancel')}
+                                </Button>
+                                <span className="text-xs text-muted-foreground">
+                                    {t('settings.messages.selectedCount', { selected: localSelectedMessages.size, total: localMessages.length })}
+                                </span>
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={handleSave}
+                                    disabled={!hasChanges}
+                                    className="h-8"
+                                >
+                                    <Save size={14} className="mr-1.5" />
+                                    {t('unsavedChatWarning.save')}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
+
+            {/* Unsaved Changes Dialog */}
+            <UnsavedChangesDialog
+                open={showUnsavedDialog}
+                onSave={handleUnsavedSave}
+                onDiscard={handleUnsavedDiscard}
+                onCancel={handleUnsavedCancel}
+            />
         </>
     );
-};
+});

@@ -87,7 +87,7 @@ function App() {
                 platformData.map((platform) => (
                     <div className="popup-section flex flex-col gap-3" key={platform.name}>
                         <div className='flex gap-2 items-center'>
-                            <img src={platform.icon} alt="" className='w-5'/>
+                            <img src={platform.icon} alt="" className='w-5' />
                             <h2 className="text-base font-semibold">{platform.name}</h2>
                         </div>
                         <div className="instruction-box">
@@ -123,6 +123,11 @@ function App() {
                     <span>Open ExportMyChat Editor</span>
                     <ArrowRight size={16} />
                 </button>
+                <div className="mb-2 flex justify-center gap-2 items-center text-xs text-gray-500">
+                    <a href="https://exportmychat.kanhaiya.me/privacy-policy.html" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">Privacy Policy</a>
+                    <span className='text-2xl leading-0.5 -mt-2'>.</span>
+                    <a href="https://exportmychat.kanhaiya.me/terms-of-service.html" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">Terms & Conditions</a>
+                </div>
             </div>
         </div>
     )

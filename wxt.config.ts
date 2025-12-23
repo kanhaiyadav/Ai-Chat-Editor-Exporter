@@ -6,9 +6,9 @@ import path from "path";
 export default defineConfig({
     modules: ["@wxt-dev/module-react"],
     manifest: {
-        name: "ExportMyChat",
-        key: "cmfbkbpocbpnioeefbgbohejpbgbkbih",
-        description: "A browser extension for converting AI chats to PDF",
+        name: "__MSG_extName__",
+        description: "__MSG_extDescription__",
+        default_locale: "en",
         version: "15.0.0",
         content_security_policy: {
             extension_pages: "script-src 'self'; object-src 'self'",

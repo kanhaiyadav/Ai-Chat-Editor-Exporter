@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useTheme } from '@/lib/useTheme';
 import { Message, PDFSettings, defaultSettings, ChatSource } from './types';
@@ -18,8 +18,8 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './app-sidebar';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
-import { MessageManagementPanel } from './MessageManagementPanel';
-import { EditorPanel } from './EditorPanel';
+import { MessageManagementPanel, MessageManagementPanelRef } from './MessageManagementPanel';
+import { EditorPanel, EditorPanelRef } from './EditorPanel';
 
 interface StorageChange {
     newValue?: any;
@@ -129,6 +129,14 @@ function App() {
     const [showMessageManagementPanel, setShowMessageManagementPanel] = useState(false);
     const [isEditingContent, setIsEditingContent] = useState(false);
     const [showEditorPanel, setShowEditorPanel] = useState(false);
+
+    // Refs for panel components to call requestClose
+    const messageManagementPanelRef = useRef<MessageManagementPanelRef>(null);
+    const editorPanelRef = useRef<EditorPanelRef>(null);
+
+    // Pending state for opening panels after another closes
+    const [pendingOpenMessagePanel, setPendingOpenMessagePanel] = useState(false);
+    const [pendingOpenEditorPanel, setPendingOpenEditorPanel] = useState(false);
 
 
     useEffect(() => {
@@ -315,6 +323,24 @@ function App() {
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [chatChanged]);
 
+    // Handle pending panel opens when another panel closes
+    // Open MessageManagementPanel after EditorPanel closes
+    useEffect(() => {
+        if (!showEditorPanel && pendingOpenMessagePanel) {
+            setPendingOpenMessagePanel(false);
+            setShowMessageManagementPanel(true);
+        }
+    }, [showEditorPanel, pendingOpenMessagePanel]);
+
+    // Open EditorPanel after MessageManagementPanel closes
+    useEffect(() => {
+        if (!showMessageManagementPanel && pendingOpenEditorPanel) {
+            setPendingOpenEditorPanel(false);
+            setShowEditorPanel(true);
+            setIsEditingContent(true);
+        }
+    }, [showMessageManagementPanel, pendingOpenEditorPanel]);
+
     const updateSettings = (updates: Partial<PDFSettings>) => {
         const newSettings = { ...settings, ...updates };
         setSettings(newSettings);
@@ -415,6 +441,20 @@ function App() {
         flushSync(() => {
             setChatData(newChatData);
             setSelectedMessages(newSelectedMessages);
+        });
+
+        // Save to chrome storage after state updates
+        chrome.storage.local.set({ chatData: newChatData });
+    };
+
+    const handleSaveMessageChanges = (messages: Message[], selectedIndices: Set<number>) => {
+        if (!chatData) return;
+
+        const newChatData = { ...chatData, messages, source: chatData.source };
+
+        flushSync(() => {
+            setChatData(newChatData);
+            setSelectedMessages(selectedIndices);
         });
 
         // Save to chrome storage after state updates
@@ -837,7 +877,15 @@ function App() {
                             onExportJSON={handleExportJSON}
                             onMerge={() => setShowMergeDialog(true)}
                             onCloseChat={handleCloseChat}
-                            onManageMessages={() => setShowMessageManagementPanel(true)}
+                            onManageMessages={() => {
+                                // If editor panel is open, request close (handles unsaved changes)
+                                if (showEditorPanel) {
+                                    setPendingOpenMessagePanel(true);
+                                    editorPanelRef.current?.requestClose();
+                                } else {
+                                    setShowMessageManagementPanel(true);
+                                }
+                            }}
                             editingIndex={editingMessageIndex}
                             onStartEdit={handleStartEditMessage}
                             onContentChange={handleContentChange}
@@ -845,10 +893,19 @@ function App() {
                             isEditingContent={isEditingContent}
                             onToggleEditContent={() => {
                                 const newEditingState = !isEditingContent;
-                                setIsEditingContent(newEditingState);
-                                setShowEditorPanel(newEditingState);
-                                if (!newEditingState) {
+                                if (newEditingState) {
+                                    // If message management panel is open, request close (handles unsaved changes)
+                                    if (showMessageManagementPanel) {
+                                        setPendingOpenEditorPanel(true);
+                                        messageManagementPanelRef.current?.requestClose();
+                                    } else {
+                                        setIsEditingContent(true);
+                                        setShowEditorPanel(true);
+                                    }
+                                } else {
                                     // Also clear editing state when turning off
+                                    setIsEditingContent(false);
+                                    setShowEditorPanel(false);
                                     setEditingMessageIndex(null);
                                     setEditingElementRef(null);
                                 }
@@ -870,6 +927,7 @@ function App() {
                                 onSaveAsPreset={handleSaveAsPreset}
                             />
                             <EditorPanel
+                                ref={editorPanelRef}
                                 isOpen={showEditorPanel}
                                 onClose={handleFinishEdit}
                                 editingMessageIndex={editingMessageIndex}
@@ -881,14 +939,18 @@ function App() {
                                     setEditingMessageIndex(null);
                                     setEditingElementRef(null);
                                 }}
+                                onCloseRequestCancelled={() => setPendingOpenMessagePanel(false)}
                             />
                             <MessageManagementPanel
+                                ref={messageManagementPanelRef}
                                 isOpen={showMessageManagementPanel}
                                 onClose={() => setShowMessageManagementPanel(false)}
                                 messages={chatData?.messages || null}
                                 selectedMessages={selectedMessages}
                                 onToggleMessage={handleToggleMessage}
                                 onReorderMessages={handleReorderMessages}
+                                onSaveChanges={handleSaveMessageChanges}
+                                onCloseRequestCancelled={() => setPendingOpenEditorPanel(false)}
                             />
                         </div>
                     </div>

@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - ExportMyChat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,135 +16,338 @@
             box-sizing: border-box;
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
+            color: #1a1a2e;
+            background: linear-gradient(to bottom, #fef3c7 0%, #f9fafb 300px, #f9fafb 100%);
+            min-height: 100vh;
+            padding: 60px 20px;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
             background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 40px;
-            margin-bottom: 40px;
-            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
         }
 
         header {
             text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 2px solid #f0f0f0;
-            margin-bottom: 40px;
+            padding: 48px 40px;
+            background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+            border-bottom: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f59e0b, #ffb900);
+        }
+
+        .header-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #ffb900 0%, #f59e0b 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            box-shadow: 0 8px 24px rgba(255, 185, 0, 0.3);
         }
 
         h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            color: #111827;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.025em;
         }
 
         .subtitle {
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #6b7280;
+            font-size: 1.05rem;
+            font-weight: 500;
         }
 
         .last-updated {
-            color: #95a5a6;
-            font-style: italic;
-            margin-top: 10px;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .last-updated i {
+            color: #f59e0b;
+        }
+
+        .content {
+            padding: 40px;
         }
 
         h2 {
-            color: #34495e;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-            border-left: 4px solid #3498db;
-            padding-left: 15px;
+            color: #111827;
+            margin-top: 48px;
+            margin-bottom: 24px;
+            font-size: 1.625rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #fde68a;
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        h2::before {
+            content: attr(data-icon);
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f59e0b;
+            font-size: 16px;
         }
 
         h3 {
-            color: #2c3e50;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.3em;
+            color: #374151;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        p,
+        h3::before {
+            content: '\f105';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #fbbf24;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #4b5563;
+            line-height: 1.75;
+        }
+
         li {
-            margin-bottom: 15px;
-            color: #555;
+            margin-bottom: 12px;
+            color: #4b5563;
+            line-height: 1.7;
         }
 
-        ul {
-            margin-left: 30px;
+        ul,
+        ol {
+            margin-left: 32px;
             margin-bottom: 20px;
         }
 
+        ul li::marker {
+            color: #fbbf24;
+        }
+
         .highlight {
-            background-color: #e8f4f8;
-            padding: 20px;
-            border-radius: 5px;
-            border-left: 4px solid #3498db;
-            margin: 20px 0;
+            background: linear-gradient(135deg, #fef3c7 0%, #fefce8 100%);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #fde68a;
+            margin: 24px 0;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
+        }
+
+        .highlight::before {
+            content: '\f0eb';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            color: #f59e0b;
+            font-size: 20px;
+        }
+
+        .highlight strong {
+            display: block;
+            margin-bottom: 12px;
+            padding-left: 36px;
+            color: #92400e;
+            font-size: 1.05rem;
+        }
+
+        .highlight p {
+            padding-left: 36px;
+            margin-bottom: 0;
         }
 
         .warning {
-            background-color: #fff3cd;
-            padding: 20px;
-            border-radius: 5px;
-            border-left: 4px solid #ffc107;
-            margin: 20px 0;
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #fdba74;
+            margin: 24px 0;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(251, 146, 60, 0.1);
+        }
+
+        .warning::before {
+            content: '\f071';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            color: #ea580c;
+            font-size: 20px;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 12px;
+            padding-left: 36px;
+            color: #9a3412;
+        }
+
+        .warning p,
+        .warning ol,
+        .warning ul {
+            padding-left: 36px;
         }
 
         strong {
-            color: #2c3e50;
+            color: #111827;
+            font-weight: 600;
         }
 
         a {
-            color: #3498db;
+            color: #f59e0b;
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
 
         a:hover {
+            color: #d97706;
             text-decoration: underline;
         }
 
         footer {
             text-align: center;
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
-            color: #7f8c8d;
+            padding: 32px 40px;
+            background: #fafafa;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+        footer p {
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        footer a {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0 12px;
+        }
+
+        footer a:hover {
+            color: #f59e0b;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            border: 1px solid #fde68a;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-                margin-top: 20px;
+            body {
+                padding: 30px 16px;
+            }
+
+            header {
+                padding: 36px 24px;
+            }
+
+            .content {
+                padding: 28px 24px;
             }
 
             h1 {
-                font-size: 2em;
+                font-size: 1.875rem;
             }
 
             h2 {
-                font-size: 1.5em;
+                font-size: 1.375rem;
+                flex-wrap: wrap;
+            }
+
+            h3 {
+                font-size: 1.125rem;
+            }
+
+            .highlight,
+            .warning {
+                padding: 20px;
+            }
+
+            footer {
+                padding: 28px 24px;
             }
         }
     </style>
@@ -149,247 +356,270 @@
 <body>
     <div class="container">
         <header>
+            <div class="header-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
             <h1>Privacy Policy</h1>
             <p class="subtitle">ExportMyChat Browser Extension</p>
-            <p class="last-updated">Last Updated: December 21, 2025</p>
+            <p class="last-updated">
+                <i class="far fa-calendar-alt"></i>
+                <span>Last Updated: December 21, 2025</span>
+            </p>
         </header>
 
-        <div class="highlight">
-            <strong>Quick Summary:</strong> ExportMyChat is committed to protecting your privacy. We do not collect,
-            store, or transmit your chat data to any external servers. All data processing happens locally in your
-            browser, and you maintain complete control over your information.
-        </div>
+        <div class="content">
 
-        <div class="section">
-            <h2>1. Introduction</h2>
-            <p>
-                ExportMyChat ("we", "our", or "the extension") is a browser extension that allows users to export, edit,
-                and manage AI chat conversations from platforms like ChatGPT, Claude, Gemini, and DeepSeek. This Privacy
-                Policy explains how we handle your data and protect your privacy.
-            </p>
-            <p>
-                By using ExportMyChat, you agree to the practices described in this Privacy Policy.
-            </p>
-        </div>
-
-        <div class="section">
-            <h2>2. Information We Do NOT Collect</h2>
-            <p>We want to be absolutely clear about what we DON'T do:</p>
-            <ul>
-                <li><strong>We do NOT collect your chat conversations</strong> - Your AI chat data never leaves your
-                    device</li>
-                <li><strong>We do NOT track your usage</strong> - No analytics, telemetry, or tracking scripts</li>
-                <li><strong>We do NOT sell your data</strong> - We have no data to sell</li>
-                <li><strong>We do NOT store data on our servers</strong> - We don't have any servers</li>
-                <li><strong>We do NOT require account creation</strong> - No email addresses or personal information
-                    needed</li>
-                <li><strong>We do NOT use cookies</strong> - Except for essential browser storage APIs</li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <h2>3. How ExportMyChat Works</h2>
-
-            <h3>3.1 Local Data Processing</h3>
-            <p>
-                ExportMyChat operates entirely within your browser using the following local storage mechanisms:
-            </p>
-            <ul>
-                <li><strong>Chrome Storage API:</strong> Temporarily stores chat data during the export process</li>
-                <li><strong>IndexedDB:</strong> Stores your saved chats, presets, and settings locally in your browser
-                </li>
-                <li><strong>localStorage:</strong> Stores user preferences like theme and language settings</li>
-            </ul>
-
-            <h3>3.2 Content Script Permissions</h3>
-            <p>
-                The extension requires permission to access specific AI chat platforms to extract conversation content:
-            </p>
-            <ul>
-                <li>chatgpt.com and chat.openai.com</li>
-                <li>claude.ai</li>
-                <li>gemini.google.com</li>
-                <li>chat.deepseek.com</li>
-            </ul>
-            <p>
-                <strong>Important:</strong> The extension only reads content from these pages when you explicitly click
-                the "Export" button. It does not continuously monitor or transmit your conversations.
-            </p>
-        </div>
-
-        <div class="section">
-            <h2>4. Google Drive Integration (Optional)</h2>
-
-            <h3>4.1 What Data is Stored</h3>
-            <p>
-                If you choose to enable Google Drive sync, the extension will store the following in YOUR personal
-                Google Drive:
-            </p>
-            <ul>
-                <li>Saved chat conversations (as JSON files)</li>
-                <li>Style presets and settings (as JSON files)</li>
-                <li>Metadata for synchronization purposes</li>
-            </ul>
-
-            <h3>4.2 Google Drive Permissions</h3>
-            <p>
-                ExportMyChat requests the <code>drive.file</code> scope, which means:
-            </p>
-            <ul>
-                <li>✅ We can ONLY access files created by our extension</li>
-                <li>✅ Data is stored in a dedicated app folder in your Drive</li>
-                <li>❌ We CANNOT access your other Google Drive files</li>
-                <li>❌ We CANNOT read your emails, contacts, or other Google data</li>
-            </ul>
-
-            <h3>4.3 Data Transmission</h3>
-            <p>
-                When Google Drive sync is enabled:
-            </p>
-            <ul>
-                <li>Data is transmitted directly between your browser and Google's servers using secure HTTPS
-                    connections</li>
-                <li>We do not have any intermediate servers that see or store your data</li>
-                <li>You can view all synced files directly in your Google Drive</li>
-                <li>You can delete all synced data at any time</li>
-            </ul>
-
-            <div class="warning">
-                <strong>Note:</strong> Google Drive sync is completely optional. The extension works fully without it,
-                storing all data only in your browser.
+            <div class="highlight">
+                <strong>Quick Summary:</strong> ExportMyChat is committed to protecting your privacy. We do not collect,
+                store, or transmit your chat data to any external servers. All data processing happens locally in your
+                browser, and you maintain complete control over your information.
             </div>
 
-            <h3>4.4 Revoking Access</h3>
-            <p>
-                You can revoke ExportMyChat's access to your Google Drive at any time by:
-            </p>
-            <ol>
-                <li>Visiting <a href="https://myaccount.google.com/permissions" target="_blank">Google Account
-                        Permissions</a></li>
-                <li>Finding "ExportMyChat" in the list</li>
-                <li>Clicking "Remove Access"</li>
-            </ol>
-        </div>
+            <div class="section">
+                <h2 data-icon="&#xf05a;">1. Introduction</h2>
+                <p>
+                    ExportMyChat ("we", "our", or "the extension") is a browser extension that allows users to export,
+                    edit,
+                    and manage AI chat conversations from platforms like ChatGPT, Claude, Gemini, and DeepSeek. This
+                    Privacy
+                    Policy explains how we handle your data and protect your privacy.
+                </p>
+                <p>
+                    By using ExportMyChat, you agree to the practices described in this Privacy Policy.
+                </p>
+            </div>
 
-        <div class="section">
-            <h2>5. Data Export and Sharing</h2>
-            <p>
-                ExportMyChat allows you to export your conversations in various formats (PDF, DOCX, HTML, Markdown,
-                JSON, TXT). When you export:
-            </p>
-            <ul>
-                <li>Files are generated locally in your browser</li>
-                <li>Files are downloaded directly to your computer</li>
-                <li>No data is sent to any external servers during export</li>
-                <li>You have complete control over what you do with exported files</li>
-            </ul>
-        </div>
+            <div class="section">
+                <h2 data-icon="&#xf05e;">2. Information We Do NOT Collect</h2>
+                <p>We want to be absolutely clear about what we DON'T do:</p>
+                <ul>
+                    <li><strong>We do NOT collect your chat conversations</strong> - Your AI chat data never leaves your
+                        device</li>
+                    <li><strong>We do NOT track your usage</strong> - No analytics, telemetry, or tracking scripts</li>
+                    <li><strong>We do NOT sell your data</strong> - We have no data to sell</li>
+                    <li><strong>We do NOT store data on our servers</strong> - We don't have any servers</li>
+                    <li><strong>We do NOT require account creation</strong> - No email addresses or personal information
+                        needed</li>
+                    <li><strong>We do NOT use cookies</strong> - Except for essential browser storage APIs</li>
+                </ul>
+            </div>
 
-        <div class="section">
-            <h2>6. Third-Party Services</h2>
+            <div class="section">
+                <h2 data-icon="&#xf013;">3. How ExportMyChat Works</h2>
 
-            <h3>6.1 AI Chat Platforms</h3>
-            <p>
-                ExportMyChat integrates with third-party AI platforms (ChatGPT, Claude, Gemini, DeepSeek). Each platform
-                has its own privacy policy:
-            </p>
-            <ul>
-                <li><a href="https://openai.com/privacy/" target="_blank">OpenAI (ChatGPT) Privacy Policy</a></li>
-                <li><a href="https://www.anthropic.com/privacy" target="_blank">Anthropic (Claude) Privacy Policy</a>
-                </li>
-                <li><a href="https://policies.google.com/privacy" target="_blank">Google (Gemini) Privacy Policy</a>
-                </li>
-                <li><a href="https://www.deepseek.com/privacy" target="_blank">DeepSeek Privacy Policy</a></li>
-            </ul>
+                <h3>3.1 Local Data Processing</h3>
+                <p>
+                    ExportMyChat operates entirely within your browser using the following local storage mechanisms:
+                </p>
+                <ul>
+                    <li><strong>Chrome Storage API:</strong> Temporarily stores chat data during the export process</li>
+                    <li><strong>IndexedDB:</strong> Stores your saved chats, presets, and settings locally in your
+                        browser
+                    </li>
+                    <li><strong>localStorage:</strong> Stores user preferences like theme and language settings</li>
+                </ul>
 
-            <h3>6.2 Google APIs</h3>
-            <p>
-                When using Google Drive sync, we use Google's APIs, which are subject to:
-            </p>
-            <ul>
-                <li><a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a></li>
-                <li><a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google
-                        API Services User Data Policy</a></li>
-            </ul>
-        </div>
+                <h3>3.2 Content Script Permissions</h3>
+                <p>
+                    The extension requires permission to access specific AI chat platforms to extract conversation
+                    content:
+                </p>
+                <ul>
+                    <li>chatgpt.com and chat.openai.com</li>
+                    <li>claude.ai</li>
+                    <li>gemini.google.com</li>
+                    <li>chat.deepseek.com</li>
+                </ul>
+                <p>
+                    <strong>Important:</strong> The extension only reads content from these pages when you explicitly
+                    click
+                    the "Export" button. It does not continuously monitor or transmit your conversations.
+                </p>
+            </div>
 
-        <div class="section">
-            <h2>7. Children's Privacy</h2>
-            <p>
-                ExportMyChat is not directed to children under the age of 13. We do not knowingly collect personal
-                information from children. If you are a parent or guardian and believe your child has provided us with
-                information, please contact us (though we don't collect such information).
-            </p>
-        </div>
+            <div class="section">
+                <h2 data-icon="&#xf1c0;">4. Google Drive Integration (Optional)</h2>
 
-        <div class="section">
-            <h2>8. Data Security</h2>
-            <p>
-                We take data security seriously:
-            </p>
-            <ul>
-                <li>All data stored locally uses browser's built-in security features</li>
-                <li>Google Drive sync uses OAuth 2.0 authentication</li>
-                <li>All data transmission to Google Drive uses HTTPS encryption</li>
-                <li>We follow browser extension security best practices</li>
-                <li>Regular security updates and patches</li>
-            </ul>
-        </div>
+                <h3>4.1 What Data is Stored</h3>
+                <p>
+                    If you choose to enable Google Drive sync, the extension will store the following in YOUR personal
+                    Google Drive:
+                </p>
+                <ul>
+                    <li>Saved chat conversations (as JSON files)</li>
+                    <li>Style presets and settings (as JSON files)</li>
+                    <li>Metadata for synchronization purposes</li>
+                </ul>
 
-        <div class="section">
-            <h2>9. Your Rights and Control</h2>
-            <p>
-                You have complete control over your data:
-            </p>
-            <ul>
-                <li><strong>Access:</strong> All your data is stored locally and accessible through the extension</li>
-                <li><strong>Delete:</strong> You can delete any saved chats or presets at any time</li>
-                <li><strong>Export:</strong> Export all your data as JSON files</li>
-                <li><strong>Disable Sync:</strong> Turn off Google Drive sync anytime</li>
-                <li><strong>Uninstall:</strong> Removing the extension deletes all local data (Google Drive data remains
-                    unless you delete it)</li>
-            </ul>
-        </div>
+                <h3>4.2 Google Drive Permissions</h3>
+                <p>
+                    ExportMyChat requests the <code>drive.file</code> scope, which means:
+                </p>
+                <ul>
+                    <li>✅ We can ONLY access files created by our extension</li>
+                    <li>✅ Data is stored in a dedicated app folder in your Drive</li>
+                    <li>❌ We CANNOT access your other Google Drive files</li>
+                    <li>❌ We CANNOT read your emails, contacts, or other Google data</li>
+                </ul>
 
-        <div class="section">
-            <h2>10. Updates to Privacy Policy</h2>
-            <p>
-                We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated
-                "Last Updated" date. We encourage you to review this policy periodically.
-            </p>
-            <p>
-                For significant changes that affect how we handle your data, we will provide notice through the
-                extension or our GitHub repository.
-            </p>
-        </div>
+                <h3>4.3 Data Transmission</h3>
+                <p>
+                    When Google Drive sync is enabled:
+                </p>
+                <ul>
+                    <li>Data is transmitted directly between your browser and Google's servers using secure HTTPS
+                        connections</li>
+                    <li>We do not have any intermediate servers that see or store your data</li>
+                    <li>You can view all synced files directly in your Google Drive</li>
+                    <li>You can delete all synced data at any time</li>
+                </ul>
 
-        <div class="section">
-            <h2>11. Open Source</h2>
-            <p>
-                ExportMyChat is open source software. You can review our code at:
-            </p>
-            <p>
-                <a href="https://github.com/kanhaiyadav/ExportMyChat"
-                    target="_blank">https://github.com/kanhaiyadav/ExportMyChat</a>
-            </p>
-            <p>
-                This transparency allows you to verify our privacy claims and see exactly how your data is handled.
-            </p>
-        </div>
+                <div class="warning">
+                    <strong>Note:</strong> Google Drive sync is completely optional. The extension works fully without
+                    it,
+                    storing all data only in your browser.
+                </div>
 
-        <div class="section">
-            <h2>12. Contact Information</h2>
-            <p>
-                If you have questions or concerns about this Privacy Policy or ExportMyChat's privacy practices, please
-                contact us:
-            </p>
-            <ul>
-                <li><strong>GitHub Issues:</strong> <a href="https://github.com/kanhaiyadav/ExportMyChat/issues"
-                        target="_blank">Report an issue</a></li>
-                <li><strong>Developer:</strong> Kanhaiya Yadav</li>
-                <li><strong>GitHub Profile:</strong> <a href="https://github.com/kanhaiyadav"
-                        target="_blank">@kanhaiyadav</a></li>
-            </ul>
+                <h3>4.4 Revoking Access</h3>
+                <p>
+                    You can revoke ExportMyChat's access to your Google Drive at any time by:
+                </p>
+                <ol>
+                    <li>Visiting <a href="https://myaccount.google.com/permissions" target="_blank">Google Account
+                            Permissions</a></li>
+                    <li>Finding "ExportMyChat" in the list</li>
+                    <li>Clicking "Remove Access"</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf56f;">5. Data Export and Sharing</h2>
+                <p>
+                    ExportMyChat allows you to export your conversations in various formats (PDF, DOCX, HTML, Markdown,
+                    JSON, TXT). When you export:
+                </p>
+                <ul>
+                    <li>Files are generated locally in your browser</li>
+                    <li>Files are downloaded directly to your computer</li>
+                    <li>No data is sent to any external servers during export</li>
+                    <li>You have complete control over what you do with exported files</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf0c1;">6. Third-Party Services</h2>
+
+                <h3>6.1 AI Chat Platforms</h3>
+                <p>
+                    ExportMyChat integrates with third-party AI platforms (ChatGPT, Claude, Gemini, DeepSeek). Each
+                    platform
+                    has its own privacy policy:
+                </p>
+                <ul>
+                    <li><a href="https://openai.com/privacy/" target="_blank">OpenAI (ChatGPT) Privacy Policy</a></li>
+                    <li><a href="https://www.anthropic.com/privacy" target="_blank">Anthropic (Claude) Privacy
+                            Policy</a>
+                    </li>
+                    <li><a href="https://policies.google.com/privacy" target="_blank">Google (Gemini) Privacy Policy</a>
+                    </li>
+                    <li><a href="https://www.deepseek.com/privacy" target="_blank">DeepSeek Privacy Policy</a></li>
+                </ul>
+
+                <h3>6.2 Google APIs</h3>
+                <p>
+                    When using Google Drive sync, we use Google's APIs, which are subject to:
+                </p>
+                <ul>
+                    <li><a href="https://policies.google.com/privacy" target="_blank">Google Privacy Policy</a></li>
+                    <li><a href="https://developers.google.com/terms/api-services-user-data-policy"
+                            target="_blank">Google
+                            API Services User Data Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf1ae;">7. Children's Privacy</h2>
+                <p>
+                    ExportMyChat is not directed to children under the age of 13. We do not knowingly collect personal
+                    information from children. If you are a parent or guardian and believe your child has provided us
+                    with
+                    information, please contact us (though we don't collect such information).
+                </p>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf023;">8. Data Security</h2>
+                <p>
+                    We take data security seriously:
+                </p>
+                <ul>
+                    <li>All data stored locally uses browser's built-in security features</li>
+                    <li>Google Drive sync uses OAuth 2.0 authentication</li>
+                    <li>All data transmission to Google Drive uses HTTPS encryption</li>
+                    <li>We follow browser extension security best practices</li>
+                    <li>Regular security updates and patches</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf507;">9. Your Rights and Control</h2>
+                <p>
+                    You have complete control over your data:
+                </p>
+                <ul>
+                    <li><strong>Access:</strong> All your data is stored locally and accessible through the extension
+                    </li>
+                    <li><strong>Delete:</strong> You can delete any saved chats or presets at any time</li>
+                    <li><strong>Export:</strong> Export all your data as JSON files</li>
+                    <li><strong>Disable Sync:</strong> Turn off Google Drive sync anytime</li>
+                    <li><strong>Uninstall:</strong> Removing the extension deletes all local data (Google Drive data
+                        remains
+                        unless you delete it)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf021;">10. Updates to Privacy Policy</h2>
+                <p>
+                    We may update this Privacy Policy from time to time. Changes will be posted on this page with an
+                    updated
+                    "Last Updated" date. We encourage you to review this policy periodically.
+                </p>
+                <p>
+                    For significant changes that affect how we handle your data, we will provide notice through the
+                    extension or our GitHub repository.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf09b;">11. Open Source</h2>
+                <p>
+                    ExportMyChat is open source software. You can review our code at:
+                </p>
+                <p>
+                    <a href="https://github.com/kanhaiyadav/ExportMyChat"
+                        target="_blank">https://github.com/kanhaiyadav/ExportMyChat</a>
+                </p>
+                <p>
+                    This transparency allows you to verify our privacy claims and see exactly how your data is handled.
+                </p>
+            </div>
+
+            <div class="section">
+                <h2 data-icon="&#xf0e0;">12. Contact Information</h2>
+                <p>
+                    If you have questions or concerns about this Privacy Policy or ExportMyChat's privacy practices,
+                    please
+                    contact us:
+                </p>
+                <ul>
+                    <li><strong>GitHub Issues:</strong> <a href="https://github.com/kanhaiyadav/ExportMyChat/issues"
+                            target="_blank">Report an issue</a></li>
+                    <li><strong>Developer:</strong> Kanhaiya Yadav</li>
+                    <li><strong>GitHub Profile:</strong> <a href="https://github.com/kanhaiyadav"
+                            target="_blank">@kanhaiyadav</a></li>
+                </ul>
+            </div>
         </div>
 
         <footer>
