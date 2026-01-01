@@ -174,12 +174,10 @@
     }
 
     #chat-container {
-        position: static;
-        left: -30px;
-        top: -0px;
-        width: 100%;
-        box-shadow: none !important;
-        margin-top: -170px !important;
+        padding: 40px 60px;
+        box-shadow: none;
+        top: -180px;
+        max-width: 1200px !important;
     }
 
     #chat-container pre {
@@ -196,9 +194,7 @@
     }
 
     .app-name {
-        margin-left: 20px;
-        top: -70px;
-        padding-right: 30px;
+        font-size: 15px !important;
     }
 
     .h-screen,

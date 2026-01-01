@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CloudOff, RefreshCw } from "lucide-react";
 import { BsCloudCheck } from "react-icons/bs";
-import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSync";
+import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSyncBackend";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function SyncStatusIndicator() {

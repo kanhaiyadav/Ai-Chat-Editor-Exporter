@@ -30,3 +30,11 @@ web-ext.config.ts
 .env.local
 .env.*.local
 client_secret*.json
+
+# Private extension key
+extension-key.pem
+
+# Backend
+backend/node_modules
+backend/dist
+backend/.env

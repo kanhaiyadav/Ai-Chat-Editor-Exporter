@@ -427,7 +427,7 @@ export const MessageManagementPanel = forwardRef<MessageManagementPanelRef, Mess
         <>
             {/* Sliding Panel - positioned to overlay settings panel only */}
             <div
-                className={`absolute top-[2px] right-0 h-[calc(100%-2px)] w-[350px] xl:w-[420px] bg-accent border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`absolute top-[2px] right-0 h-[calc(100%-2px)] w-[350px] xl:w-[400px] bg-accent border-l border-border shadow-xl z-20 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Header */}

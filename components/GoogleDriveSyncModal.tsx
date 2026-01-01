@@ -12,7 +12,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Cloud, CloudOff, RefreshCw, Trash2, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSync";
+import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSyncBackend";
 import { chatOperations, presetOperations } from "@/lib/settingsDB";
 import { useToast } from "@/hooks/use-toast";
 
@@ -111,7 +111,7 @@ export function GoogleDriveSyncModal({
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                        <img src="/gdrive.svg" alt="" className="w-5 h-5"/>
+                        <img src="/gdrive.svg" alt="" className="w-5 h-5" />
                         {t('googleDriveSync.title')}
                     </DialogTitle>
                     <DialogDescription>

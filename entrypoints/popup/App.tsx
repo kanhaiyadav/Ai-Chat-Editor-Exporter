@@ -52,7 +52,7 @@ const platformData = [
 
 function App() {
     const handleOpenOptions = () => {
-        const optionsUrl = chrome.runtime.getURL("/options.html");
+        const optionsUrl = chrome.runtime.getURL("/options.html?welcome=true");
         chrome.tabs.create({ url: optionsUrl });
     }
 

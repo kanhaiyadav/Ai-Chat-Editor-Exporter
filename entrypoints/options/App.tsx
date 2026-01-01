@@ -845,6 +845,13 @@ function App() {
     // Filter messages based on selection
     const filteredMessages = chatData?.messages?.filter((_, index) => selectedMessages.has(index)) || null;
 
+    // Show a welcome screen when URL contains ?welcome=true
+    // Only show welcome if there's no loaded chat (so clicking a saved chat opens preview)
+    const showWelcome = typeof window !== 'undefined'
+        && new URLSearchParams(window.location.search).get('welcome') === 'true'
+        && currentChatId === null
+        && (!(chatData && chatData.messages && chatData.messages.length > 0));
+
     return (
         <div className='flex flex-col items-center h-screen w-full !overflow-hidden'>
             <Header />
@@ -859,100 +866,110 @@ function App() {
                 />
                 <SidebarInset>
                     <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
-                        <PreviewContainer
-                            source={chatData?.source || 'chatgpt'}
-                            messages={filteredMessages}
-                            settings={settings}
-                            currentChatId={currentChatId}
-                            artifacts={chatData?.artifacts || []}
-                            chatSaved={chatSaved}
-                            chatChanged={chatChanged}
-                            onSaveChat={handleSaveChat}
-                            onSaveAsChat={handleSaveAsChat}
-                            onExportPDF={handleGeneratePDF}
-                            onOpenInWord={handleOpenInWord}
-                            onExportMarkdown={handleExportMarkdown}
-                            onExportHTML={handleExportHTML}
-                            onExportPlainText={handleExportPlainText}
-                            onExportJSON={handleExportJSON}
-                            onMerge={() => setShowMergeDialog(true)}
-                            onCloseChat={handleCloseChat}
-                            onManageMessages={() => {
-                                // If editor panel is open, request close (handles unsaved changes)
-                                if (showEditorPanel) {
-                                    setPendingOpenMessagePanel(true);
-                                    editorPanelRef.current?.requestClose();
-                                } else {
-                                    setShowMessageManagementPanel(true);
-                                }
-                            }}
-                            editingIndex={editingMessageIndex}
-                            onStartEdit={handleStartEditMessage}
-                            onContentChange={handleContentChange}
-                            onFinishEdit={handleFinishEdit}
-                            isEditingContent={isEditingContent}
-                            onToggleEditContent={() => {
-                                const newEditingState = !isEditingContent;
-                                if (newEditingState) {
-                                    // If message management panel is open, request close (handles unsaved changes)
-                                    if (showMessageManagementPanel) {
-                                        setPendingOpenEditorPanel(true);
-                                        messageManagementPanelRef.current?.requestClose();
-                                    } else {
-                                        setIsEditingContent(true);
-                                        setShowEditorPanel(true);
-                                    }
-                                } else {
-                                    // Also clear editing state when turning off
-                                    setIsEditingContent(false);
-                                    setShowEditorPanel(false);
-                                    setEditingMessageIndex(null);
-                                    setEditingElementRef(null);
-                                }
-                            }}
-                        />
+                        {showWelcome ? (
+                            <div className="flex-1 flex items-center justify-center h-full no-scrollbar inset-shadow-amber-950" style={{
+                                scrollbarWidth: "none"
+                            }}>
+                                <iframe src="https://exportmychat.kanhaiya.me" frameBorder="0" className="w-full h-full"></iframe>
+                            </div>
+                        ) : (
+                            <>
+                                <PreviewContainer
+                                    source={chatData?.source || 'chatgpt'}
+                                    messages={filteredMessages}
+                                    settings={settings}
+                                    currentChatId={currentChatId}
+                                    artifacts={chatData?.artifacts || []}
+                                    chatSaved={chatSaved}
+                                    chatChanged={chatChanged}
+                                    onSaveChat={handleSaveChat}
+                                    onSaveAsChat={handleSaveAsChat}
+                                    onExportPDF={handleGeneratePDF}
+                                    onOpenInWord={handleOpenInWord}
+                                    onExportMarkdown={handleExportMarkdown}
+                                    onExportHTML={handleExportHTML}
+                                    onExportPlainText={handleExportPlainText}
+                                    onExportJSON={handleExportJSON}
+                                    onMerge={() => setShowMergeDialog(true)}
+                                    onCloseChat={handleCloseChat}
+                                    onManageMessages={() => {
+                                        // If editor panel is open, request close (handles unsaved changes)
+                                        if (showEditorPanel) {
+                                            setPendingOpenMessagePanel(true);
+                                            editorPanelRef.current?.requestClose();
+                                        } else {
+                                            setShowMessageManagementPanel(true);
+                                        }
+                                    }}
+                                    editingIndex={editingMessageIndex}
+                                    onStartEdit={handleStartEditMessage}
+                                    onContentChange={handleContentChange}
+                                    onFinishEdit={handleFinishEdit}
+                                    isEditingContent={isEditingContent}
+                                    onToggleEditContent={() => {
+                                        const newEditingState = !isEditingContent;
+                                        if (newEditingState) {
+                                            // If message management panel is open, request close (handles unsaved changes)
+                                            if (showMessageManagementPanel) {
+                                                setPendingOpenEditorPanel(true);
+                                                messageManagementPanelRef.current?.requestClose();
+                                            } else {
+                                                setIsEditingContent(true);
+                                                setShowEditorPanel(true);
+                                            }
+                                        } else {
+                                            // Also clear editing state when turning off
+                                            setIsEditingContent(false);
+                                            setShowEditorPanel(false);
+                                            setEditingMessageIndex(null);
+                                            setEditingElementRef(null);
+                                        }
+                                    }}
+                                />
+                                {/* Settings Panel with Editor and Message Management overlays */}
+                                <div className='relative h-full overflow-hidden'>
+                                    <SettingsPanel
+                                        settings={settings}
+                                        expandedSections={expandedSections}
+                                        currentPresetId={currentPresetId}
+                                        settingsChanged={settingsChanged}
+                                        presetSaved={presetSaved}
+                                        onUpdateSettings={updateSettings}
+                                        onToggleSection={toggleSection}
+                                        onResetSettings={handleResetSettingsRequest}
+                                        onSavePreset={handleSavePreset}
+                                        onSaveAsPreset={handleSaveAsPreset}
+                                    />
+                                    <EditorPanel
+                                        ref={editorPanelRef}
+                                        isOpen={showEditorPanel}
+                                        onClose={handleFinishEdit}
+                                        editingMessageIndex={editingMessageIndex}
+                                        editingElementRef={editingElementRef}
+                                        onSaveContent={handleSaveEditedContent}
+                                        onSaveAndClose={() => {
+                                            setShowEditorPanel(false);
+                                            setIsEditingContent(false);
+                                            setEditingMessageIndex(null);
+                                            setEditingElementRef(null);
+                                        }}
+                                        onCloseRequestCancelled={() => setPendingOpenMessagePanel(false)}
+                                    />
+                                    <MessageManagementPanel
+                                        ref={messageManagementPanelRef}
+                                        isOpen={showMessageManagementPanel}
+                                        onClose={() => setShowMessageManagementPanel(false)}
+                                        messages={chatData?.messages || null}
+                                        selectedMessages={selectedMessages}
+                                        onToggleMessage={handleToggleMessage}
+                                        onReorderMessages={handleReorderMessages}
+                                        onSaveChanges={handleSaveMessageChanges}
+                                        onCloseRequestCancelled={() => setPendingOpenEditorPanel(false)}
+                                    />
+                                </div>
+                            </>
+                        )}
 
-                        {/* Settings Panel with Editor and Message Management overlays */}
-                        <div className='relative h-full overflow-hidden'>
-                            <SettingsPanel
-                                settings={settings}
-                                expandedSections={expandedSections}
-                                currentPresetId={currentPresetId}
-                                settingsChanged={settingsChanged}
-                                presetSaved={presetSaved}
-                                onUpdateSettings={updateSettings}
-                                onToggleSection={toggleSection}
-                                onResetSettings={handleResetSettingsRequest}
-                                onSavePreset={handleSavePreset}
-                                onSaveAsPreset={handleSaveAsPreset}
-                            />
-                            <EditorPanel
-                                ref={editorPanelRef}
-                                isOpen={showEditorPanel}
-                                onClose={handleFinishEdit}
-                                editingMessageIndex={editingMessageIndex}
-                                editingElementRef={editingElementRef}
-                                onSaveContent={handleSaveEditedContent}
-                                onSaveAndClose={() => {
-                                    setShowEditorPanel(false);
-                                    setIsEditingContent(false);
-                                    setEditingMessageIndex(null);
-                                    setEditingElementRef(null);
-                                }}
-                                onCloseRequestCancelled={() => setPendingOpenMessagePanel(false)}
-                            />
-                            <MessageManagementPanel
-                                ref={messageManagementPanelRef}
-                                isOpen={showMessageManagementPanel}
-                                onClose={() => setShowMessageManagementPanel(false)}
-                                messages={chatData?.messages || null}
-                                selectedMessages={selectedMessages}
-                                onToggleMessage={handleToggleMessage}
-                                onReorderMessages={handleReorderMessages}
-                                onSaveChanges={handleSaveMessageChanges}
-                                onCloseRequestCancelled={() => setPendingOpenEditorPanel(false)}
-                            />
-                        </div>
                     </div>
                 </SidebarInset>
             </SidebarProvider>

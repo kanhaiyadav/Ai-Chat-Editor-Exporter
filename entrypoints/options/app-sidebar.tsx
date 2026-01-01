@@ -18,6 +18,7 @@ import { NavPresets } from "./nav-presets"
 import { ToggleSidebar } from "./team-switcher"
 import { BuyMeCoffeeModal } from "@/components/BuyMeCoffeeModal"
 import { GoogleDriveSyncModal } from "@/components/GoogleDriveSyncModal"
+import { GoogleDriveTokenModal } from "@/components/GoogleDriveTokenModal"
 import { ConfirmationDialog } from "./ConfirmationDialog"
 import {
     Sidebar,
@@ -49,9 +50,10 @@ import {
 import { BsFiletypeJson } from "react-icons/bs";
 import { BsFileEarmarkArrowDown } from "react-icons/bs";
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useTranslation } from "react-i18next"
 import { Spinner } from "@/components/ui/spinner"
-import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSync"
+import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSyncBackend"
 import { useToast } from "@/hooks/use-toast"
 import { SyncStatusIndicator } from '@/components/SyncStatusIndicator';
 
@@ -77,6 +79,7 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onOpenBulkExport, onOpenI
         authenticated: false,
     })
     const [syncLoading, setSyncLoading] = React.useState(false)
+    const [showTokenModal, setShowTokenModal] = React.useState(false)
 
     // Load sync status on mount and listen for changes
     useEffect(() => {
@@ -104,10 +107,25 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onOpenBulkExport, onOpenI
     };
 
     const handleConnectGoogleDrive = async () => {
+        // Open OAuth URL in new tab
+        const oauthUrl = googleDriveSync.getOAuthUrl();
+        await chrome.tabs.create({ url: oauthUrl });
+
+        // Show token modal
+        setShowTokenModal(true);
+
+        toast({
+            title: t('googleDriveSync.toasts.authStarted') || "Authentication Started",
+            description: t('googleDriveSync.toasts.authStartedDesc') || "Complete sign-in in the new tab, then paste the token in the modal.",
+        });
+    };
+
+    const handleSubmitToken = async (token: string): Promise<boolean> => {
         setSyncLoading(true);
         try {
-            const success = await googleDriveSync.authenticate();
+            const success = await googleDriveSync.completeAuthentication(token);
             if (success) {
+                setShowTokenModal(false);
                 toast({
                     title: t('googleDriveSync.toasts.connected'),
                     description: t('googleDriveSync.toasts.checkingData'),
@@ -183,20 +201,23 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onOpenBulkExport, onOpenI
                 }
 
                 await loadSyncStatus();
+                return true;
             } else {
                 toast({
-                    title: t('googleDriveSync.toasts.connectionFailed'),
-                    description: t('googleDriveSync.toasts.tryAgain'),
+                    title: t('googleDriveSync.toasts.invalidToken') || "Invalid Token",
+                    description: t('googleDriveSync.toasts.invalidTokenDesc') || "The token is invalid or expired. Please try again.",
                     variant: "destructive",
                 });
+                return false;
             }
         } catch (error) {
-            console.error("Authentication error:", error);
+            console.error("Token validation error:", error);
             toast({
                 title: t('googleDriveSync.toasts.connectionError'),
                 description: error instanceof Error ? error.message : "Unknown error",
                 variant: "destructive",
             });
+            return false;
         } finally {
             setSyncLoading(false);
         }
@@ -721,6 +742,13 @@ export function AppSidebar({ onLoadChat, onLoadPreset, onOpenBulkExport, onOpenI
                     setDeleteConfirmOpen(false);
                     setPendingDeleteChatId(null);
                 }}
+            />
+
+            <GoogleDriveTokenModal
+                open={showTokenModal}
+                onOpenChange={setShowTokenModal}
+                onSubmitToken={handleSubmitToken}
+                loading={syncLoading}
             />
 
             <ConfirmationDialog

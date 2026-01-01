@@ -158,19 +158,21 @@ export const PreviewContainer = ({
             />
 
             <div
-                className='flex-1 overflow-y-auto px-5 pt-8'
+                className='flex-1 overflow-y-auto p-5 min-w-[800px]'
             >
                 <div
                     id='chat-container'
                     className={`mx-auto px-8 shadow-lg relative pt-10 ${source} `}
                     style={{
-                        maxWidth: '800px',
                         minHeight: '1000px',
                         backgroundColor: 'var(--pdf-background)',
                         color: settings && settings.general.textColor,
+                        fontSize: settings && settings.general.fontSize,
+                        fontFamily: settings && settings.general.fontFamily?.value,
+                        lineHeight: settings && settings.general.lineHeight,
                     }}
                 >
-                    <div className='app-name absolute top-1 left-0 px-4 text-black/50 w-full flex justify-between'>
+                    <div className='app-name px-4 text-black/50 w-full flex justify-between'>
                         <span>ExportMyChat</span>
                         <span>{new Date().toLocaleDateString()}</span>
                     </div>

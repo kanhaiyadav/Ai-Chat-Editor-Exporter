@@ -98,7 +98,7 @@ export const SettingsPanel = ({
     const presetDisplayName = currentPreset?.name || t('settingsPanel.untitledPreset');
 
     return (
-        <div className='w-[350px] xl:w-[420px] h-full bg-gradient-to-b relative bg-accent mt-0.5 flex flex-col border border-border'>
+        <div className='w-[350px] xl:w-[400px] h-full bg-gradient-to-b relative bg-accent mt-0.5 flex flex-col border border-border'>
             {/* Sticky Header with Preset Name */}
             <div className='sticky top-0 z-10 bg-accent border-b border-border px-6 py-1 pb-[7px]'>
                 {isEditingPresetName ? (
@@ -193,7 +193,7 @@ export const SettingsPanel = ({
             </div>
 
             <div
-                className='flex-1 overflow-y-scroll p-6 py-4 space-y-3 pb-24'
+                className='flex-1 overflow-y-scroll p-3 py-4 space-y-3 pb-24'
                 style={{
                     scrollbarColor: '#bebebe var(--color-accent)',
                 }}

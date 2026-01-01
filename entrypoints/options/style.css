@@ -210,3 +210,12 @@ pre code {
     margin: 1rem 0;
     border: 1px solid #e0e0e0;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}

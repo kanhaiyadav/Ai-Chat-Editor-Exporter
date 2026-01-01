@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { Cloud, CloudOff, RefreshCw, Trash2, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSync";
+import { Cloud, CloudOff, RefreshCw, Trash2, CheckCircle2, XCircle, AlertCircle, ExternalLink, Clipboard, Key } from "lucide-react";
+import { googleDriveSync, SyncStatus } from "@/lib/googleDriveSyncBackend";
 import { chatOperations, presetOperations } from "@/lib/settingsDB";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,10 +19,14 @@ export function GoogleDriveSyncSettings() {
         authenticated: false,
     });
     const [loading, setLoading] = useState(true);
+    const [showTokenInput, setShowTokenInput] = useState(false);
+    const [tokenInput, setTokenInput] = useState("");
+    const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
     const { toast } = useToast();
 
     useEffect(() => {
         loadSyncStatus();
+        checkBackendAvailability();
 
         // Listen for storage changes
         const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
@@ -37,6 +42,11 @@ export function GoogleDriveSyncSettings() {
         };
     }, []);
 
+    const checkBackendAvailability = async () => {
+        const available = await googleDriveSync.hasCredentials();
+        setBackendAvailable(available);
+    };
+
     const loadSyncStatus = async () => {
         try {
             const status = await googleDriveSync.getSyncStatus();
@@ -49,10 +59,37 @@ export function GoogleDriveSyncSettings() {
     };
 
     const handleAuthenticate = async () => {
+        // Open OAuth URL in new tab
+        const oauthUrl = googleDriveSync.getOAuthUrl();
+        await chrome.tabs.create({ url: oauthUrl });
+
+        // Show token input field
+        setShowTokenInput(true);
+
+        toast({
+            title: "Authentication Started",
+            description: "Complete sign-in in the new tab, then paste the token here.",
+        });
+    };
+
+    const handleSubmitToken = async () => {
+        if (!tokenInput.trim()) {
+            toast({
+                title: "Token Required",
+                description: "Please paste the session token from the authentication page.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         setLoading(true);
         try {
-            const success = await googleDriveSync.authenticate();
+            const success = await googleDriveSync.completeAuthentication(tokenInput.trim());
+
             if (success) {
+                setShowTokenInput(false);
+                setTokenInput("");
+
                 toast({
                     title: "Connected!",
                     description: "Checking for existing data in Google Drive...",
@@ -133,13 +170,13 @@ export function GoogleDriveSyncSettings() {
                 await loadSyncStatus();
             } else {
                 toast({
-                    title: "Connection Failed",
-                    description: "Please try again.",
+                    title: "Invalid Token",
+                    description: "The token is invalid or expired. Please try again.",
                     variant: "destructive",
                 });
             }
         } catch (error) {
-            console.error("Authentication error:", error);
+            console.error("Token validation error:", error);
             toast({
                 title: "Connection Error",
                 description: error instanceof Error ? error.message : "Unknown error",
@@ -148,6 +185,24 @@ export function GoogleDriveSyncSettings() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handlePasteToken = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            setTokenInput(text);
+        } catch (e) {
+            toast({
+                title: "Clipboard Access Denied",
+                description: "Please paste the token manually.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleCancelTokenInput = () => {
+        setShowTokenInput(false);
+        setTokenInput("");
     };
 
     const handleSignOut = async () => {
@@ -371,23 +426,95 @@ export function GoogleDriveSyncSettings() {
                     </div>
 
                     {!syncStatus.authenticated ? (
-                        <Button
-                            onClick={handleAuthenticate}
-                            disabled={loading}
-                            className="w-full"
-                        >
-                            {loading ? (
-                                <>
-                                    <Spinner className="mr-2 h-4 w-4" />
-                                    Connecting...
-                                </>
-                            ) : (
-                                <>
-                                    <Cloud className="mr-2 h-4 w-4" />
-                                    Connect to Google Drive
-                                </>
+                        <>
+                            {backendAvailable === false && (
+                                <div className="rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-3 mb-4">
+                                    <div className="flex items-start gap-2">
+                                        <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                                        <div>
+                                            <p className="text-sm font-medium text-yellow-700 dark:text-yellow-500">
+                                                Backend Server Unavailable
+                                            </p>
+                                            <p className="text-sm text-yellow-600/90 dark:text-yellow-500/90">
+                                                The sync server is not reachable. Please ensure the backend is running.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             )}
-                        </Button>
+
+                            {showTokenInput ? (
+                                <div className="space-y-3">
+                                    <div className="rounded-lg bg-muted p-3">
+                                        <p className="text-sm text-muted-foreground">
+                                            Complete sign-in in the browser tab that opened, then paste the session token below.
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Input
+                                            type="password"
+                                            placeholder="Paste session token here..."
+                                            value={tokenInput}
+                                            onChange={(e) => setTokenInput(e.target.value)}
+                                            className="flex-1"
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={handlePasteToken}
+                                            title="Paste from clipboard"
+                                        >
+                                            <Clipboard className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            onClick={handleSubmitToken}
+                                            disabled={loading || !tokenInput.trim()}
+                                            className="flex-1"
+                                        >
+                                            {loading ? (
+                                                <>
+                                                    <Spinner className="mr-2 h-4 w-4" />
+                                                    Validating...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Key className="mr-2 h-4 w-4" />
+                                                    Submit Token
+                                                </>
+                                            )}
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleCancelTokenInput}
+                                            disabled={loading}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <Button
+                                    onClick={handleAuthenticate}
+                                    disabled={loading || backendAvailable === false}
+                                    className="w-full"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Spinner className="mr-2 h-4 w-4" />
+                                            Connecting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Cloud className="mr-2 h-4 w-4" />
+                                            Connect to Google Drive
+                                            <ExternalLink className="ml-2 h-3 w-3" />
+                                        </>
+                                    )}
+                                </Button>
+                            )}
+                        </>
                     ) : (
                         <Button
                             onClick={handleSignOut}
@@ -491,11 +618,18 @@ export function GoogleDriveSyncSettings() {
                     <p className="text-sm font-medium">How it works</p>
                     <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                         <li>Your data is stored in your personal Google Drive</li>
-                        <li>All data is encrypted by Google Drive</li>
-                        <li>No data is stored on our servers</li>
+                        <li>Authentication is handled securely via our backend</li>
+                        <li>Works on all browsers (Chrome, Edge, Brave, etc.)</li>
                         <li>Sync across all your browsers and devices</li>
                     </ul>
                 </div>
+
+                {/* User Email Display */}
+                {syncStatus.authenticated && syncStatus.email && (
+                    <div className="text-xs text-muted-foreground text-center">
+                        Signed in as {syncStatus.email}
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
