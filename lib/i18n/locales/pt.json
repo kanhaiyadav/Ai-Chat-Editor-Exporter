@@ -474,8 +474,8 @@
         "howItWorks": "Como funciona",
         "howItWorksItems": {
             "stored": "Seus dados são armazenados no seu Google Drive pessoal",
-            "encrypted": "Todos os dados são criptografados pelo Google Drive",
-            "noServers": "Nenhum dado é armazenado em nossos servidores",
+            "encrypted": "Autenticação segura através do nosso backend OAuth",
+            "noServers": "Seus tokens de atualização permanecem no backend, dados de chat no seu Drive",
             "syncAcross": "Sincronize em todos os seus navegadores e dispositivos"
         },
         "enterToken": "Completar Autenticação",

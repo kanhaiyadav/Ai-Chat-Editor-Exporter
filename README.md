@@ -318,10 +318,11 @@ Seamlessly sync your chats and presets across all your devices using Google Driv
 #### How to Use
 
 1. Click the Google Drive icon in the header
-2. Sign in with your Google account
-3. Grant permission to access Google Drive
-4. Enable sync for chats and/or presets
-5. Your data automatically syncs across all devices
+2. Sign in with your Google account through the secure authentication page
+3. Copy the provided session token
+4. Paste the token back in the extension to complete authentication
+5. Enable sync for chats and/or presets
+6. Your data automatically syncs across all devices
 
 #### Sync Options
 

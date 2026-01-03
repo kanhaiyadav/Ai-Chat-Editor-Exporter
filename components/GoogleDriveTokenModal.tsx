@@ -167,7 +167,7 @@ export function GoogleDriveTokenModal({
                         onClick={handleCancel}
                         disabled={loading}
                     >
-                        {t('common.cancel') || 'Cancel'}
+                        {t('dialog.cancel') || 'Cancel'}
                     </Button>
                     <Button
                         onClick={handleSubmit}

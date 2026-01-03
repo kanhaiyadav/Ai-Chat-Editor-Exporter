@@ -474,8 +474,8 @@
         "howItWorks": "Nasıl çalışır",
         "howItWorksItems": {
             "stored": "Verileriniz kişisel Google Drive'ınızda saklanır",
-            "encrypted": "Tüm veriler Google Drive tarafından şifrelenir",
-            "noServers": "Sunucularımızda hiçbir veri saklanmaz",
+            "encrypted": "OAuth arka ucumuz aracılığıyla güvenli kimlik doğrulama",
+            "noServers": "Yenileme belirteçleriniz arka uçta, sohbet verileri Drive'ınızda kalır",
             "syncAcross": "Tüm tarayıcılarınız ve cihazlarınız arasında senkronize edin"
         },
         "enterToken": "Kimlik Doğrulamayı Tamamlayın",

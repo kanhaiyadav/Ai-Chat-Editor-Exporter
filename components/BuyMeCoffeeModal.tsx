@@ -32,7 +32,7 @@ export const BuyMeCoffeeModal: React.FC<BuyMeCoffeeModalProps> = ({
                         </div>
                         <div>
                             <DialogTitle className="text-xl">{t('coffee.title')}</DialogTitle>
-                            <DialogDescription className="mt-[-2px]">
+                            <DialogDescription className="text-xs">
                                 {t('coffee.message')}
                             </DialogDescription>
                         </div>

@@ -13,7 +13,7 @@ const platformData = [
             'Click on the "ExportMyChat" button at the top right of the conversation pag, to open the chat in the editor.',
             'Open the editor by clicking on the export button'
         ],
-        link: 'https://chat.openai.com/'
+        link: 'https://chatgpt.com'
     },
     {
         icon: '/chat/claude.png',

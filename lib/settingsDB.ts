@@ -186,7 +186,7 @@ export const presetOperations = {
 // Helper function to track deletions for sync
 async function trackDeletion(type: "chat" | "preset", syncId: string) {
     try {
-        const { googleDriveSync } = await import("./googleDriveSync");
+        const { googleDriveSync } = await import("./googleDriveSyncBackend");
         await googleDriveSync.trackDeletion(type, syncId);
     } catch (error) {
         console.error("Failed to track deletion:", error);
@@ -196,7 +196,7 @@ async function trackDeletion(type: "chat" | "preset", syncId: string) {
 // Helper function to trigger sync if enabled
 async function triggerAutoSync() {
     try {
-        const { googleDriveSync } = await import("./googleDriveSync");
+        const { googleDriveSync } = await import("./googleDriveSyncBackend");
         const syncStatus = await googleDriveSync.getSyncStatus();
 
         if (

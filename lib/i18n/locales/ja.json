@@ -473,10 +473,10 @@
         "deleteConfirm": "Google Driveからすべてのデータを削除してもよろしいですか？この操作は取り消せません。",
         "howItWorks": "仕組み",
         "howItWorksItems": {
-            "stored": "データはあなたの個人的なGoogle Driveに保存されます",
-            "encrypted": "すべてのデータはGoogle Driveによって暗号化されます",
-            "noServers": "当社のサーバーにはデータは保存されません",
-            "syncAcross": "すべてのブラウザとデバイスで同期"
+            "stored": "データは個人のGoogle Driveに保存されます",
+            "encrypted": "OAuthバックエンドを介した安全な認証",
+            "noServers": "更新トークンはバックエンドに、チャットデータはDriveに保存されます",
+            "syncAcross": "すべてのブラウザとデバイス間で同期"
         },
         "enterToken": "認証を完了",
         "tokenModalDesc": "認証ページからセッショントークンを貼り付けて設定を完了します。",

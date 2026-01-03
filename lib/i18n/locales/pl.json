@@ -473,10 +473,10 @@
         "deleteConfirm": "Czy na pewno chcesz usunąć wszystkie dane z Google Drive? Tej akcji nie można cofnąć.",
         "howItWorks": "Jak to działa",
         "howItWorksItems": {
-            "stored": "Twoje dane są przechowywane na Twoim osobistym Google Drive",
-            "encrypted": "Wszystkie dane są szyfrowane przez Google Drive",
-            "noServers": "Żadne dane nie są przechowywane na naszych serwerach",
-            "syncAcross": "Synchronizuj na wszystkich przeglądarkach i urządzeniach"
+            "stored": "Twoje dane są przechowywane na Twoim osobistym Dysku Google",
+            "encrypted": "Bezpieczne uwierzytelnianie przez nasz backend OAuth",
+            "noServers": "Twoje tokeny odświeżania pozostają na backendzie, dane czatu na Twoim Dysku",
+            "syncAcross": "Synchronizuj we wszystkich przeglądarkach i urządzeniach"
         },
         "enterToken": "Zakończ Uwierzytelnianie",
         "tokenModalDesc": "Wklej token sesji ze strony uwierzytelniania, aby zakończyć konfigurację.",

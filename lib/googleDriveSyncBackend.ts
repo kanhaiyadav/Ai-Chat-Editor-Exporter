@@ -184,26 +184,21 @@ class GoogleDriveSyncBackend {
      * Returns the URL to open (extension handles opening it)
      */
     getOAuthUrl(): string {
-        const origin = chrome.runtime.getURL("");
-        return `${BACKEND_URL}/oauth/google?origin=${encodeURIComponent(
-            origin
-        )}`;
+        return `${BACKEND_URL}/oauth/google`;
     }
 
     /**
      * Authenticate with Google via backend
-     * Opens a new tab for OAuth, waits for token via clipboard or manual entry
+     * Opens a new tab for OAuth, waits for token via manual entry
      */
     async authenticate(): Promise<boolean> {
         try {
             // Open OAuth URL in new tab
             const oauthUrl = this.getOAuthUrl();
-
-            // Create a new tab for OAuth
             await chrome.tabs.create({ url: oauthUrl });
 
             // The user will need to paste the token from the success page
-            // This is handled by the UI component (GoogleDriveSyncModal)
+            // This is handled by the UI component (GoogleDriveTokenModal)
             return true;
         } catch (error) {
             console.error("Authentication failed:", error);

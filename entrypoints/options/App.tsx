@@ -20,6 +20,8 @@ import { ConfirmationDialog } from './ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import { MessageManagementPanel, MessageManagementPanelRef } from './MessageManagementPanel';
 import { EditorPanel, EditorPanelRef } from './EditorPanel';
+import { Save, Cog, Palette } from 'lucide-react';
+import { FiFileText } from 'react-icons/fi';
 
 interface StorageChange {
     newValue?: any;
@@ -867,10 +869,161 @@ function App() {
                 <SidebarInset>
                     <div className='flex-1 min-h-0 flex items-center w-full inset-shadow-sm inset-shadow-black/30'>
                         {showWelcome ? (
-                            <div className="flex-1 flex items-center justify-center h-full no-scrollbar inset-shadow-amber-950" style={{
-                                scrollbarWidth: "none"
-                            }}>
-                                <iframe src="https://exportmychat.kanhaiya.me" frameBorder="0" className="w-full h-full"></iframe>
+                            <div className="flex-1 h-full overflow-y-auto bg-gradient-to-br from-background via-background to-muted/20">
+                                <div className="max-w-4xl w-full mx-auto p-8 space-y-8 animate-in fade-in duration-500">
+                                    {/* Welcome Header */}
+                                    <div className="text-center space-y-4">
+                                        <div className="flex items-center justify-center gap-4 mb-6">
+                                            <img src="/icon/128.png" alt="ExportMyChat" className="w-16 h-16" />
+                                            <div className="text-left">
+                                                <h1 className="text-4xl font-bold text-primary">
+                                                    ExportMyChat
+                                                </h1>
+                                                <p className="text-lg text-muted-foreground font-medium">
+                                                    Edit and Export AI Chats
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p className="text-muted-foreground max-w-2xl mx-auto">
+                                            Transform your AI conversations into beautifully formatted documents with full editing control
+                                        </p>
+                                    </div>
+
+                                    {/* Features Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
+                                        <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                                            <Save className="w-5 h-5 text-primary mt-0.5" />
+                                            <div>
+                                                <h3 className="font-semibold mb-1">Save & Manage</h3>
+                                                <p className="text-sm text-muted-foreground">Merge, save and organize your AI conversations</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border border-border hover:border-primary/50 transition-colors">
+                                            <FiFileText className="w-5 h-5 text-primary mt-0.5" />
+                                            <div>
+                                                <h3 className="font-semibold mb-1">Multiple Formats</h3>
+                                                <p className="text-sm text-muted-foreground">Export to PDF, Doc, HTML, Markdown, and more</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border border-border hover:border-primary/50 transition-colors">
+                                            <Cog className="w-5 h-5 text-primary mt-0.5" />
+                                            <div>
+                                                <h3 className="font-semibold mb-1">Full Customization</h3>
+                                                <p className="text-sm text-muted-foreground">Fine-tune styling, layout, and export settings</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors">
+                                            <Palette className="w-5 h-5 text-primary mt-0.5" />
+                                            <div>
+                                                <h3 className="font-semibold mb-1">Presets</h3>
+                                                <p className="text-sm text-muted-foreground">Create and save presets for quick exports</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* How to Use Section */}
+                                    <div className="space-y-6">
+                                        <h2 className="text-2xl font-bold text-center">How to Get Started</h2>
+
+                                        {/* Platform Instructions */}
+                                        <div className="space-y-6">
+                                            {[
+                                                {
+                                                    icon: '/chat/chatgpt.png',
+                                                    name: 'ChatGPT',
+                                                    link: 'https://chatgpt.com',
+                                                    image: 'https://github.com/kanhaiyadav/assests/blob/main/export-location.png?raw=true'
+                                                },
+                                                {
+                                                    icon: '/chat/claude.png',
+                                                    name: 'Claude',
+                                                    link: 'https://claude.ai/',
+                                                    image: 'https://github.com/kanhaiyadav/assests/blob/main/Screenshot%202025-12-11%20180828.png?raw=true'
+                                                },
+                                                {
+                                                    icon: '/chat/gemini.png',
+                                                    name: 'Gemini',
+                                                    link: 'https://gemini.google.com/',
+                                                    image: 'https://github.com/kanhaiyadav/assests/blob/main/Screenshot%202025-12-14%20222152%20-%20Copy.png?raw=true'
+                                                },
+                                                {
+                                                    icon: '/chat/deepseek.png',
+                                                    name: 'Deepseek',
+                                                    link: 'https://chat.deepseek.com/',
+                                                    image: 'https://github.com/kanhaiyadav/assests/blob/main/Screenshot%202025-12-14%20222316%20-%20Copy.png?raw=true'
+                                                }
+                                            ].map((platform) => (
+                                                <div key={platform.name} className="border border-border rounded-lg p-6 bg-card space-y-4">
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <img src={platform.icon} alt={platform.name} className="w-8 h-8" />
+                                                        <h3 className="text-xl font-semibold">{platform.name}</h3>
+                                                    </div>
+
+                                                    <div className="space-y-4">
+                                                        <div className="flex gap-4">
+                                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
+                                                                1
+                                                            </div>
+                                                            <p className="text-sm pt-1">
+                                                                Visit{' '}
+                                                                <a
+                                                                    href={platform.link}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline font-semibold"
+                                                                >
+                                                                    {platform.link}
+                                                                </a>
+                                                                {' '}and start or open a conversation
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="space-y-2">
+                                                            <div className="flex gap-4">
+                                                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
+                                                                    2
+                                                                </div>
+                                                                <p className="text-sm pt-1">
+                                                                    Click the "ExportMyChat" button {platform.name === 'Deepseek' ? 'at the top left' : 'at the top right'} of the conversation page
+                                                                </p>
+                                                            </div>
+                                                            <img
+                                                                src={platform.image}
+                                                                alt={`${platform.name} export button location`}
+                                                                className="rounded-lg border border-border ml-12 max-w-[690px]"
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex gap-4">
+                                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
+                                                                3
+                                                            </div>
+                                                            <p className="text-sm pt-1">
+                                                                Edit, customize, and export your chat in your preferred format
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Footer */}
+                                    <div className="text-center pt-6 border-t border border-border space-y-4">
+                                        <p className="text-sm text-muted-foreground">
+                                            Ready to get started? Visit any supported AI platform and look for the ExportMyChat button!
+                                        </p>
+                                        <div className="flex justify-center gap-4 text-xs text-muted-foreground">
+                                            <a href="https://exportmychat.kanhaiya.me/privacy-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                                                Privacy Policy
+                                            </a>
+                                            <span>•</span>
+                                            <a href="https://exportmychat.kanhaiya.me/terms-of-service.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                                                Terms & Conditions
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <>

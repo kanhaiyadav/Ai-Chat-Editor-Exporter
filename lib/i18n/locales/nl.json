@@ -474,8 +474,8 @@
         "howItWorks": "Hoe het werkt",
         "howItWorksItems": {
             "stored": "Uw gegevens worden opgeslagen in uw persoonlijke Google Drive",
-            "encrypted": "Alle gegevens worden versleuteld door Google Drive",
-            "noServers": "Er worden geen gegevens opgeslagen op onze servers",
+            "encrypted": "Veilige authenticatie via onze OAuth-backend",
+            "noServers": "Uw refresh-tokens blijven op de backend, chatgegevens in uw Drive",
             "syncAcross": "Synchroniseer over al uw browsers en apparaten"
         },
         "enterToken": "Authenticatie Voltooien",

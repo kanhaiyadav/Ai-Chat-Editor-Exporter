@@ -447,8 +447,8 @@
         "howItWorks": "How it works",
         "howItWorksItems": {
             "stored": "Your data is stored in your personal Google Drive",
-            "encrypted": "All data is encrypted by Google Drive",
-            "noServers": "No data is stored on our servers",
+            "encrypted": "Secure authentication through our OAuth backend",
+            "noServers": "Your refresh tokens remain on the backend, chat data stays in your Drive",
             "syncAcross": "Sync across all your browsers and devices"
         },
         "enterToken": "Complete Authentication",

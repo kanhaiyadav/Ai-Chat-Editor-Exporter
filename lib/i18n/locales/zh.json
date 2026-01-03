@@ -474,8 +474,8 @@
         "howItWorks": "工作原理",
         "howItWorksItems": {
             "stored": "您的数据存储在您的个人 Google Drive 中",
-            "encrypted": "所有数据都由 Google Drive 加密",
-            "noServers": "我们的服务器不存储任何数据",
+            "encrypted": "通过我们的OAuth后端进行安全身份验证",
+            "noServers": "您的刷新令牌保留在后端，聊天数据在您的 Drive 中",
             "syncAcross": "在所有浏览器和设备之间同步"
         },
         "enterToken": "完成身份验证",

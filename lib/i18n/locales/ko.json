@@ -474,9 +474,9 @@
         "howItWorks": "작동 방식",
         "howItWorksItems": {
             "stored": "데이터는 개인 Google Drive에 저장됩니다",
-            "encrypted": "모든 데이터는 Google Drive에 의해 암호화됩니다",
-            "noServers": "당사 서버에는 데이터가 저장되지 않습니다",
-            "syncAcross": "모든 브라우저와 기기에서 동기화"
+            "encrypted": "OAuth 백엔드를 통한 안전한 인증",
+            "noServers": "새로 고침 토큰은 백엔드에, 채팅 데이터는 Drive에 유지됩니다",
+            "syncAcross": "모든 브라우저 및 장치에서 동기화"
         },
         "enterToken": "인증 완료",
         "tokenModalDesc": "인증 페이지에서 세션 토큰을 붙여넣어 설정을 완료하세요.",
